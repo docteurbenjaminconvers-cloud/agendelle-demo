@@ -918,7 +918,7 @@ function optOn(k){return !!(S.options&&S.options[k])}
 function campCount(){const t=S.campCible||'all';return S.clients.filter(c=>{if(!c.optin)return false;const st=clientStats(c.id);if(t==='inact')return !st.next.length&&(!st.last||st.last.date<addDays(TODAY,-21));if(t==='fid')return st.visites>=6;if(t==='new')return st.visites<=1;return true}).length}
 function vMarketing(){
   const ch=S.campCanal||'sms';
-  const A=[['rappelSms','Rappel SMS 24 h avant','1 crédit SMS par rappel. Divise les absences par deux en moyenne.','sms'],
+  const A=[['rappelSms','Rappel SMS 24 h avant','1 crédit SMS par rappel. Le moyen le plus sûr d’éviter les oublis.','sms'],
     ['rappelMail','Rappel email 48 h avant','Avec lien pour déplacer ou annuler.','rappelsMail'],
     ['relance','Relance « Il est temps de revenir »','Par email, 6 semaines après une cire ou un rehaussement.','rappelsMail'],
     ['avis','Demande d’avis Google','Par email, 2 h après un rendez-vous honoré.','rappelsMail'],

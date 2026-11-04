@@ -8,4 +8,6 @@ Démo cliquable d'Agendelle, l'agenda en ligne des instituts de beauté, une mar
 
 Toutes les données sont fictives. Aucun paiement, SMS ni email réel n'est envoyé. Les essais restent dans le navigateur.
 
-En ligne : https://docteurbenjaminconvers-cloud.github.io/agendelle-demo/
+Démo : https://docteurbenjaminconvers-cloud.github.io/agendelle-demo/
+
+Site de présentation : https://docteurbenjaminconvers-cloud.github.io/agendelle-demo/site/
