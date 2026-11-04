@@ -141,6 +141,14 @@ p{margin:0}
 .d7[aria-pressed="true"] small,.d7[aria-pressed="true"] b{color:inherit}
 .d7[aria-pressed="true"] i{background:var(--accent-ink)}
 .d7.closed{opacity:.45}
+.dstrip{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));margin-right:calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding:12px calc(50% - 27px) 4px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%)}
+.dstrip::-webkit-scrollbar{display:none}
+.dstrip .d7{flex:0 0 54px;scroll-snap-align:center;transition:transform .15s,background-color .15s}
+.dstrip .d7[aria-pressed="true"]{transform:scale(1.08)}
+.dstrip .mlab{position:absolute;top:-13px;left:0;font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
 .grid{display:grid;grid-template-columns:38px minmax(0,1fr);gap:0;margin-left:-4px}
 .gh{position:sticky;top:0;z-index:4;background:var(--bg);display:grid;gap:6px;padding:6px 0 8px 38px;margin-left:-4px}
 .gh div{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;min-width:0}
@@ -586,8 +594,11 @@ function vAgenda(){
     ${!isT?'<button class="btn sm ghost" data-a="jour-today">Aujourd’hui</button>':''}
   </div>`;
   if(S.vue==='semaine')return head+vWeek(week);
-  const strip=`<div class="days7">${week.map(x=>{const n=S.rdv.filter(r=>r.date===x&&r.statut!=='annule').length;const open=PK.some(p=>workRanges(p,x).length);
-    return `<button class="d7 ${x===TODAY?'today':''} ${open?'':'closed'}" data-a="jour" data-v="${x}" aria-pressed="${x===d}" aria-label="${dlabel(x)}, ${n} rendez-vous"><small>${JOURS[dow(x)].replace('.','')}</small><b>${fromIso(x).getDate()}</b>${n?'<i></i>':''}</button>`}).join('')}</div>`;
+  const from=d<addDays(TODAY,-42)?addDays(d,-21):addDays(TODAY,-42);
+  const to=d>addDays(TODAY,90)?addDays(d,21):addDays(TODAY,90);
+  const days=[];for(let x=from;x<=to;x=addDays(x,1))days.push(x);
+  const strip=`<div class="dstrip" id="dstrip" role="listbox" aria-label="Choisir un jour, faites défiler">${days.map(x=>{const n=S.rdv.filter(r=>r.date===x&&r.statut!=='annule').length;const open=PK.some(p=>workRanges(p,x).length);const f=fromIso(x);
+    return `<button class="d7 ${x===TODAY?'today':''} ${open?'':'closed'} ${f.getDate()===1?'m1':''}" data-a="jour" data-v="${x}" role="option" aria-selected="${x===d}" aria-pressed="${x===d}" aria-label="${dlabel(x)}, ${n} rendez-vous">${f.getDate()===1?`<span class="mlab">${MOISC[f.getMonth()]}</span>`:''}<small>${JOURS[dow(x)].replace('.','')}</small><b>${f.getDate()}</b>${n?'<i></i>':''}</button>`}).join('')}</div>`;
   const filt=`<div class="chips" role="group" aria-label="Filtrer"><button class="chip" data-a="filtre" data-v="all" aria-pressed="${S.filtre==='all'}">Toute l’équipe</button>${PK.map(p=>`<button class="chip" data-a="filtre" data-v="${p}" aria-pressed="${S.filtre===p}">${PRATS[p].nom}</button>`).join('')}</div>`;
   return head+strip+filt+dayKpis(d)+kBanner(d)+attenteNotice(d)+dayGrid(d,PX)+`<button class="fab" data-a="new">${I.plus} RDV</button>`;
 }
@@ -1286,8 +1297,28 @@ function render(keepScroll){
     <div class="seg" role="group" aria-label="Point de vue"><button data-a="mode" data-v="salon" aria-pressed="${S.mode==='salon'}">Salon</button><button data-a="mode" data-v="cliente" aria-pressed="${S.mode==='cliente'}">Cliente</button></div></header>
     ${S.mode==='cliente'&&S.c.page==='home'?`<div class="row between small" style="margin:-4px 0 10px"><span class="tag">Démo · données d’exemple</span>${me()?`<button class="link" data-a="c-mesrdv">Mes rendez-vous (${clientStats(me().id).next.length})</button>`:''}</div>`:`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
   app.innerHTML=topbar+`<main>${main}</main>`+nav+sheetHTML();
+  setupStrip();
   if(keepScroll)window.scrollTo(0,y);
   save();
+}
+let stripLeft=null,stripTimer=null;
+function setupStrip(){
+  const st=document.getElementById('dstrip');
+  if(!st){stripLeft=null;return}
+  const sel=st.querySelector('[aria-pressed="true"]');
+  const target=sel?sel.offsetLeft-(st.clientWidth-sel.offsetWidth)/2:0;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(stripLeft!=null&&Math.abs(stripLeft-target)<st.clientWidth*3&&!reduce){st.scrollLeft=stripLeft;st.scrollTo({left:target,behavior:'smooth'})}
+  else st.scrollLeft=target;
+  st.addEventListener('scroll',()=>{
+    stripLeft=st.scrollLeft;
+    clearTimeout(stripTimer);
+    stripTimer=setTimeout(()=>{
+      const mid=st.scrollLeft+st.clientWidth/2;let best=null,bd=1e9;
+      st.querySelectorAll('.d7').forEach(b=>{const c=b.offsetLeft+b.offsetWidth/2,dd=Math.abs(c-mid);if(dd<bd){bd=dd;best=b}});
+      if(best&&best.dataset.v!==S.jour){S.jour=best.dataset.v;S.flash=null;try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}render(true)}
+    },160);
+  },{passive:true});
 }
 function go(fn){fn();render(false);window.scrollTo(0,0)}
 
