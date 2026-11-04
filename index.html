@@ -216,6 +216,77 @@ p{margin:0}
 .opt[aria-pressed="true"]{border:2px solid var(--accent);padding:13px}
 .opt.k[aria-pressed="true"]{border-color:var(--k)}
 .chart text{fill:var(--faint);font-size:10px;font-family:var(--body)}
+.g2{display:flex;flex-direction:column;gap:14px}
+.desk-only{display:none}
+.pdot{width:8px;height:8px;border-radius:4px;display:inline-block;flex-shrink:0}
+.p-maya{background:var(--k)}.p-julie{background:#8B6BB8}.p-ines{background:#5E9A57}
+.ibtn.sm{width:32px;height:32px}
+.item[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.wgh{display:grid;grid-template-columns:38px repeat(7,minmax(0,1fr));gap:6px;position:sticky;top:0;z-index:4;background:var(--bg);padding:4px 0 8px}
+.wgd{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:0}
+.wgd small{font-size:10.5px;font-weight:800;color:var(--faint);text-transform:uppercase}
+.wgd b{font-family:var(--display);font-size:19px}
+.wgd em{font-style:normal;font-size:11px;color:var(--muted);font-weight:700}
+.wgd.today{border-color:var(--accent)}.wgd.today b{color:var(--accent)}
+.mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.mc{height:34px;border:0;border-radius:10px;background:none;font-weight:700;font-size:13px;position:relative;font-variant-numeric:tabular-nums;padding:0}
+.mc:hover{background:var(--sunk)}
+.mc i{position:absolute;bottom:4px;left:50%;margin-left:-2px;width:4px;height:4px;border-radius:2px;background:var(--accent)}
+.mc.today{color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.mc.closed{color:var(--faint)}
+.mc[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.mc[aria-pressed="true"] i{background:var(--accent-ink)}
+@media (min-width:1000px){
+  .app{max-width:none}
+  .mob-only{display:none!important}
+  .desk-only{display:revert}
+  .gh div em{font-style:normal;font-size:11.5px;color:var(--faint);font-weight:700;margin-left:auto}
+  .desk{display:grid;grid-template-columns:236px minmax(0,1fr);gap:28px;min-height:100vh;max-width:1560px;margin:0 auto}
+  .side{position:sticky;top:0;height:100vh;padding:18px 0 18px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
+  .side .logo{padding:2px 8px 12px}
+  .navi{display:flex;align-items:center;gap:11px;min-height:42px;padding:0 12px;border-radius:12px;border:0;background:none;font-weight:700;font-size:14px;color:var(--muted);width:100%;text-align:left}
+  .navi svg{width:20px;height:20px;flex-shrink:0}
+  .navi:hover{background:var(--sunk);color:var(--ink)}
+  .navi[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .navi .kc{width:22px;height:22px;border-radius:11px;background:var(--k);color:var(--k-on);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:12px;flex-shrink:0}
+  .navi.k[aria-current="page"]{color:var(--k-ink)}
+  .navi .pill{margin-left:auto}
+  .side .tag{padding:14px 12px 4px}
+  .dmain{min-width:0;display:flex;flex-direction:column}
+  .dtop{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 0 14px;border-bottom:1px solid var(--line);margin-bottom:20px}
+  .dmain main,.cdesk main{padding-bottom:48px;gap:18px}
+  .cols2{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;align-items:start}
+  .cols2.cl{grid-template-columns:380px minmax(0,1fr)}
+  .dside{position:sticky;top:16px;display:flex;flex-direction:column;gap:14px}
+  .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .kpis.two{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .fab,.tabs{display:none}
+  .gh{margin-left:0;padding-left:38px}
+  .grid{margin-left:0}
+  .blk{font-size:12px}.blk b{font-size:12px}
+  .cb{cursor:copy}
+  .sheet-bg{justify-content:flex-end;align-items:stretch}
+  .sheet{max-width:460px;max-height:none;height:100%;border-radius:0;border-left:1px solid var(--line);padding:22px 26px}
+  .grab{display:none}
+  .toast{bottom:28px}
+  .cdesk{max-width:1180px;margin:0 auto}
+  .cdesk .dtop nav{display:flex;gap:6px}
+  .cdesk .dtop nav button{border:0;background:none;font-weight:700;font-size:14px;color:var(--muted);padding:8px 12px;border-radius:10px}
+  .cdesk .dtop nav button[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .cover{height:250px}
+  .ilogo{width:92px;height:92px;font-size:38px;margin-top:-58px;margin-left:24px;border-radius:26px}
+  .plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .avis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .cta{position:sticky;left:auto;right:auto;bottom:16px;background:transparent;border:0;padding:0;margin-top:6px}
+  .cta .in{max-width:none;margin:0}
+  .cta.home{display:none}
+  .wk{grid-template-columns:64px minmax(0,1fr) auto}
+  .dside .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .dside .kpi{padding:9px 10px}.dside .kpi b{font-size:17px}
+  .grid{margin-top:10px}
+  .wg .blk{padding:3px 5px}.wg .blk.honore::after{display:none}
+}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 </head>
@@ -439,7 +510,68 @@ function srcPill(r){
   if(r.source==='en ligne')return '<span class="pill acc">Réservé en ligne</span>';
   return '<span class="pill">Par téléphone</span>';
 }
+function dayKpis(d){
+  const dayR=S.rdv.filter(r=>r.date===d&&r.statut!=='annule');
+  const cap_=PK.reduce((a,p)=>a+workRanges(p,d).reduce((x,[s,e])=>x+e-s,0),0);
+  const booked=dayR.reduce((a,r)=>a+r.dur,0);
+  const ca=dayR.reduce((a,r)=>a+rdvPrice(r),0);
+  return `<div class="kpis"><div class="kpi"><b>${dayR.length}</b><span>rendez-vous</span></div><div class="kpi"><b>${eur(ca)}</b><span>CA prévu</span></div><div class="kpi"><b>${cap_?Math.round(booked/cap_*100):0} %</b><span>remplissage</span></div></div>`;
+}
+function blkHTML(r,px,extraStyle,showPrat){
+  const c=CLIENT(r.client),h=r.dur*px-3,cat=rdvCat(r),kk=r.source==='kookla';
+  return `<button class="blk cat-${cat} ${kk?'kk':''} ${r.statut}" style="top:${(r.start-GS)*px+1}px;height:${h}px;${extraStyle||''}" data-a="rdv" data-id="${r.id}" aria-label="${hm(r.start)}, ${esc(c.nom)}, ${esc(rdvNames(r))}, avec ${PRATS[r.prat].nom}">
+    <b>${showPrat?`<i class="pdot p-${r.prat}"></i>`:''}${hm(r.start)} ${esc(court(c.nom))}</b>${h>34?`<span>${kk?'K · ':''}${esc(rdvNames(r))}</span>`:''}</button>`;
+}
+function nowLine(d,px){return d===TODAY&&nowMin()>GS&&nowMin()<GE?`<div class="nowl" style="top:${(nowMin()-GS)*px}px"></div>`:''}
+function hoursCol(px){const H=(GE-GS)*px;const h=[];for(let m=GS;m<=GE;m+=60)h.push(`<span style="top:${(m-GS)*px}px">${m/60}h</span>`);return `<div class="times" style="height:${H}px">${h.join('')}</div>`}
+function dayGrid(d,px){
+  const dayR=S.rdv.filter(r=>r.date===d&&r.statut!=='annule');
+  const prats=PK.filter(p=>(S.filtre==='all'||S.filtre===p)&&workRanges(p,d).length);
+  if(!prats.length)return `<div class="card empty"><b>${S.filtre==='all'?'Institut fermé ce jour-là':PRATS[S.filtre].nom+' ne travaille pas ce jour-là'}</b><br><button class="link" data-a="jour" data-v="${firstOpen(addDays(d,1))}" style="margin-top:8px">Aller au prochain jour d’ouverture</button></div>`;
+  const H=(GE-GS)*px;
+  const cols=prats.map(p=>{
+    const rs=workRanges(p,d);const offs=[];let cur=GS;
+    rs.forEach(([a,b],i)=>{if(a>cur)offs.push(`<div class="off" style="top:${(cur-GS)*px}px;height:${(a-cur)*px}px">${i>0?'Pause':''}</div>`);cur=b});
+    if(cur<GE)offs.push(`<div class="off" style="top:${(cur-GS)*px}px;height:${(GE-cur)*px}px"></div>`);
+    const blks=dayR.filter(r=>r.prat===p).map(r=>blkHTML(r,px)).join('');
+    return `<div class="cb" data-a="grid" data-p="${p}" data-date="${d}" data-px="${px}" style="height:${H}px;--hour:${60*px}px">${offs.join('')}${blks}${nowLine(d,px)}</div>`;
+  }).join('');
+  return `<div class="agrid"><div class="gh" style="grid-template-columns:repeat(${prats.length},minmax(0,1fr))">${prats.map(p=>{const n=dayR.filter(r=>r.prat===p).length;return `<div>${pAv(p)}<span>${PRATS[p].nom}</span><em class="desk-only">${n} RDV</em></div>`}).join('')}</div>
+    <div class="grid">${hoursCol(px)}<div class="cols" style="grid-template-columns:repeat(${prats.length},minmax(0,1fr))">${cols}</div></div>
+    <p class="foot">Cliquez sur un créneau vide pour ajouter un rendez-vous.</p></div>`;
+}
+function weekGrid(week,px){
+  const H=(GE-GS)*px;
+  const head=`<div class="wgh"><span></span>${week.map(x=>{const n=S.rdv.filter(r=>r.date===x&&r.statut!=='annule'&&(S.filtre==='all'||r.prat===S.filtre)).length;
+    return `<button class="wgd ${x===TODAY?'today':''}" data-a="goday" data-v="${x}"><small>${JOURS[dow(x)].replace('.','')}</small><b>${fromIso(x).getDate()}</b><em>${n?n+' RDV':'—'}</em></button>`}).join('')}</div>`;
+  const cols=week.map(x=>{
+    const prats=PK.filter(p=>S.filtre==='all'||S.filtre===p);
+    const ranges=prats.flatMap(p=>workRanges(p,x));
+    let offs='',seg=null;
+    for(let m=GS;m<GE;m+=15){const w=ranges.some(([a,b])=>m>=a&&m<b);
+      if(!w&&seg===null)seg=m;
+      if(seg!==null&&(w||m+15>=GE)){const end=w?m:GE;offs+=`<div class="off" style="top:${(seg-GS)*px}px;height:${(end-seg)*px}px"></div>`;seg=null}}
+    const rs=S.rdv.filter(r=>r.date===x&&r.statut!=='annule'&&(S.filtre==='all'||r.prat===S.filtre)).sort((a,b)=>a.start-b.start||a.prat.localeCompare(b.prat));
+    const pos=[],nl=[];let cl=[],clEnd=-1,lanes=[];
+    const flush=()=>{cl.forEach(k=>nl[k]=lanes.length);cl=[];lanes=[]};
+    rs.forEach((r,j)=>{if(r.start>=clEnd){flush();clEnd=0}let i=lanes.findIndex(e=>e<=r.start);if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=r.start+r.dur;pos[j]=i;cl.push(j);clEnd=Math.max(clEnd,r.start+r.dur)});
+    flush();
+    const blks=rs.map((r,j)=>{const n=nl[j]||1;return blkHTML(r,px,`left:calc(${pos[j]/n*100}% + 2px);right:auto;width:calc(${100/n}% - 4px);`,true)}).join('');
+    return `<div class="cb" data-a="grid" data-date="${x}" data-px="${px}" style="height:${H}px;--hour:${60*px}px">${offs}${blks}${nowLine(x,px)}</div>`;
+  }).join('');
+  return `<div class="wg">${head}<div class="grid">${hoursCol(px)}<div class="cols" style="grid-template-columns:repeat(7,minmax(0,1fr))">${cols}</div></div>
+    <div class="row wrap small" style="gap:12px;margin-top:8px">${PK.map(p=>`<span class="row" style="gap:5px"><i class="pdot p-${p}"></i>${PRATS[p].nom}</span>`).join('')}<span class="sub small">· Couleur du bloc = type de soin</span></div></div>`;
+}
+function kBanner(d){
+  const kRdv=S.rdv.filter(r=>r.date===d&&r.statut!=='annule'&&r.source==='kookla');
+  return kPartner()&&kRdv.length?`<button class="notice k" data-a="tab" data-v="kookla" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>${kRdv.length} séance${kRdv.length>1?'s':''} laser vendue${kRdv.length>1?'s':''} par Kookla</b> ce jour-là, déjà payée${kRdv.length>1?'s':''}.</span></button>`:'';
+}
+function attenteNotice(d){
+  const att=S.attente.filter(w=>w.date>=TODAY).length;
+  return S.flash?`<div class="notice">${I.clock}<span>${esc(S.flash)}</span></div>`:(att&&d===TODAY?`<div class="notice">${I.clock}<span><b>${att} cliente${att>1?'s':''} en liste d’attente.</b> ${S.auto.attente?'Prévenues automatiquement si une place se libère.':'Activez la liste d’attente automatique dans Marketing.'}</span></div>`:'');
+}
 function vAgenda(){
+  if(DESK)return vAgendaDesk();
   const d=S.jour,isT=d===TODAY;
   const mon=mondayOf(d);
   const week=[...Array(7)].map((_,i)=>addDays(mon,i));
@@ -457,39 +589,7 @@ function vAgenda(){
   const strip=`<div class="days7">${week.map(x=>{const n=S.rdv.filter(r=>r.date===x&&r.statut!=='annule').length;const open=PK.some(p=>workRanges(p,x).length);
     return `<button class="d7 ${x===TODAY?'today':''} ${open?'':'closed'}" data-a="jour" data-v="${x}" aria-pressed="${x===d}" aria-label="${dlabel(x)}, ${n} rendez-vous"><small>${JOURS[dow(x)].replace('.','')}</small><b>${fromIso(x).getDate()}</b>${n?'<i></i>':''}</button>`}).join('')}</div>`;
   const filt=`<div class="chips" role="group" aria-label="Filtrer"><button class="chip" data-a="filtre" data-v="all" aria-pressed="${S.filtre==='all'}">Toute l’équipe</button>${PK.map(p=>`<button class="chip" data-a="filtre" data-v="${p}" aria-pressed="${S.filtre===p}">${PRATS[p].nom}</button>`).join('')}</div>`;
-  const dayR=S.rdv.filter(r=>r.date===d&&r.statut!=='annule');
-  const cap_=PK.reduce((a,p)=>a+workRanges(p,d).reduce((x,[s,e])=>x+e-s,0),0);
-  const booked=dayR.reduce((a,r)=>a+r.dur,0);
-  const ca=dayR.reduce((a,r)=>a+rdvPrice(r),0);
-  const kpis=`<div class="kpis"><div class="kpi"><b>${dayR.length}</b><span>rendez-vous</span></div><div class="kpi"><b>${eur(ca)}</b><span>CA prévu</span></div><div class="kpi"><b>${cap_?Math.round(booked/cap_*100):0} %</b><span>remplissage</span></div></div>`;
-  const kRdv=dayR.filter(r=>r.source==='kookla');
-  const kBan=kPartner()&&kRdv.length?`<button class="notice k" data-a="tab" data-v="kookla" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>${kRdv.length} séance${kRdv.length>1?'s':''} laser vendue${kRdv.length>1?'s':''} par Kookla</b> ce jour-là, déjà payée${kRdv.length>1?'s':''}.</span></button>`:'';
-  const att=S.attente.filter(w=>w.date>=TODAY).length;
-  const attN=S.flash?`<div class="notice">${I.clock}<span>${esc(S.flash)}</span></div>`:(att&&isT?`<div class="notice">${I.clock}<span><b>${att} cliente${att>1?'s':''} en liste d’attente.</b> ${S.auto.attente?'Prévenues automatiquement si une place se libère.':'Activez la liste d’attente automatique dans Marketing.'}</span></div>`:'');
-  const prats=PK.filter(p=>(S.filtre==='all'||S.filtre===p)&&workRanges(p,d).length);
-  let grid;
-  if(!prats.length){
-    grid=`<div class="card empty"><b>${S.filtre==='all'?'Institut fermé ce jour-là':PRATS[S.filtre].nom+' ne travaille pas ce jour-là'}</b><br><button class="link" data-a="jour" data-v="${firstOpen(addDays(d,1))}" style="margin-top:8px">Aller au prochain jour d’ouverture</button></div>`;
-  } else {
-    const H=(GE-GS)*PX;
-    const hours=[];for(let m=GS;m<=GE;m+=60)hours.push(`<span style="top:${(m-GS)*PX}px">${m/60}h</span>`);
-    const cols=prats.map(p=>{
-      const rs=workRanges(p,d);
-      const offs=[];let cur=GS;
-      rs.forEach(([a,b],i)=>{if(a>cur)offs.push(`<div class="off" style="top:${(cur-GS)*PX}px;height:${(a-cur)*PX}px">${i>0?'Pause':''}</div>`);cur=b});
-      if(cur<GE)offs.push(`<div class="off" style="top:${(cur-GS)*PX}px;height:${(GE-cur)*PX}px"></div>`);
-      const blks=dayR.filter(r=>r.prat===p).map(r=>{
-        const c=CLIENT(r.client),h=r.dur*PX-3,cat=rdvCat(r),kk=r.source==='kookla';
-        return `<button class="blk cat-${cat} ${kk?'kk':''} ${r.statut}" style="top:${(r.start-GS)*PX+1}px;height:${h}px" data-a="rdv" data-id="${r.id}" aria-label="${hm(r.start)}, ${esc(c.nom)}, ${esc(rdvNames(r))}">
-          <b>${hm(r.start)} ${esc(court(c.nom))}</b>${h>34?`<span>${kk?'K · ':''}${esc(rdvNames(r))}</span>`:''}</button>`}).join('');
-      const nl=isT&&nowMin()>GS&&nowMin()<GE?`<div class="nowl" style="top:${(nowMin()-GS)*PX}px"></div>`:'';
-      return `<div class="cb" data-a="grid" data-p="${p}" style="height:${H}px;--hour:${60*PX}px">${offs.join('')}${blks}${nl}</div>`;
-    }).join('');
-    grid=`<div class="gh" style="grid-template-columns:repeat(${prats.length},minmax(0,1fr))">${prats.map(p=>`<div>${pAv(p)}<span>${PRATS[p].nom}</span></div>`).join('')}</div>
-      <div class="grid"><div class="times" style="height:${H}px">${hours.join('')}</div><div class="cols" style="grid-template-columns:repeat(${prats.length},minmax(0,1fr))">${cols}</div></div>
-      <p class="foot">Touchez un créneau vide pour ajouter un rendez-vous.</p>`;
-  }
-  return head+strip+filt+kpis+kBan+attN+grid+`<button class="fab" data-a="new">${I.plus} RDV</button>`;
+  return head+strip+filt+dayKpis(d)+kBanner(d)+attenteNotice(d)+dayGrid(d,PX)+`<button class="fab" data-a="new">${I.plus} RDV</button>`;
 }
 function vWeek(week){
   return `<div class="list">${week.map(x=>{
@@ -501,6 +601,37 @@ function vWeek(week){
       <span style="display:flex;flex-direction:column;align-items:center"><span class="tag">${JOURS[dow(x)].replace('.','')}</span><b style="font-family:var(--display);font-size:22px;${x===TODAY?'color:var(--accent)':''}">${fromIso(x).getDate()}</b></span>
       <span class="col" style="gap:6px;min-width:0">${capm?`<span class="row between small"><b>${rs.length} RDV</b><span class="sub small">${occ} % rempli</span></span><span class="bar"><i style="width:${occ}%"></i></span>${k&&kPartner()?`<span class="pill ks" style="align-self:flex-start">${k} séance${k>1?'s':''} Kookla</span>`:''}`:'<span class="sub">Fermé</span>'}</span>
       <span class="price">${capm?eur(rs.reduce((a,r)=>a+rdvPrice(r),0)):''}</span></button>`}).join('')}</div>`;
+}
+function miniCal(d){
+  const f=fromIso(d),y=f.getFullYear(),m=f.getMonth();
+  const off=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+  const cells=[];for(let i=0;i<off;i++)cells.push('<span></span>');
+  for(let i=1;i<=n;i++){const x=iso(new Date(y,m,i));const c=S.rdv.filter(r=>r.date===x&&r.statut!=='annule').length;const open=PK.some(p=>workRanges(p,x).length);
+    cells.push(`<button class="mc ${x===TODAY?'today':''} ${open?'':'closed'}" data-a="jour" data-v="${x}" aria-pressed="${x===d}" aria-label="${dlabel(x)}">${i}${c?'<i></i>':''}</button>`)}
+  return `<div class="card col" style="gap:8px"><div class="row between"><b>${cap(MOIS[m])} ${y}</b><span class="row" style="gap:4px"><button class="ibtn sm" data-a="mois" data-v="-1" aria-label="Mois précédent">${I.left}</button><button class="ibtn sm" data-a="mois" data-v="1" aria-label="Mois suivant">${I.right}</button></span></div>
+    <div class="mcal">${['L','M','M','J','V','S','D'].map(x=>`<span class="tag" style="text-align:center">${x}</span>`).join('')}${cells.join('')}</div></div>`;
+}
+function vAgendaDesk(){
+  const d=S.jour,mon=mondayOf(d),week=[...Array(7)].map((_,i)=>addDays(mon,i));
+  const title=S.vue==='jour'?cap(dlabel(d)):'Semaine du '+dshort(mon)+' au '+dshort(addDays(mon,6));
+  const tool=`<div class="row between wrap" style="gap:12px">
+    <div class="row" style="gap:8px"><button class="ibtn" data-a="jour-prev" aria-label="Précédent">${I.left}</button><button class="ibtn" data-a="jour-next" aria-label="Suivant">${I.right}</button>
+      <button class="btn sm ghost" data-a="jour-today" ${d===TODAY&&S.vue==='jour'?'disabled':''}>Aujourd’hui</button><h1 style="margin-left:8px">${title}</h1></div>
+    <div class="row" style="gap:10px"><div class="chips" role="group" aria-label="Filtrer"><button class="chip" data-a="filtre" data-v="all" aria-pressed="${S.filtre==='all'}">Toute l’équipe</button>${PK.map(p=>`<button class="chip" data-a="filtre" data-v="${p}" aria-pressed="${S.filtre===p}">${PRATS[p].nom}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Vue"><button data-a="vue" data-v="jour" aria-pressed="${S.vue==='jour'}">Jour</button><button data-a="vue" data-v="semaine" aria-pressed="${S.vue==='semaine'}">Semaine</button></div></div></div>`;
+  const main=S.vue==='jour'?dayGrid(d,1.8):weekGrid(week,1.5);
+  const ref=S.vue==='jour'?d:(week.includes(TODAY)?TODAY:week[0]);
+  const list=S.rdv.filter(r=>r.date===ref&&r.statut!=='annule'&&(ref!==TODAY||r.start+r.dur>nowMin())).sort((a,b)=>a.start-b.start).slice(0,5);
+  const wk=S.rdv.filter(r=>week.includes(r.date)&&r.source==='kookla'&&r.statut!=='annule');
+  const att=S.attente.filter(w=>w.date>=TODAY);
+  const aside=`${miniCal(d)}
+    <div class="col" style="gap:8px"><span class="tag">${S.vue==='jour'?'Ce jour-là':'Ce jour : '+dshort(ref)}</span>${dayKpis(ref)}</div>
+    ${attenteNotice(ref)}
+    ${kPartner()?`<button class="kcard" data-a="tab" data-v="kookla" style="text-align:left;padding:0;width:100%"><div class="kh"><div class="row between"><span class="kword">Kookla</span><span class="pill" style="background:rgba(255,255,255,.22);color:inherit">Partenaire</span></div><b>${wk.length} séance${wk.length>1?'s':''} laser cette semaine</b><span style="font-size:13px;opacity:.9">Déjà payées, versées après chaque séance.</span></div></button>`:''}
+    <div class="card col" style="gap:8px"><b>${ref===TODAY?'Prochaines arrivées':'Rendez-vous du '+dshort(ref)}</b>${list.length?list.map(r=>`<button class="item" data-a="rdv" data-id="${r.id}" style="padding:8px 10px"><i class="pdot p-${r.prat}"></i><span class="t"><b>${hm(r.start)} · ${esc(court(CLIENT(r.client).nom))}</b><span>${esc(rdvNames(r))}</span></span>${r.source==='kookla'?'<span class="pill k">K</span>':''}</button>`).join(''):'<span class="sub small">Plus de rendez-vous aujourd’hui.</span>'}</div>
+    ${att.length?`<div class="card col" style="gap:8px"><b>Liste d’attente</b>${att.map(w=>`<div class="row between small"><span>${esc(w.nom)}</span><span class="sub small">${esc(SOIN(w.soin).nom)} · ${dshort(w.date)}</span></div>`).join('')}</div>`:''}`;
+  if(S.vue==='semaine')return tool+`<div class="col" style="gap:12px;min-width:0">${main}</div>`;
+  return tool+`<div class="cols2 ag"><div class="col" style="gap:12px;min-width:0">${kBanner(d)}${main}</div><aside class="dside">${aside}</aside></div>`;
 }
 
 /* ----- clientes ----- */
@@ -524,10 +655,10 @@ function clientsListHTML(){
     return true;
   }).sort((a,b)=>a.c.nom.localeCompare(b.c.nom));
   if(!rows.length)return '<p class="empty">Aucune cliente ne correspond.</p>';
-  return rows.map(({c,st})=>`<button class="item" data-a="fiche" data-id="${c.id}">${av(c.nom)}<span class="t"><b>${esc(c.nom)}</b><span>${st.next[0]?'Prochain RDV '+dshort(st.next[0].date):st.last?'Dernière visite '+dshort(st.last.date):'Aucune visite'} · ${st.visites} visite${st.visites>1?'s':''}</span><span class="row wrap" style="gap:4px;margin-top:3px">${clientTags(c,st)}</span></span></button>`).join('');
+  return rows.map(({c,st})=>`<button class="item" data-a="fiche" data-id="${c.id}" aria-current="${S.clientId===c.id}">${av(c.nom)}<span class="t"><b>${esc(c.nom)}</b><span>${st.next[0]?'Prochain RDV '+dshort(st.next[0].date):st.last?'Dernière visite '+dshort(st.last.date):'Aucune visite'} · ${st.visites} visite${st.visites>1?'s':''}</span><span class="row wrap" style="gap:4px;margin-top:3px">${clientTags(c,st)}</span></span></button>`).join('');
 }
 function vClientes(){
-  if(S.clientId)return vFiche(CLIENT(S.clientId));
+  if(S.clientId&&!DESK)return vFiche(CLIENT(S.clientId));
   const f=[['all','Toutes'],['new','Nouvelles'],['fid','Fidèles'],['k','Via Kookla'],['inact','À relancer']];
   return `<div class="row between"><h1>Clientes</h1><button class="btn sm soft" data-a="new-client">${I.plus} Ajouter</button></div>
   <label class="field" for="cq"><span class="sr" style="position:absolute;left:-9999px">Rechercher une cliente</span><input id="cq" type="search" placeholder="Rechercher par nom ou téléphone" value="${esc(S.cq)}" autocomplete="off"></label>
@@ -535,10 +666,19 @@ function vClientes(){
   <div class="notice">${I.shield}<span>Votre fichier vous appartient. Kookla ne l’utilise jamais pour contacter vos clientes ni leur proposer d’autres centres.</span></div>
   <div class="list" id="cl-list">${clientsListHTML()}</div>`;
 }
+function vClientesDesk(){
+  const f=[['all','Toutes'],['new','Nouvelles'],['fid','Fidèles'],['k','Via Kookla'],['inact','À relancer']];
+  return `<div class="row between"><div><h1>Clientes</h1><span class="sub">${S.clients.length} clientes dans votre fichier</span></div><button class="btn sm soft" data-a="new-client">${I.plus} Nouvelle cliente</button></div>
+  <div class="cols2 cl"><div class="col" style="gap:10px;position:sticky;top:16px;max-height:calc(100vh - 32px)">
+    <label class="field" for="cq"><input id="cq" type="search" placeholder="Rechercher par nom ou téléphone" value="${esc(S.cq)}" autocomplete="off" aria-label="Rechercher une cliente"></label>
+    <div class="chips wrap" style="flex-wrap:wrap">${f.map(([k,l])=>`<button class="chip" data-a="cf" data-v="${k}" aria-pressed="${S.cf===k}">${l}</button>`).join('')}</div>
+    <div class="list" id="cl-list" style="overflow-y:auto;padding:2px">${clientsListHTML()}</div></div>
+    <div class="col" style="gap:14px;min-width:0">${S.clientId?vFiche(CLIENT(S.clientId)):`<div class="card empty" style="padding:60px 20px">${I.users}<br><b>Choisissez une cliente</b><br><span class="sub small">Son historique, ses rendez-vous et vos notes s’affichent ici.</span></div><div class="notice">${I.shield}<span>Votre fichier vous appartient. Kookla ne l’utilise jamais pour contacter vos clientes ni leur proposer d’autres centres.</span></div>`}</div></div>`;
+}
 function vFiche(c){
   const st=clientStats(c.id);
   const rdvItem=r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="t"><b>${esc(rdvNames(r))}</b><span>${cap(dlabel(r.date))} · ${hm(r.start)} · ${PRATS[r.prat].nom}</span></span>${r.date>=TODAY&&r.statut!=='honore'?srcPill(r):statusPill(r)}</button>`;
-  return `<button class="link" data-a="fiche-back">${I.left} Clientes</button>
+  return `<button class="link mob-only" data-a="fiche-back">${I.left} Clientes</button>
   <div class="row" style="gap:14px">${av(c.nom,'lg')}<div class="grow col" style="gap:4px"><h1 style="font-size:24px">${esc(c.nom)}</h1><span class="sub">${esc(c.tel)} · ${esc(c.mail)}</span><span class="row wrap" style="gap:4px">${clientTags(c,st)}</span></div></div>
   <div class="row"><button class="btn sm" data-a="new" data-client="${c.id}">${I.plus} Rendez-vous</button><button class="btn sm ghost" data-a="sms" data-id="${c.id}">SMS</button><button class="btn sm ghost" data-a="call" data-id="${c.id}">${I.phone} Appeler</button></div>
   <div class="kpis"><div class="kpi"><b>${st.visites}</b><span>visites</span></div><div class="kpi"><b>${eur(st.spent)}</b><span>dépensés</span></div><div class="kpi"><b>${st.absences}</b><span>absence${st.absences>1?'s':''}</span></div></div>
@@ -576,7 +716,7 @@ function vKookla(){
         <div class="kpi"><b>${st.done}</b><span>séances réalisées ce mois</span></div>
         <div class="kpi"><b>${eur(st.net)}</b><span>net versé ce mois</span></div></div>
         <span class="foot" style="text-align:left">Net après commission de 25 %. Données d’exemple.</span></div></div>
-    <div class="sec"><div class="sec-h"><h3>Prochaines séances Kookla</h3><span class="sub small">${st.next.length} à venir</span></div>
+    <div class="g2"><div class="sec"><div class="sec-h"><h3>Prochaines séances Kookla</h3><span class="sub small">${st.next.length} à venir</span></div>
       <div class="list">${st.next.slice(0,5).map(r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="av" style="background:var(--k-soft);color:var(--k-ink)">K</span><span class="t"><b>${esc(rdvNames(r))}</b><span>${cap(dlabel(r.date))} · ${hm(r.start)} · ${esc(court(CLIENT(r.client).nom))}</span></span><span class="pill ks">${esc(r.pack)}</span></button>`).join('')||'<p class="sub">Aucune séance à venir.</p>'}</div></div>
     <div class="sec"><h3>Votre fiche sur Kookla</h3>
       <div class="card col" style="gap:10px">
@@ -584,11 +724,11 @@ function vKookla(){
         <div class="row between"><b>Institut Écusson</b><span class="pill k">Premium · Centre partenaire</span></div>
         <span class="sub small">Montpellier · Laser Alexandrite et Nd:YAG · <span class="stars">★</span> 4,9</span>
         <div class="row between"><span class="sub small">Séance dès <b style="color:var(--ink)">${eur(Math.min(...S.catalogue.filter(s=>s.cat==='laser').map(s=>s.prix)))}</b></span><span class="pill ok">Garantie anti-faillite</span></div>
-      </div><span class="foot" style="text-align:left">Aperçu de votre carte dans la recherche Kookla. Les prix et horaires viennent d’Agendelle.</span></div>
-    <div class="sec"><h3>Derniers versements</h3><div class="list">${st.pays.map(r=>`<div class="item"><span class="t"><b>${eur(rdvPrice(r)*.75)}</b><span>${esc(rdvNames(r))} · ${esc(court(CLIENT(r.client).nom))}</span></span><span class="sub small">${dshort(r.date)}</span></div>`).join('')}</div>
+      </div><span class="foot" style="text-align:left">Aperçu de votre carte dans la recherche Kookla. Les prix et horaires viennent d’Agendelle.</span></div></div>
+    <div class="g2"><div class="sec"><h3>Derniers versements</h3><div class="list">${st.pays.map(r=>`<div class="item"><span class="t"><b>${eur(rdvPrice(r)*.75)}</b><span>${esc(rdvNames(r))} · ${esc(court(CLIENT(r.client).nom))}</span></span><span class="sub small">${dshort(r.date)}</span></div>`).join('')}</div>
       <span class="foot" style="text-align:left">Chaque séance est versée sur votre compte après sa réalisation (séquestre Stripe).</span></div>
     <div class="sec"><h3>Comment ça marche</h3><div class="list">
-      ${[['Vos créneaux laser sont partagés','Kookla vend sur les créneaux de votre agenda Agendelle : aucune double réservation.'],['La cliente paie sur Kookla','Séance ou pack de 5 ou 8, paiement en plusieurs fois possible.'],['Vous êtes payée après la séance','Le montant d’une séance vous est versé une fois réalisée, moins 25 % de commission.']].map(([t,s],i)=>`<div class="item"><span class="av" style="background:var(--k-soft);color:var(--k-ink)">${i+1}</span><span class="t"><b>${t}</b><span>${s}</span></span></div>`).join('')}</div></div>
+      ${[['Vos créneaux laser sont partagés','Kookla vend sur les créneaux de votre agenda Agendelle : aucune double réservation.'],['La cliente paie sur Kookla','Séance ou pack de 5 ou 8, paiement en plusieurs fois possible.'],['Vous êtes payée après la séance','Le montant d’une séance vous est versé une fois réalisée, moins 25 % de commission.']].map(([t,s],i)=>`<div class="item"><span class="av" style="background:var(--k-soft);color:var(--k-ink)">${i+1}</span><span class="t"><b>${t}</b><span>${s}</span></span></div>`).join('')}</div></div></div>
     <div class="row wrap"><button class="btn sm ghost" data-a="k-level" data-v="annuaire">Passer en annuaire seul</button><button class="btn sm danger" data-a="k-off">Désactiver Kookla</button></div>`;
   }
   if(k.statut==='actif'&&k.niveau==='annuaire'){
@@ -623,9 +763,9 @@ function vCaisse(){
   <div class="card col" style="gap:6px"><span class="sub">Encaissé aujourd’hui</span><b style="font-family:var(--display);font-size:34px;letter-spacing:-.02em">${eur(tot)}</b>
     <div class="row wrap" style="gap:6px">${Object.entries(modes).map(([m,v])=>`<span class="pill">${esc(m)} · ${eur(v)}</span>`).join('')||'<span class="sub small">Rien encaissé pour l’instant.</span>'}</div>
     ${kToday.length&&kPartner()?`<span class="pill ks" style="align-self:flex-start">+ ${eur(kToday.reduce((a,r)=>a+rdvPrice(r)*.75,0))} versés par Kookla après les séances</span>`:''}</div>
-  <div class="sec"><div class="sec-h"><h3>À encaisser</h3><span class="sub small">${todo.length}</span></div>
+  <div class="g2"><div class="sec"><div class="sec-h"><h3>À encaisser</h3><span class="sub small">${todo.length}</span></div>
     ${todo.length?`<div class="list">${todo.map(r=>`<div class="item"><span class="t"><b>${esc(court(CLIENT(r.client).nom))} · ${esc(rdvNames(r))}</b><span>${r.date===TODAY?'Aujourd’hui':dshort(r.date)} ${hm(r.start)}${r.acompte?' · acompte '+eur(r.acompte)+' déjà payé':''}</span></span><button class="btn sm" data-a="encaisser" data-id="${r.id}">${eur(rdvPrice(r)-r.acompte)}</button></div>`).join('')}</div>`:'<p class="sub">Tout est encaissé.</p>'}</div>
-  <div class="sec"><h3>Encaissements du jour</h3>${paid.length+ventes.length?`<div class="list">${paid.map(r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="t"><b>${esc(court(CLIENT(r.client).nom))}</b><span>${esc(rdvNames(r))} · ${esc(r.paid.mode)}</span></span><span class="price">${eur(r.paid.montant)}</span></button>`).join('')}${ventes.map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>Vente en ligne · ${esc(v.acheteur)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div>`:'<p class="sub">Aucun encaissement aujourd’hui.</p>'}</div>`;
+  <div class="sec"><h3>Encaissements du jour</h3>${paid.length+ventes.length?`<div class="list">${paid.map(r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="t"><b>${esc(court(CLIENT(r.client).nom))}</b><span>${esc(rdvNames(r))} · ${esc(r.paid.mode)}</span></span><span class="price">${eur(r.paid.montant)}</span></button>`).join('')}${ventes.map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>Vente en ligne · ${esc(v.acheteur)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div>`:'<p class="sub">Aucun encaissement aujourd’hui.</p>'}</div></div>`;
 }
 
 /* ----- menu ----- */
@@ -634,7 +774,7 @@ const MENU=[['prestations','Prestations',I.list,'Catalogue à cocher, prix et du
  ['stats','Statistiques',I.chart,'Chiffre d’affaires, remplissage, sources'],['reservation','Page de réservation',I.globe,'Règles, acompte, lien à partager'],['formule','Formule',I.crown,'Essentiel ou Plus, option Kookla']];
 function vMenu(){
   if(S.menu){const f={prestations:vPrestations,equipe:vEquipe,ventes:vVentes,marketing:vMarketing,stats:vStats,reservation:vReservation,formule:vFormule}[S.menu];
-    return `<button class="link" data-a="menu-back">${I.left} Menu</button>`+f()}
+    return `<button class="link mob-only" data-a="menu-back">${I.left} Menu</button>`+f()}
   return `<h1>Menu</h1>
   <div class="card row" style="gap:12px"><span class="av lg" style="width:52px;height:52px">É</span><div class="grow"><b>Institut Écusson</b><div class="sub small">Montpellier · formule ${plus()?'Plus':'Essentiel'}</div></div></div>
   <div class="list">${MENU.map(([k,l,icon,s])=>`<button class="item" data-a="menu" data-v="${k}"><span class="av" style="background:var(--sunk);color:var(--ink)">${icon}</span><span class="t"><b>${l}</b><span>${s}</span></span>${(k==='ventes'||k==='marketing')&&!plus()?'<span class="pill acc">Plus</span>':I.right}</button>`).join('')}</div>
@@ -708,11 +848,11 @@ function vStats(){
   <div class="kpis"><div class="kpi"><b>${eur(caN)}</b><span>CA <span style="color:${evo>=0?'var(--ok)':'var(--bad)'}">${evo>=0?'+':''}${evo} %</span></span></div><div class="kpi"><b>${occ} %</b><span>remplissage</span></div><div class="kpi"><b>${rs.length}</b><span>rendez-vous</span></div>
   <div class="kpi"><b>${nouv}</b><span>nouvelles</span></div><div class="kpi"><b>${abs} %</b><span>absences</span></div><div class="kpi"><b>${eur(rs.filter(r=>r.statut==='honore').length?caN/rs.filter(r=>r.statut==='honore').length:0)}</b><span>panier moyen</span></div></div>
   <div class="card col"><b>Chiffre d’affaires par jour</b><svg class="chart" viewBox="0 0 ${W} ${Hc+20}" width="100%" role="img" aria-label="Chiffre d’affaires par jour">${bars}${labels}</svg></div>
-  <div class="card col"><b>D’où viennent les rendez-vous</b>
+  <div class="g2"><div class="card col"><b>D’où viennent les rendez-vous</b>
     <div style="display:flex;height:14px;border-radius:7px;overflow:hidden"><i style="width:${src['en ligne']/tot*100}%;background:var(--accent)"></i><i style="width:${src['téléphone']/tot*100}%;background:var(--faint)"></i><i style="width:${src.kookla/tot*100}%;background:var(--k)"></i></div>
     <div class="row wrap small" style="gap:12px"><span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></i>En ligne ${Math.round(src['en ligne']/tot*100)} %</span><span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:var(--faint)"></i>Téléphone ${Math.round(src['téléphone']/tot*100)} %</span><span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:var(--k)"></i>Kookla ${Math.round(src.kookla/tot*100)} %</span></div></div>
   <div class="card col"><b>Prestations les plus réservées</b>${topL.map(([id,n])=>`<div class="col" style="gap:4px"><div class="row between small"><span>${esc(SOIN(id).cat==='laser'?'Laser '+SOIN(id).nom.toLowerCase():SOIN(id).nom)}</span><b>${n}</b></div><div class="bar"><i style="width:${n/tmax*100}%;${SOIN(id).cat==='laser'?'background:var(--k)':''}"></i></div></div>`).join('')}</div>
-  <p class="foot">Données d’exemple générées pour la démo.</p>`;
+  </div><p class="foot">Données d’exemple générées pour la démo.</p>`;
 }
 function vReservation(){
   const R=S.reglages;
@@ -774,11 +914,11 @@ function vClienteHome(){
   <div class="sec" id="prestas"><h2>Prestations</h2>
    ${cats.map(([c,nom])=>{const list=S.catalogue.filter(s=>s.cat===c&&s.actif);const open=S.c.open===c;
      return `<div><button class="acc-h" data-a="c-open" data-v="${c}" aria-expanded="${open}"><span>${nom}</span><span class="row"><span class="n">${list.length} soins</span>${open?ic('<path d="m6 15 6-6 6 6"/>',18):ic('<path d="m6 9 6 6 6-6"/>',18)}</span></button>
-     ${open?`<div class="list" style="padding-top:10px">${list.map(s=>{const inC=S.c.cart.includes(s.id);return `<div class="item"><span class="t"><b>${esc(s.nom)}</b><span>${s.dur} min${s.desc?' · '+esc(s.desc):''}</span></span><span class="col" style="align-items:flex-end;gap:6px"><span class="price">${eur(s.prix)}</span><button class="btn sm ${inC?'soft':''}" data-a="c-add" data-id="${s.id}">${inC?'Ajouté':'Choisir'}</button></span></div>`}).join('')}</div>`:''}</div>`}).join('')}</div>
+     ${open?`<div class="list plist" style="padding-top:10px">${list.map(s=>{const inC=S.c.cart.includes(s.id);return `<div class="item"><span class="t"><b>${esc(s.nom)}</b><span>${s.dur} min${s.desc?' · '+esc(s.desc):''}</span></span><span class="col" style="align-items:flex-end;gap:6px"><span class="price">${eur(s.prix)}</span><button class="btn sm ${inC?'soft':''}" data-a="c-add" data-id="${s.id}">${inC?'Ajouté':'Choisir'}</button></span></div>`}).join('')}</div>`:''}</div>`}).join('')}</div>
   <div class="sec"><h2>L’équipe</h2><div class="row" style="gap:14px;overflow-x:auto">${PK.map(p=>`<div class="col" style="align-items:center;gap:4px;min-width:84px">${pAv(p).replace('av sm','av lg')}<b class="small">${PRATS[p].nom}</b><span class="sub small" style="text-align:center">${PRATS[p].role}</span></div>`).join('')}</div></div>
   ${plus()&&(S.produits['bon-libre']||S.produits['bon-soin'])?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre ou soin, envoyé par message.</span></span>${I.right}</button>`:''}
   <div class="sec"><div class="sec-h"><h2>Avis</h2><span class="sub small">128 avis vérifiés</span></div>
-   <div class="list">${AVIS.slice(0,3).map(([n,s,t,w])=>`<div class="card col" style="gap:4px"><div class="row between"><b class="small">${n}</b><span class="sub small">${w}</span></div><span class="stars small">${'★'.repeat(s)}${'☆'.repeat(5-s)}</span><span class="small">${t}</span></div>`).join('')}</div></div>
+   <div class="list avis">${AVIS.slice(0,3).map(([n,s,t,w])=>`<div class="card col" style="gap:4px"><div class="row between"><b class="small">${n}</b><span class="sub small">${w}</span></div><span class="stars small">${'★'.repeat(s)}${'☆'.repeat(5-s)}</span><span class="small">${t}</span></div>`).join('')}</div></div>
   <div class="sec"><h2>Infos pratiques</h2><div class="card col" style="gap:6px">
    ${[1,2,3,4,5,6,0].map(d=>{const rr=PK.flatMap(p=>PRATS[p].h[d]||[]);return `<div class="row between small" ${d===dow(TODAY)?'style="font-weight:800"':''}><span>${cap(JOURSL[d])}</span><span>${rr.length?hm(Math.min(...rr.map(x=>x[0])))+' – '+hm(Math.max(...rr.map(x=>x[1]))):'Fermé'}</span></div>`}).join('')}
    <hr style="border:0;border-top:1px solid var(--line);width:100%">
@@ -790,9 +930,9 @@ function vClienteHome(){
 }
 function ctaBar(){
   const c=S.c.cart;
-  if(!c.length)return `<div class="cta"><div class="in"><button class="btn" data-a="c-book">Prendre rendez-vous</button></div></div>`;
+  if(!c.length)return `<div class="cta home"><div class="in"><button class="btn" data-a="c-book">Prendre rendez-vous</button></div></div>`;
   const tot=c.reduce((a,id)=>a+SOIN(id).prix,0),dur=c.reduce((a,id)=>a+SOIN(id).dur,0);
-  return `<div class="cta"><div class="in"><button class="btn" data-a="c-book">${c.length} prestation${c.length>1?'s':''} · ${dur>=60?hm(dur).replace(/h$/,' h'):dur+' min'} · ${eur(tot)} — Continuer</button></div></div>`;
+  return `<div class="cta home"><div class="in"><button class="btn" data-a="c-book">${c.length} prestation${c.length>1?'s':''} · ${dur>=60?hm(dur).replace(/h$/,' h'):dur+' min'} · ${eur(tot)} — Continuer</button></div></div>`;
 }
 function vBook(){
   const c=S.c,steps=S.reglages.choixPrat?4:3;
@@ -1060,7 +1200,73 @@ function sheetHTML(){
    RENDER
    ========================================================= */
 const STABS=[['agenda','Agenda',I.cal],['clientes','Clientes',I.users],['kookla','Kookla',''],['caisse','Caisse',I.cash],['menu','Menu',I.menu]];
+const MQ=window.matchMedia('(min-width: 1000px)');
+let DESK=MQ.matches;
+const onMQ=()=>{DESK=MQ.matches;render(false)};
+if(MQ.addEventListener)MQ.addEventListener('change',onMQ);else if(MQ.addListener)MQ.addListener(onMQ);
+function cInstitutCard(){
+  return `<div class="card row" style="gap:12px"><span class="av lg" style="width:52px;height:52px;border-radius:16px;font-family:var(--display);font-size:22px">É</span><div class="grow"><b>Institut Écusson</b><div class="sub small"><span class="stars">★</span> 4,9 · Rue de la Valfère, Montpellier</div><div class="small">${openStatus()}</div></div></div>`;
+}
+function cAsideHome(){
+  const c=S.c.cart,nd=nextDispo(c.length?c:['c1']);
+  const tot=c.reduce((a,id)=>a+SOIN(id).prix,0),dur=c.reduce((a,id)=>a+SOIN(id).dur,0);
+  return `<div class="card col" style="gap:12px;padding:18px"><h2>Réserver en ligne</h2>
+    ${c.length?`<div class="list">${c.map(id=>`<div class="row between small"><span>${esc(SOIN(id).nom)} · ${SOIN(id).dur} min</span><span class="row" style="gap:6px"><b>${eur(SOIN(id).prix)}</b><button class="ibtn sm" data-a="c-rm" data-id="${id}" aria-label="Retirer ${esc(SOIN(id).nom)}">${I.x}</button></span></div>`).join('')}
+      <div class="row between" style="border-top:1px solid var(--line);padding-top:8px"><b>Total · ${dur} min</b><b>${eur(tot)}</b></div></div>`
+      :'<p class="sub small">Choisissez une ou plusieurs prestations dans la liste, elles seront faites à la suite.</p>'}
+    <button class="btn" data-a="c-book">${c.length?'Choisir un créneau':'Prendre rendez-vous'}</button>
+    ${nd?`<span class="row small" style="gap:6px;color:var(--ok);font-weight:800">${I.clock} Prochaine dispo : ${nd.d===TODAY?'aujourd’hui':nd.d===addDays(TODAY,1)?'demain':JOURS[dow(nd.d)]+' '+fromIso(nd.d).getDate()} à ${hm(nd.t)}</span>`:''}
+    <span class="sub small">Annulation gratuite jusqu’à ${S.reglages.annulation} h avant · ${plus()&&S.reglages.acompte?'acompte de '+S.reglages.acompte+' % à la réservation':'paiement sur place'}</span></div>
+  ${kPartner()?`<button class="notice k" data-a="k-open" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>Épilation laser :</b> séances et packs vendus et garantis par Kookla.</span></button>`:''}
+  ${plus()&&(S.produits['bon-libre']||S.produits['bon-soin'])?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre, envoyé par message.</span></span>${I.right}</button>`:''}`;
+}
+function cAsideFlow(){
+  const p=S.c.page;
+  let x='';
+  if(p==='book'){const c=S.c;const tot=c.cart.reduce((a,id)=>a+SOIN(id).prix,0),dur=c.cart.reduce((a,id)=>a+SOIN(id).dur,0);
+    x=`<div class="card col" style="gap:8px"><span class="tag">Votre réservation</span>${c.cart.length?c.cart.map(id=>`<div class="row between small"><span>${esc(SOIN(id).nom)}</span><b>${eur(SOIN(id).prix)}</b></div>`).join('')+`<div class="row between" style="border-top:1px solid var(--line);padding-top:8px"><b>Total · ${dur} min</b><b>${eur(tot)}</b></div>`:'<span class="sub small">Aucune prestation choisie.</span>'}
+      ${c.step!=='soins'&&c.step!=='ok'?`<span class="small">${I.team} ${c.prat==='any'?'Sans préférence':PRATS[c.prat].nom}</span>`:''}
+      ${c.t!=null&&c.tdate?`<span class="small" style="font-weight:800">${I.cal} ${cap(dlabel(c.tdate))} à ${hm(c.t)}</span>`:''}</div>
+      <div class="notice">${I.clock}<span>Annulation gratuite jusqu’à ${S.reglages.annulation} h avant.</span></div>`}
+  if(p==='kookla'){const k=S.c.k;const s=k.zone?SOIN(k.zone):null;
+    x=`<div class="card col" style="gap:8px;background:var(--k-soft);border-color:transparent"><span class="tag" style="color:var(--k-ink)">Votre achat Kookla</span>${s?`<b>Laser ${esc(s.nom.toLowerCase())}</b><span class="small">${k.formule==='1'?'Séance seule · '+eur(s.prix):k.formule?'Pack '+k.formule+' séances · '+eur(pack(s.prix,+k.formule)):''}</span>${k.t!=null&&k.tdate?`<span class="small" style="font-weight:800">1re séance ${dlabel(k.tdate)} à ${hm(k.t)}</span>`:''}`:'<span class="sub small">Choisissez une zone.</span>'}</div>
+      <div class="list small">${['Séances versées à l’institut une à une','Garantie anti-faillite','Paiement en plusieurs fois','K-Coins offerts'].map(t=>`<span class="row">${I.shield}<span>${t}</span></span>`).join('')}</div>`}
+  if(p==='gift')x=`<div class="notice">${I.gift}<span>Le bon cadeau est encaissé par l’institut et envoyé par email, prêt à imprimer ou à transférer. Valable 12 mois.</span></div>`;
+  return cInstitutCard()+x;
+}
+function renderDesk(keepScroll){
+  const y=window.scrollY;const app=document.getElementById('app');
+  const sw=`<div class="seg" role="group" aria-label="Point de vue"><button data-a="mode" data-v="salon" aria-pressed="${S.mode==='salon'}">Salon</button><button data-a="mode" data-v="cliente" aria-pressed="${S.mode==='cliente'}">Cliente</button></div>`;
+  if(S.mode==='salon'){
+    if(S.tab==='menu'&&!S.menu)S.menu='prestations';
+    const main={agenda:vAgenda,clientes:vClientesDesk,kookla:vKookla,caisse:vCaisse,menu:vMenu}[S.tab]();
+    const top=[['agenda','Agenda',I.cal],['clientes','Clientes',I.users],['caisse','Caisse',I.cash]];
+    const kLabel=S.kookla.statut==='actif'?(S.kookla.niveau==='partenaire'?'Partenaire':'Annuaire'):S.kookla.statut==='demande'?'En attente':'Option';
+    const side=`<aside class="side"><span class="logo">${swallow(32,'var(--accent-ink)','var(--accent)')}Agendelle</span>${sw}
+      <span class="tag">Au quotidien</span>
+      ${top.map(([k,l,ic_])=>`<button class="navi" data-a="tab" data-v="${k}" ${S.tab===k?'aria-current="page"':''}>${ic_}<span>${l}</span>${k==='caisse'?'':''}</button>`).join('')}
+      <button class="navi k" data-a="tab" data-v="kookla" ${S.tab==='kookla'?'aria-current="page"':''}><span class="kc">K</span><span>Kookla</span><span class="pill ks">${kLabel}</span></button>
+      <span class="tag">Gestion</span>
+      ${MENU.map(([k,l,ic_])=>`<button class="navi" data-a="dmenu" data-v="${k}" ${S.tab==='menu'&&S.menu===k?'aria-current="page"':''}>${ic_}<span>${l}</span>${(k==='ventes'||k==='marketing')&&!plus()?'<span class="pill acc">Plus</span>':''}</button>`).join('')}
+      <div style="margin-top:auto;padding-top:14px" class="col"><div class="card row" style="gap:10px;padding:10px 12px"><span class="av">É</span><div class="grow"><b class="small">Institut Écusson</b><div class="sub small">Formule ${plus()?'Plus':'Essentiel'}</div></div></div>
+      <button class="link" data-a="reset" style="color:var(--faint);padding:4px 12px">Réinitialiser la démo</button></div></aside>`;
+    const head=`<header class="dtop"><div class="col" style="gap:0"><span class="tag">Institut Écusson · ${cap(dlabel(TODAY))}</span><span class="sub small">Démo · données d’exemple</span></div>
+      <div class="row" style="gap:10px"><button class="btn sm" data-a="new">${I.plus} Rendez-vous</button><button class="btn sm ghost" data-a="mode" data-v="cliente">${I.globe} Voir ma page cliente</button></div></header>`;
+    app.innerHTML=`<div class="desk">${side}<section class="dmain">${head}<main>${main}</main></section></div>`+sheetHTML();
+  } else {
+    const p=S.c.page;const main=vCliente();
+    let body;
+    if(p==='home')body=`<div class="cols2"><div class="col" style="gap:18px;min-width:0">${main}</div><aside class="dside">${cAsideHome()}</aside></div>`;
+    else if(p==='mesrdv')body=`<div class="cols2"><div class="col" style="gap:14px;min-width:0">${main}</div><aside class="dside">${cInstitutCard()}<button class="btn" data-a="c-book">Prendre un nouveau rendez-vous</button></aside></div>`;
+    else body=`<div class="cols2"><div class="col" style="gap:14px;min-width:0">${main}</div><aside class="dside">${cAsideFlow()}</aside></div>`;
+    const nav=`<nav aria-label="Navigation cliente"><button data-a="c-home" ${p==='home'?'aria-current="page"':''}>L’institut</button><button data-a="c-mesrdv" ${p==='mesrdv'?'aria-current="page"':''}>Mes rendez-vous${me()?' ('+clientStats(me().id).next.length+')':''}</button>${plus()?`<button data-a="g-open" ${p==='gift'?'aria-current="page"':''}>Bons cadeaux</button>`:''}</nav>`;
+    app.innerHTML=`<div class="cdesk"><header class="dtop"><span class="logo">${swallow(32,'var(--accent-ink)','var(--accent)')}Agendelle</span>${nav}<div class="row" style="gap:10px"><span class="tag">Démo</span>${sw}</div></header><main>${body}</main></div>`+sheetHTML();
+  }
+  if(keepScroll)window.scrollTo(0,y);
+  save();
+}
 function render(keepScroll){
+  if(DESK)return renderDesk(keepScroll);
   const y=window.scrollY;
   const app=document.getElementById('app');
   let main='',nav='';
@@ -1106,9 +1312,13 @@ document.addEventListener('click',e=>{
     case 'jour-today':S.jour=TODAY;break;
     case 'vue':S.vue=v;break;
     case 'filtre':S.filtre=v;break;
-    case 'grid':{const rect=el.getBoundingClientRect();let t=GS+Math.floor((e.clientY-rect.top)/PX/15)*15;const p=el.dataset.p;
-      const inR=workRanges(p,S.jour).some(([x,y])=>t>=x&&t<y);if(!inR){toast(PRATS[p].nom+' ne travaille pas à cette heure-là');return}
-      S.sheet={type:'new',prat:p,t,date:S.jour};break}
+    case 'grid':{const rect=el.getBoundingClientRect();const px=+el.dataset.px||PX;const date=el.dataset.date||S.jour;let t=GS+Math.floor((e.clientY-rect.top)/px/15)*15;
+      let p=el.dataset.p;
+      if(!p)p=PK.filter(x=>S.filtre==='all'||S.filtre===x).find(x=>workRanges(x,date).some(([a,b])=>t>=a&&t<b)&&!busy(x,date,t,t+15));
+      if(!p||!workRanges(p,date).some(([x,y])=>t>=x&&t<y)){toast(p?PRATS[p].nom+' ne travaille pas à cette heure-là':'Personne de disponible à cette heure-là');return}
+      S.sheet={type:'new',prat:p,t,date};break}
+    case 'mois':{const f=fromIso(S.jour);S.jour=iso(new Date(f.getFullYear(),f.getMonth()+(+v),1));break}
+    case 'dmenu':S.sheet=null;return go(()=>{S.mode='salon';S.tab='menu';S.menu=v});
     case 'new':S.sheet={type:'new',date:S.jour,client:el.dataset.client||null,prat:S.filtre!=='all'?S.filtre:'maya'};break;
     case 'rdv':S.sheet={type:'rdv',id};break;
     case 'statut':{const r=S.rdv.find(x=>x.id===sh.id);r.statut=v;render(true);toast(v==='honore'?'Marqué honoré':v==='absent'?'Marquée absente':'Arrivée notée');return}
