@@ -141,6 +141,41 @@ p{margin:0}
 .d7[aria-pressed="true"] small,.d7[aria-pressed="true"] b{color:inherit}
 .d7[aria-pressed="true"] i{background:var(--accent-ink)}
 .d7.closed{opacity:.45}
+.galw{position:relative}
+.gal{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:22px}
+.gal::-webkit-scrollbar{display:none}
+.galit{flex:0 0 100%;height:230px;scroll-snap-align:start;border:0;padding:0;border-radius:22px;overflow:hidden;background:var(--sunk);position:relative}
+.galit img,.phtile img,.lb-img img{width:100%;height:100%;object-fit:cover;display:block}
+.galw .badge{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.94);color:#241A22;border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;z-index:2}
+.galw .cnt{position:absolute;right:12px;bottom:12px;background:rgba(36,26,34,.72);color:#fff;border-radius:12px;padding:4px 9px;font-size:12px;font-weight:800;z-index:2}
+.ph{width:100%;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:flex-start;padding:12px;color:#fff;overflow:hidden}
+.ph svg.sw{position:absolute;right:16px;top:14px}
+.ph span{font-weight:800;font-size:14px;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.ph em{position:absolute;left:12px;top:12px;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.22);padding:3px 7px;border-radius:8px}
+.galw .ph em{top:auto;bottom:40px}
+.ph1{background:radial-gradient(160px 120px at 80% 20%,rgba(255,255,255,.3),transparent 70%),linear-gradient(135deg,#6B2D5C,#C8797C)}
+.ph2{background:radial-gradient(160px 120px at 20% 20%,rgba(255,255,255,.3),transparent 70%),linear-gradient(135deg,#3F6E73,#9CC5C2)}
+.ph3{background:radial-gradient(160px 120px at 70% 30%,rgba(255,255,255,.28),transparent 70%),linear-gradient(135deg,#8E3F42,#E0A49B)}
+.ph4{background:radial-gradient(160px 120px at 30% 30%,rgba(255,255,255,.3),transparent 70%),linear-gradient(135deg,#7A4E8C,#D9B8E2)}
+.ph5{background:radial-gradient(160px 120px at 60% 20%,rgba(255,255,255,.3),transparent 70%),linear-gradient(135deg,#8A6A3A,#E7CFA3)}
+.phgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.phtile{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sunk);max-width:100%}
+.phtile .ph{padding:8px}.phtile .ph span{font-size:11.5px}.phtile .ph em{font-size:8.5px;left:6px;top:6px}
+.phtile .tb{position:absolute;inset:auto 4px 4px 4px;display:flex;gap:4px;justify-content:flex-end}
+.phtile .tb button{height:28px;padding:0 8px;border-radius:14px;border:0;background:rgba(255,255,255,.94);color:#241A22;font-size:11px;font-weight:800}
+.phtile .cov{position:absolute;left:6px;top:6px;background:var(--accent);color:var(--accent-ink);font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px}
+.addph{aspect-ratio:1;border-radius:14px;border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:12.5px;color:var(--accent);cursor:pointer;text-align:center;padding:6px}
+.desc{white-space:pre-line;color:var(--ink);font-size:14.5px;line-height:1.6}
+.desc.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.lb{position:fixed;inset:0;z-index:35;background:rgba(14,9,13,.94);display:flex;flex-direction:column;align-items:stretch;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 0 calc(16px + env(safe-area-inset-bottom,0px))}
+.lb-top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:max(16px, env(safe-area-inset-left, 0px));right:max(16px, env(safe-area-inset-right, 0px));display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:800;font-size:14px;z-index:2}
+.lb .ibtn{background:rgba(255,255,255,.14);border-color:transparent;color:#fff}
+.lb-img{width:100%;max-width:1100px;margin:0 auto;height:72vh}
+.lb-img img{object-fit:contain}
+.lb-img .ph{border-radius:0}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%)}
+.lb-prev{left:max(12px, env(safe-area-inset-left, 0px))}.lb-next{right:max(12px, env(safe-area-inset-right, 0px))}
+.lb-cap{color:#fff;text-align:center;margin-top:12px;font-weight:700}
 .dstrip{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;
   margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));margin-right:calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
   padding:12px calc(50% - 27px) 4px;
@@ -289,6 +324,15 @@ p{margin:0}
   .cta{position:sticky;left:auto;right:auto;bottom:16px;background:transparent;border:0;padding:0;margin-top:6px}
   .cta .in{max-width:none;margin:0}
   .cta.home{display:none}
+  .gal{display:grid;gap:8px;overflow:hidden;grid-template-columns:2fr 1fr 1fr;grid-template-rows:150px 150px}
+  .galit{height:auto;min-height:0}
+  .gal .galit:first-child{grid-row:span 2}
+  .gal .galit:nth-child(n+6){display:none}
+  .gal.n1{grid-template-columns:1fr;grid-template-rows:308px}
+  .gal.n2{grid-template-columns:2fr 1fr;grid-template-rows:308px}.gal.n2 .galit:first-child{grid-row:auto}
+  .gal.n3{grid-template-columns:2fr 1fr}
+  .gal.n4 .galit:nth-child(4){grid-column:span 2}
+  .phgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .wk{grid-template-columns:64px minmax(0,1fr) auto}
   .dside .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
   .dside .kpi{padding:9px 10px}.dside .kpi b{font-size:17px}
@@ -331,7 +375,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='4 nov. 2026 · 16h45';
+const VERSION='4 nov. 2026 · 17h10';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -432,8 +476,36 @@ const KEY='agendelle-demo-v1';
 let S=null;
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.v===1&&o.rdv)S=o}}catch(e){}
 if(!S)S=seed();
+function defaultVitrine(){return {desc:'Au cœur de l’Écusson, notre institut vous accueille dans un cadre doux et lumineux. Maya, Julie et Inès prennent soin de vous : épilation à la cire et au laser, soins du visage, cils et ongles.\n\nProduits de qualité, hygiène irréprochable et conseils personnalisés à chaque visite.',
+  atouts:{'Climatisé':true,'Wi-Fi':true,'Produits vegan':true,'Accès PMR':false,'Parking à 2 min':true,'Paiement sans contact':true,'Thé offert':false},
+  photos:[{id:'e1',src:null,label:'L’accueil',g:1},{id:'e2',src:null,label:'Cabine de soin',g:2},{id:'e3',src:null,label:'Cabine laser',g:3},{id:'e4',src:null,label:'Espace ongles',g:4},{id:'e5',src:null,label:'Nos produits',g:5}]}}
+if(!S.vitrine)S.vitrine=defaultVitrine();
+if(!S.options)S.options={rappelsMail:true,campMail:false};
+let STORE_OK=true;try{localStorage.setItem('agd-t','1');localStorage.removeItem('agd-t')}catch(e){STORE_OK=false}
 S.sheet=null;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
+function photoHTML(ph,big){
+  if(ph&&ph.src)return `<img src="${ph.src}" alt="${esc(ph.label||'Photo de l’institut')}" loading="lazy">`;
+  const g=ph?ph.g||1:1;
+  return `<div class="ph ph${g}">${swallow(big?72:38,'rgba(255,255,255,.75)','')}<span>${esc(ph?ph.label:'')}</span><em>Photo d’exemple</em></div>`;
+}
+function addPhotos(files){
+  const real=S.vitrine.photos.filter(p=>p.src).length;
+  const list=[...files].filter(f=>/^image\//.test(f.type)).slice(0,Math.max(0,12-real));
+  if(!list.length){toast(real>=12?'12 photos maximum':'Choisissez des photos (JPEG, PNG ou HEIC)');return}
+  toast('Préparation des photos…');
+  Promise.all(list.map(f=>new Promise(res=>{const u=URL.createObjectURL(f);const img=new Image();
+    img.onload=()=>{const m=1200,sc=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);try{res(c.toDataURL('image/jpeg',.8))}catch(e){res(null)}};
+    img.onerror=()=>{URL.revokeObjectURL(u);res(null)};img.src=u}))).then(srcs=>{
+    const ok=srcs.filter(Boolean);
+    if(!ok.length){toast('Ces photos n’ont pas pu être lues. Essayez en JPEG ou PNG.');return}
+    if(S.vitrine.photos.every(p=>!p.src))S.vitrine.photos=[];
+    ok.forEach(src=>S.vitrine.photos.push({id:uid(),src,label:''}));
+    if(STORE_OK&&!save()){S.vitrine.photos.splice(-ok.length);if(!S.vitrine.photos.length)S.vitrine=Object.assign(S.vitrine,{photos:defaultVitrine().photos});toast('Mémoire du navigateur pleine : supprimez une photo puis réessayez');render(true);return}
+    render(true);toast(ok.length>1?ok.length+' photos ajoutées':'Photo ajoutée');
+  });
+}
 
 /* ---------- helpers on state ---------- */
 const SOIN=id=>S.catalogue.find(s=>s.id===id);
@@ -733,7 +805,7 @@ function vKookla(){
       <div class="list">${st.next.slice(0,5).map(r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="av" style="background:var(--k-soft);color:var(--k-ink)">K</span><span class="t"><b>${esc(rdvNames(r))}</b><span>${cap(dlabel(r.date))} · ${hm(r.start)} · ${esc(court(CLIENT(r.client).nom))}</span></span><span class="pill ks">${esc(r.pack)}</span></button>`).join('')||'<p class="sub">Aucune séance à venir.</p>'}</div></div>
     <div class="sec"><h3>Votre fiche sur Kookla</h3>
       <div class="card col" style="gap:10px">
-        <div style="height:92px;border-radius:14px;background:linear-gradient(135deg,var(--k) 0%,#C8797C 100%);position:relative">${swallow(40,'rgba(255,255,255,.85)','')}</div>
+        <div style="height:120px;border-radius:14px;overflow:hidden">${photoHTML(S.vitrine.photos[0],false)}</div>
         <div class="row between"><b>Institut Écusson</b><span class="pill k">Premium · Centre partenaire</span></div>
         <span class="sub small">Montpellier · Laser Alexandrite et Nd:YAG · <span class="stars">★</span> 4,9</span>
         <div class="row between"><span class="sub small">Séance dès <b style="color:var(--ink)">${eur(Math.min(...S.catalogue.filter(s=>s.cat==='laser').map(s=>s.prix)))}</b></span><span class="pill ok">Garantie anti-faillite</span></div>
@@ -782,17 +854,33 @@ function vCaisse(){
 }
 
 /* ----- menu ----- */
-const MENU=[['prestations','Prestations',I.list,'Catalogue à cocher, prix et durées'],['equipe','Équipe & horaires',I.team,'Horaires, congés, réservable en ligne'],
+const MENU=[['vitrine','Ma vitrine',ic('<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2.5h5L16 6"/>'),'Présentation, photos, points forts'],['prestations','Prestations',I.list,'Catalogue à cocher, prix et durées'],['equipe','Équipe & horaires',I.team,'Horaires, congés, réservable en ligne'],
  ['ventes','Ventes en ligne',I.gift,'Bons cadeaux, cartes de séances'],['marketing','Marketing',I.mega,'Rappels, relances, campagnes SMS'],
  ['stats','Statistiques',I.chart,'Chiffre d’affaires, remplissage, sources'],['reservation','Page de réservation',I.globe,'Règles, acompte, lien à partager'],['formule','Formule',I.crown,'Essentiel ou Plus, option Kookla']];
 function vMenu(){
-  if(S.menu){const f={prestations:vPrestations,equipe:vEquipe,ventes:vVentes,marketing:vMarketing,stats:vStats,reservation:vReservation,formule:vFormule}[S.menu];
+  if(S.menu){const f={vitrine:vVitrine,prestations:vPrestations,equipe:vEquipe,ventes:vVentes,marketing:vMarketing,stats:vStats,reservation:vReservation,formule:vFormule}[S.menu];
     return `<button class="link mob-only" data-a="menu-back">${I.left} Menu</button>`+f()}
   return `<h1>Menu</h1>
   <div class="card row" style="gap:12px"><span class="av lg" style="width:52px;height:52px">É</span><div class="grow"><b>Institut Écusson</b><div class="sub small">Montpellier · formule ${plus()?'Plus':'Essentiel'}</div></div></div>
-  <div class="list">${MENU.map(([k,l,icon,s])=>`<button class="item" data-a="menu" data-v="${k}"><span class="av" style="background:var(--sunk);color:var(--ink)">${icon}</span><span class="t"><b>${l}</b><span>${s}</span></span>${(k==='ventes'||k==='marketing')&&!plus()?'<span class="pill acc">Plus</span>':I.right}</button>`).join('')}</div>
+  <div class="list">${MENU.map(([k,l,icon,s])=>`<button class="item" data-a="menu" data-v="${k}"><span class="av" style="background:var(--sunk);color:var(--ink)">${icon}</span><span class="t"><b>${l}</b><span>${s}</span></span>${k==='ventes'&&!plus()?'<span class="pill acc">Plus</span>':I.right}</button>`).join('')}</div>
   <button class="item" data-a="update"><span class="av" style="background:var(--sunk);color:var(--ink)">${I.refresh}</span><span class="t"><b>Mettre à jour l’appli</b><span>Version du ${VERSION}</span></span></button>
   <button class="link" data-a="reset" style="align-self:center;color:var(--faint)">Réinitialiser la démo</button>`;
+}
+function vVitrine(){
+  const V=S.vitrine,real=V.photos.filter(p=>p.src).length;
+  return `<div class="row between wrap" style="gap:10px"><div><h1>Ma vitrine</h1><p class="sub">Ce que vos clientes voient en haut de votre page de réservation.</p></div><button class="btn sm ghost" data-a="mode" data-v="cliente">Voir ma page</button></div>
+  <div class="g2"><div class="sec">
+    <label class="field" for="vit-desc">Présentation du centre<textarea id="vit-desc" maxlength="600" style="min-height:180px" placeholder="Votre institut en quelques lignes : l’ambiance, l’équipe, ce qui vous distingue.">${esc(V.desc)}</textarea></label>
+    <span class="sub small" id="vit-count">${V.desc.length} / 600 caractères · enregistré automatiquement</span>
+    <div class="notice">${I.sparkle}<span>Quelques lignes suffisent : l’ambiance, l’équipe, vos spécialités. Évitez les promesses de résultat sur les soins.</span></div>
+    <span class="tag">Points forts</span>
+    <div class="row wrap" style="gap:6px">${Object.entries(V.atouts).map(([k,v])=>`<button class="chip" data-a="atout" data-v="${esc(k)}" aria-pressed="${v}">${esc(k)}</button>`).join('')}</div></div>
+  <div class="sec"><div class="sec-h"><span class="tag">Photos</span><span class="sub small">${real?real+' / 12':'Exemples, à remplacer'}</span></div>
+    <div class="phgrid">${V.photos.map((p,i)=>`<div class="phtile">${photoHTML(p,false)}${i===0?'<span class="cov">Couverture</span>':''}
+      <div class="tb">${i>0?`<button data-a="ph-cover" data-id="${p.id}" aria-label="Mettre en couverture">En 1er</button>`:''}<button data-a="ph-del" data-id="${p.id}" aria-label="Supprimer la photo">${I.x.replace('width="18" height="18"','width="13" height="13"')}</button></div></div>`).join('')}
+      ${real<12?`<label class="addph" for="ph-in">${I.plus}<span>Ajouter des photos</span></label>`:''}</div>
+    <input type="file" id="ph-in" accept="image/*" multiple style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+    <span class="foot" style="text-align:left">La première photo sert de couverture, ici et sur votre fiche Kookla. Format paysage conseillé.${STORE_OK?' Démo : vos photos restent dans ce navigateur.':' Démo : vos photos seront perdues à la fermeture de la page.'}</span></div></div>`;
 }
 function plusGate(t,txt){return `<h1>${t}</h1><div class="card col" style="gap:10px"><span class="pill acc" style="align-self:flex-start">Formule Plus</span><h2>${txt}</h2><button class="btn" data-a="formule" data-v="plus">Passer à Plus (simulation)</button></div>`}
 function vPrestations(){
@@ -823,21 +911,41 @@ function vVentes(){
   <div class="sec"><span class="tag">Dernières ventes</span><div class="list">${S.ventes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>${esc(v.acheteur)} · ${dshort(v.date)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div></div>
   <div class="notice">${I.shield}<span>Les ventes sont encaissées au nom de l’institut et versées sur votre compte. Agendelle ne vend jamais à votre place.</span></div>`;
 }
+const PACKS=[[100,7],[500,30],[1000,55],[3000,150]];
+const OPT={rappelsMail:['Rappels email automatiques','4,90 € / mois','Rappel 48 h avant, relances « il est temps de revenir », demande d’avis.'],
+  campMail:['Campagnes email','9 € / mois','Jusqu’à 5 000 emails par mois vers vos clientes qui l’ont accepté.']};
+function optOn(k){return !!(S.options&&S.options[k])}
 function campCount(){const t=S.campCible||'all';return S.clients.filter(c=>{if(!c.optin)return false;const st=clientStats(c.id);if(t==='inact')return !st.next.length&&(!st.last||st.last.date<addDays(TODAY,-21));if(t==='fid')return st.visites>=6;if(t==='new')return st.visites<=1;return true}).length}
 function vMarketing(){
-  if(!plus())return plusGate('Marketing','Rappels SMS, relances automatiques et campagnes pour remplir votre agenda.');
-  const A=[['rappelSms','Rappel SMS 24 h avant','Divise les absences par deux en moyenne.'],['rappelMail','Rappel email 48 h avant','Avec lien pour déplacer ou annuler.'],['relance','Relance « Il est temps de revenir »','6 semaines après une cire ou un rehaussement.'],['anniv','Message d’anniversaire','Avec une attention à offrir, si vous le souhaitez.'],['avis','Demande d’avis Google','Envoyée 2 h après un rendez-vous honoré.'],['attente','Liste d’attente automatique','Prévient les clientes dès qu’une place se libère.']];
-  const n=campCount(),msg=S.campMsg==null?'Institut Écusson : -15 % sur les soins du visage jusqu’à dimanche. Réservez en ligne. STOP au 36xxx':S.campMsg;
-  const nb=Math.max(1,Math.ceil(msg.length/160));
+  const ch=S.campCanal||'sms';
+  const A=[['rappelSms','Rappel SMS 24 h avant','1 crédit SMS par rappel. Divise les absences par deux en moyenne.','sms'],
+    ['rappelMail','Rappel email 48 h avant','Avec lien pour déplacer ou annuler.','rappelsMail'],
+    ['relance','Relance « Il est temps de revenir »','Par email, 6 semaines après une cire ou un rehaussement.','rappelsMail'],
+    ['avis','Demande d’avis Google','Par email, 2 h après un rendez-vous honoré.','rappelsMail'],
+    ['anniv','Message d’anniversaire','Par SMS, 1 crédit par message.','sms'],
+    ['attente','Liste d’attente automatique','Par email, inclus gratuitement.','free']];
+  const avail=req=>req==='free'||(req==='sms'?S.sms>0:optOn(req));
+  const n=campCount();
+  const defMsg=ch==='sms'?'Institut Écusson : -15 % sur les soins du visage jusqu’à dimanche. Réservez en ligne. STOP au 36xxx':'Objet : Votre moment beauté de novembre\n\nBonjour,\n\nCe mois-ci, profitez de -15 % sur tous nos soins du visage…';
+  const msg=(ch==='sms'?S.campMsg:S.campMail)==null?defMsg:(ch==='sms'?S.campMsg:S.campMail);
+  const nb=ch==='sms'?Math.max(1,Math.ceil(msg.length/160)):0;
+  const canSend=ch==='sms'?S.sms>=n*nb:optOn('campMail');
   return `<h1>Marketing</h1>
-  <div class="sec"><span class="tag">Automatismes</span><div class="list">${A.map(([k,t,s])=>`<div class="item"><span class="t"><b>${t}</b><span>${s}</span></span><button class="toggle" role="switch" aria-checked="${S.auto[k]}" aria-label="${t}" data-a="auto" data-id="${k}"></button></div>`).join('')}</div></div>
-  <div class="sec"><div class="sec-h"><span class="tag">Campagne SMS</span><span class="pill acc">${S.sms} crédits</span></div>
+  <div class="g2"><div class="card col" style="gap:8px"><div class="row between"><b>Crédits SMS</b><span class="pill ${S.sms>50?'acc':'warn'}">${S.sms} crédits</span></div>
+    <span class="sub small">1 crédit = 1 SMS de 160 caractères, pour les rappels et les campagnes. Les crédits n’expirent pas.</span>
+    <button class="btn sm soft" data-a="credits" style="align-self:flex-start">${I.plus} Acheter des crédits</button></div>
+  <div class="card col" style="gap:8px"><b>Options email</b>${Object.entries(OPT).map(([k,[t,p]])=>`<div class="row between small"><span>${t}</span>${optOn(k)?'<span class="pill ok">Active</span>':`<button class="link" data-a="opt" data-v="${k}">Activer · ${p}</button>`}</div>`).join('')}
+    <span class="sub small">La confirmation de rendez-vous par email reste gratuite.</span></div></div>
+  <div class="sec"><span class="tag">Automatismes</span><div class="list">${A.map(([k,t,s,req])=>{const ok=avail(req);return `<div class="item" style="${ok?'':'opacity:.6'}"><span class="t"><b>${t}</b><span>${s}</span></span>${ok?`<button class="toggle" role="switch" aria-checked="${S.auto[k]}" aria-label="${t}" data-a="auto" data-id="${k}"></button>`:`<button class="btn sm soft" data-a="${req==='sms'?'credits':'opt'}" data-v="${req}">${req==='sms'?'Crédits':'Activer'}</button>`}</div>`}).join('')}</div></div>
+  <div class="sec"><div class="sec-h"><span class="tag">Campagne</span><div class="seg" role="group" aria-label="Canal"><button data-a="canal" data-v="sms" aria-pressed="${ch==='sms'}">SMS</button><button data-a="canal" data-v="email" aria-pressed="${ch==='email'}">Email</button></div></div>
    <div class="card col" style="gap:10px">
     <label class="field" for="camp-cible">Destinataires<select id="camp-cible">${[['all','Toutes les clientes'],['inact','À relancer (plus de 3 semaines)'],['fid','Clientes fidèles'],['new','Nouvelles clientes']].map(([k,l])=>`<option value="${k}" ${S.campCible===k?'selected':''}>${l}</option>`).join('')}</select></label>
-    <label class="field" for="camp-msg">Message<textarea id="camp-msg" maxlength="320">${esc(msg)}</textarea></label>
-    <span class="sub small" id="camp-info">${msg.length} caractères · ${nb} SMS par cliente · ${n} clientes ayant accepté les messages</span>
-    ${S.campConfirm?`<div class="notice warn"><span>Envoyer à <b>${n} clientes</b> ? Cela utilisera <b>${n*nb} crédits</b>.</span></div><div class="row"><button class="btn sm ghost" data-a="camp-cancel">Modifier</button><button class="btn sm" data-a="camp-send">Confirmer l’envoi</button></div>`:`<button class="btn" data-a="camp-prep">Envoyer la campagne</button>`}
-   </div><span class="foot" style="text-align:left">Seules les clientes ayant accepté les messages promotionnels reçoivent les campagnes. Simulation : aucun SMS réel.</span></div>`;
+    <label class="field" for="camp-msg">Message<textarea id="camp-msg" data-canal="${ch}" maxlength="${ch==='sms'?320:2000}" style="${ch==='email'?'min-height:150px':''}">${esc(msg)}</textarea></label>
+    <span class="sub small" id="camp-info">${ch==='sms'?`${msg.length} caractères · ${nb} SMS par cliente · ${n} clientes · ${n*nb} crédits`:`${n} clientes ayant accepté les messages`}</span>
+    ${!canSend?`<div class="notice warn"><span>${ch==='sms'?`Il vous faut ${n*nb} crédits, vous en avez ${S.sms}.`:'Activez l’option Campagnes email pour envoyer.'}</span></div><button class="btn" data-a="${ch==='sms'?'credits':'opt'}" data-v="campMail">${ch==='sms'?'Acheter des crédits':'Activer les campagnes email · 9 € / mois'}</button>`
+    :S.campConfirm?`<div class="notice warn"><span>Envoyer à <b>${n} clientes</b>${ch==='sms'?` ? Cela utilisera <b>${n*nb} crédits</b>.`:' ?'}</span></div><div class="row"><button class="btn sm ghost" data-a="camp-cancel">Modifier</button><button class="btn sm" data-a="camp-send">Confirmer l’envoi</button></div>`
+    :`<button class="btn" data-a="camp-prep">Envoyer la campagne</button>`}
+   </div><span class="foot" style="text-align:left">Seules les clientes ayant accepté les messages promotionnels reçoivent les campagnes, avec un lien de désinscription. Simulation : aucun envoi réel.</span></div>`;
 }
 function vStats(){
   const per=S.statPer||7;const from=addDays(TODAY,-(per-1));
@@ -886,8 +994,14 @@ function vFormule(){
   const cur=S.formule;
   const plan=(id,nom,prix,pts)=>`<div class="opt" aria-pressed="${cur===id}"><div class="row between"><h2>${nom}</h2>${cur===id?'<span class="pill acc">Votre formule</span>':''}</div><b style="font-size:20px">${prix}</b><ul style="margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex-direction:column;gap:3px">${pts.map(p=>`<li>${p}</li>`).join('')}</ul>${cur!==id?`<button class="btn ${id==='plus'?'':'ghost'}" data-a="formule" data-v="${id}">${id==='plus'?'Passer à Plus (simulation)':'Revenir à Essentiel'}</button>`:''}</div>`;
   return `<h1>Formule</h1><p class="sub">L’agenda reste gratuit. Vous payez seulement ce qui vous rapporte.</p>
-  ${plan('essentiel','Essentiel','Gratuit',['Agenda et équipe','Prestations à cocher','Réservation en ligne, paiement sur place','Confirmation à l’écran et par email','Liste d’attente','Caisse et fiches clientes'])}
-  ${plan('plus','Plus','[PRIX] / mois',['Tout Essentiel','Acompte ou paiement à la réservation','Rappels SMS et email','Bons cadeaux, cartes et abonnements','Relances et campagnes','Statistiques détaillées'])}
+  <div class="g2">${plan('essentiel','Essentiel','Gratuit',['Agenda et équipe','Prestations à cocher','Réservation en ligne, paiement sur place','Confirmation par email','Liste d’attente','Caisse et fiches clientes'])}
+  ${plan('plus','Plus','[PRIX] / mois',['Tout Essentiel','Acompte ou paiement à la réservation','Bons cadeaux, cartes et abonnements','Statistiques détaillées','Plusieurs praticiennes et cabines'])}</div>
+  <div class="sec"><span class="tag">Options de communication · à la carte, avec les deux formules</span>
+   <div class="g2"><div class="card col" style="gap:10px"><div class="row between"><b>Crédits SMS</b><span class="pill acc">${S.sms} crédits</span></div><span class="sub small">Pour les rappels SMS et les campagnes SMS. Sans abonnement, sans expiration.</span>
+     <div class="list">${PACKS.map(([q,p])=>`<div class="row between small"><span><b>${q.toLocaleString('fr-FR')} SMS</b> · ${eur(p)}</span><span class="sub small">${(p/q).toLocaleString('fr-FR',{minimumFractionDigits:3})} € / SMS</span></div>`).join('')}</div>
+     <button class="btn sm soft" data-a="credits" style="align-self:flex-start">Acheter des crédits</button></div>
+   <div class="col" style="gap:10px">${Object.entries(OPT).map(([k,[t,p,d]])=>`<div class="card col" style="gap:6px"><div class="row between"><b>${t}</b><b>${p}</b></div><span class="sub small">${d}</span>${optOn(k)?`<div class="row between"><span class="pill ok">Active</span><button class="link" data-a="opt-off" data-v="${k}">Résilier</button></div>`:`<button class="btn sm soft" data-a="opt" data-v="${k}" style="align-self:flex-start">Activer (simulation)</button>`}</div>`).join('')}</div></div>
+   <span class="foot" style="text-align:left">Prix HT proposés, à valider.</span></div>
   <div class="kcard"><div class="kh"><div class="row between"><span class="kword">Kookla</span><span class="pill" style="background:rgba(255,255,255,.22);color:inherit">Option laser</span></div><span style="font-size:13.5px">Annuaire gratuit ou partenariat à la commission. Compatible avec les deux formules.</span></div><div class="kb2"><button class="btn k" data-a="tab" data-v="kookla">Gérer l’option Kookla</button></div></div>
   <p class="foot">Agendelle est une marque de Kookla Platform SAS</p>`;
 }
@@ -914,11 +1028,18 @@ function vClienteHome(){
   const laserK=kPartner();
   const lasers=S.catalogue.filter(s=>s.cat==='laser'&&s.actif);
   const cats=CATS.filter(([c])=>!(c==='laser'&&laserK)&&S.catalogue.some(s=>s.cat===c&&s.actif));
-  return `<div class="cover">${swallow(64,'rgba(255,255,255,.9)','')}<span class="badge">${nd?'Prochaine dispo : '+(nd.d===TODAY?'aujourd’hui':nd.d===addDays(TODAY,1)?'demain':JOURS[dow(nd.d)]+' '+fromIso(nd.d).getDate())+' '+hm(nd.t):'Complet cette semaine'}</span></div>
-  <div class="ilogo">É</div>
-  <div class="col" style="gap:4px;margin-top:-6px"><h1>Institut Écusson</h1>
+  const V=S.vitrine,ph=V.photos.length?V.photos:[{id:'x',src:null,label:'',g:1}];
+  const at=Object.entries(V.atouts).filter(([,v])=>v).map(([k])=>k);
+  const long=V.desc.length>260;
+  return `<div class="galw"><div class="gal n${Math.min(ph.length,5)}">${ph.map((p,i)=>`<button class="galit" data-a="ph-open" data-i="${i}" aria-label="Voir la photo ${i+1} sur ${ph.length}">${photoHTML(p,i===0)}</button>`).join('')}</div>
+    <span class="badge">${nd?'Prochaine dispo : '+(nd.d===TODAY?'aujourd’hui':nd.d===addDays(TODAY,1)?'demain':JOURS[dow(nd.d)]+' '+fromIso(nd.d).getDate())+' '+hm(nd.t):'Complet cette semaine'}</span>
+    ${ph.length>1?`<span class="cnt">${ph.length} photos</span>`:''}</div>
+  <div class="row" style="gap:14px;align-items:center"><div class="ilogo" style="margin:0;flex-shrink:0">É</div>
+  <div class="col grow" style="gap:4px"><h1>Institut Écusson</h1>
     <span class="sub">Rue de la Valfère, Montpellier</span>
-    <span class="row wrap small" style="gap:10px"><span><span class="stars">★★★★★</span> <b>4,9</b> <span class="sub">(128 avis)</span></span><span>${openStatus()}</span></span></div>
+    <span class="row wrap small" style="gap:10px"><span><span class="stars">★★★★★</span> <b>4,9</b> <span class="sub">(128 avis)</span></span><span>${openStatus()}</span></span></div></div>
+  ${V.desc.trim()?`<div class="sec" style="gap:8px"><h2>À propos</h2><p class="desc ${long&&!S.c.descOpen?'clamp':''}">${esc(V.desc)}</p>${long?`<button class="link" data-a="desc-more">${S.c.descOpen?'Réduire':'Lire la suite'}</button>`:''}
+    ${at.length?`<div class="row wrap" style="gap:6px">${at.map(a=>`<span class="pill ok">${I.check.replace('width="18" height="18"','width="13" height="13"')} ${esc(a)}</span>`).join('')}</div>`:''}</div>`:''}
   <div class="row wrap"><span class="pill">Cire</span><span class="pill">Visage</span><span class="pill">Cils</span><span class="pill">Ongles</span><span class="pill">Massages</span>${lasers.length?'<span class="pill ks">Laser</span>':''}</div>
   ${laserK&&lasers.length?`<div class="kcard"><div class="kh"><div class="row between"><span class="kword">Kookla</span><span class="pill" style="background:rgba(255,255,255,.22);color:inherit">Vendu et garanti par Kookla</span></div>
      <b style="font-size:18px">Épilation laser · packs jusqu’à −25&nbsp;%</b><span style="font-size:13.5px;opacity:.92">Séance ou pack de 5 ou 8, paiement en plusieurs fois possible.</span></div>
@@ -995,7 +1116,7 @@ function vBook(){
       <label class="field" for="b-tel">Téléphone<input id="b-tel" type="tel" autocomplete="tel" value="${esc(f.tel||(m.tel&&!m.tel.includes('•')?m.tel:'')||'')}"></label>
       <label class="field" for="b-mail">Email<input id="b-mail" type="email" autocomplete="email" value="${esc(f.mail||m.mail||'')}"></label>
       <label class="field" for="b-note">Un mot pour l’institut (facultatif)<input id="b-note" value="${esc(f.note||'')}" placeholder="Ex. première fois"></label>
-      <label class="row small" for="b-sms" style="gap:10px;font-weight:600"><input id="b-sms" type="checkbox" checked style="width:20px;height:20px"> Recevoir un rappel par SMS la veille</label>
+      ${S.auto.rappelSms&&S.sms>0?`<label class="row small" for="b-sms" style="gap:10px;font-weight:600"><input id="b-sms" type="checkbox" checked style="width:20px;height:20px"> Recevoir un rappel par SMS la veille</label>`:''}
       <div class="notice">${I.clock}<span>${esc(S.reglages.message)} Annulation gratuite jusqu’à ${S.reglages.annulation} h avant.</span></div>
       ${acompte?`<div class="notice">${I.shield}<span>Acompte de <b>${eur(acompte)}</b> à régler maintenant, encaissé au nom de l’institut et déduit le jour du soin. Simulation : aucun paiement réel.</span></div>`:`<div class="notice">${I.euro}<span>Paiement sur place, le jour du soin.</span></div>`}
       <span class="err" id="b-err"></span>
@@ -1115,6 +1236,10 @@ function vCliente(){
    ========================================================= */
 function sheetHTML(){
   const sh=S.sheet;if(!sh)return '';
+  if(sh.type==='photo'){const ph=S.vitrine.photos.length?S.vitrine.photos:[{src:null,label:'',g:1}];const i=Math.max(0,Math.min(sh.i,ph.length-1));
+    return `<div class="lb" role="dialog" aria-modal="true" aria-label="Photos de l’institut" id="lb"><div class="lb-top"><span>${i+1} / ${ph.length}</span><button class="ibtn" data-a="close" aria-label="Fermer">${I.x}</button></div>
+      <div class="lb-img">${photoHTML(ph[i],true)}</div>${ph[i].label?`<p class="lb-cap">${esc(ph[i].label)}</p>`:''}
+      ${ph.length>1?`<button class="ibtn lb-prev" data-a="ph-nav" data-v="-1" aria-label="Photo précédente">${I.left}</button><button class="ibtn lb-next" data-a="ph-nav" data-v="1" aria-label="Photo suivante">${I.right}</button>`:''}</div>`}
   let h='';
   if(sh.type==='rdv'){const r=S.rdv.find(x=>x.id===sh.id);if(!r)return '';const c=CLIENT(r.client),st=clientStats(c.id),kk=r.source==='kookla',price=rdvPrice(r);
     h=`<div class="row wrap" style="gap:6px"><span class="pill cat-${rdvCat(r)}">${CATN[rdvCat(r)]}</span>${srcPill(r)}${statusPill(r)}</div>
@@ -1126,7 +1251,7 @@ function sheetHTML(){
       :`<div class="card col" style="gap:4px"><div class="row between small"><span>Total</span><b>${eur(price)}</b></div>${r.acompte?`<div class="row between small"><span>Acompte payé en ligne</span><span>− ${eur(r.acompte)}</span></div>`:''}${r.paid?`<div class="row between small"><span>Encaissé (${esc(r.paid.mode)})</span><b style="color:var(--ok)">${eur(r.paid.montant)}</b></div>`:`<div class="row between"><b>Reste à payer</b><b>${eur(price-r.acompte)}</b></div>`}</div>`}
     ${r.statut!=='annule'?`<div class="seg" role="group" aria-label="Statut" style="display:grid;grid-template-columns:repeat(3,1fr)"><button data-a="statut" data-v="arrive" aria-pressed="${r.statut==='arrive'}">Arrivée</button><button data-a="statut" data-v="honore" aria-pressed="${r.statut==='honore'}">Honoré</button><button data-a="statut" data-v="absent" aria-pressed="${r.statut==='absent'}">Absente</button></div>`:''}
     ${!kk&&!r.paid&&r.statut!=='annule'&&r.statut!=='absent'?`<button class="btn" data-a="encaisser" data-id="${r.id}">${I.euro} Encaisser ${eur(price-r.acompte)}</button>`:''}
-    ${r.statut!=='annule'&&!kk?`<div class="row"><button class="btn sm ghost" data-a="deplacer" style="flex:1">Déplacer</button><button class="btn sm ghost" data-a="rappel" style="flex:1">${plus()?'Rappel SMS':'Rappel email'}</button></div>`:''}
+    ${r.statut!=='annule'&&!kk?`<div class="row"><button class="btn sm ghost" data-a="deplacer" style="flex:1">Déplacer</button><button class="btn sm ghost" data-a="rappel" style="flex:1">${S.sms>0?'Rappel SMS':'Rappel email'}</button></div>`:''}
     ${r.statut!=='annule'&&!r.paid&&!kk?(sh.confirm?`<div class="notice warn"><span>Annuler ce rendez-vous ? ${S.auto.attente?'Les clientes en liste d’attente seront prévenues.':''}</span></div><div class="row"><button class="btn sm ghost" data-a="sheet-noconfirm" style="flex:1">Garder</button><button class="btn sm" data-a="annuler" style="flex:1">Oui, annuler</button></div>`:`<button class="btn danger" data-a="ask-annuler">Annuler le rendez-vous</button>`):''}`;
   }
   if(sh.type==='encaisser'){const r=S.rdv.find(x=>x.id===sh.id);const price=rdvPrice(r);const rem=sh.remise||0;const due=Math.max(0,Math.round((price*(1-rem/100)-r.acompte)*100)/100);const mode=sh.mode||'CB';const c=CLIENT(r.client);
@@ -1163,7 +1288,7 @@ function sheetHTML(){
     <label class="field" for="m-prat">Praticienne<select id="m-prat">${PK.filter(p=>canDo(p,r.soins)).map(p=>`<option value="${p}" ${prat===p?'selected':''}>${PRATS[p].nom}</option>`).join('')}</select></label></div>
     ${sl.length?`<div class="slots">${sl.map(x=>`<button class="slot" data-a="m-slot" data-t="${x.t}" aria-pressed="${sh.t===x.t}">${hh(x.t)}</button>`).join('')}</div>`:'<p class="sub">Aucun créneau libre ce jour-là.</p>'}
     <button class="btn" data-a="m-ok" ${sh.t!=null?'':'disabled'}>${sh.t!=null?'Déplacer au '+dlabel(date)+' à '+hm(sh.t):'Choisissez un horaire'}</button>
-    <p class="foot">La cliente est prévenue par ${plus()?'SMS et ':''}email (simulation).</p>`;
+    <p class="foot">La cliente est prévenue par ${S.sms>0?'SMS et ':''}email (simulation).</p>`;
   }
   if(sh.type==='presta'){const s=SOIN(sh.id);
     h=`<h2>${esc(s.nom)}</h2><p class="sub">${CATN[s.cat]}</p>
@@ -1206,6 +1331,11 @@ function sheetHTML(){
     <label class="field" for="w-tel">Téléphone<input id="w-tel" type="tel" autocomplete="tel"></label><span class="err" id="w-err"></span>
     <button class="btn" type="submit">M’inscrire sur la liste d’attente</button></form>`;
   }
+  if(sh.type==='credits'){const pk=PACKS.find(x=>x[0]===sh.pack)||PACKS[1];
+    h=`<h2>Acheter des crédits SMS</h2><p class="sub">Solde actuel : ${S.sms} crédits. 1 crédit = 1 SMS en France.</p>
+    <div class="list">${PACKS.map(([q,p])=>`<button class="opt" data-a="pack" data-v="${q}" aria-pressed="${sh.pack===q}"><span class="row between"><b>${q.toLocaleString('fr-FR')} SMS</b><b>${eur(p)} HT</b></span><span class="sub small">${(p/q).toLocaleString('fr-FR',{minimumFractionDigits:3})} € par SMS${q>=1000?' · le plus avantageux':''}</span></button>`).join('')}</div>
+    <div class="notice">${I.clock}<span>Avec ${S.sms+pk[0]} crédits, vous couvrez environ ${Math.round((S.sms+pk[0])/120)} mois de rappels pour un institut de 120 rendez-vous par mois.</span></div>
+    <button class="btn" data-a="buy">Payer ${eur(pk[1])} HT (simulation)</button>`}
   if(sh.type==='info'){h=`<h2>${esc(sh.title)}</h2><p class="sub">${esc(sh.text)}</p><button class="btn" data-a="close">OK</button>`}
   return `<div class="sheet-bg" data-a="close-bg"><div class="sheet" role="dialog" aria-modal="true" aria-label="Détail"><span class="grab"></span>${h}<button class="link" data-a="close" style="align-self:center;color:var(--muted)">Fermer</button></div></div>`;
 }
@@ -1261,7 +1391,7 @@ function renderDesk(keepScroll){
       ${top.map(([k,l,ic_])=>`<button class="navi" data-a="tab" data-v="${k}" ${S.tab===k?'aria-current="page"':''}>${ic_}<span>${l}</span>${k==='caisse'?'':''}</button>`).join('')}
       <button class="navi k" data-a="tab" data-v="kookla" ${S.tab==='kookla'?'aria-current="page"':''}><span class="kc">K</span><span>Kookla</span><span class="pill ks">${kLabel}</span></button>
       <span class="tag">Gestion</span>
-      ${MENU.map(([k,l,ic_])=>`<button class="navi" data-a="dmenu" data-v="${k}" ${S.tab==='menu'&&S.menu===k?'aria-current="page"':''}>${ic_}<span>${l}</span>${(k==='ventes'||k==='marketing')&&!plus()?'<span class="pill acc">Plus</span>':''}</button>`).join('')}
+      ${MENU.map(([k,l,ic_])=>`<button class="navi" data-a="dmenu" data-v="${k}" ${S.tab==='menu'&&S.menu===k?'aria-current="page"':''}>${ic_}<span>${l}</span>${k==='ventes'&&!plus()?'<span class="pill acc">Plus</span>':''}</button>`).join('')}
       <div style="margin-top:auto;padding-top:14px" class="col"><div class="card row" style="gap:10px;padding:10px 12px"><span class="av">É</span><div class="grow"><b class="small">Institut Écusson</b><div class="sub small">Formule ${plus()?'Plus':'Essentiel'}</div></div></div>
       <button class="navi" data-a="update">${I.refresh}<span>Mettre à jour</span></button>
       <span class="sub small" style="padding:0 12px">Version du ${VERSION}</span>
@@ -1368,7 +1498,7 @@ document.addEventListener('click',e=>{
     case 'deplacer':S.sheet={type:'deplacer',id:sh.id,t:null};break;
     case 'm-slot':sh.t=+el.dataset.t;break;
     case 'm-ok':{const r=S.rdv.find(x=>x.id===sh.id);r.date=sh.date||r.date;r.prat=sh.prat||r.prat;r.start=sh.t;S.jour=r.date;S.sheet=null;render(true);toast('Rendez-vous déplacé · cliente prévenue');return}
-    case 'rappel':toast(plus()?'Rappel SMS envoyé (simulation)':'Rappel email envoyé (simulation)');if(plus())S.sms--;return;
+    case 'rappel':if(S.sms>0){S.sms--;toast('Rappel SMS envoyé · 1 crédit utilisé (simulation)')}else if(optOn('rappelsMail'))toast('Rappel email envoyé (simulation)');else{S.sheet={type:'credits',pack:500};render(true)}return;
     case 'ask-annuler':sh.confirm=true;break;
     case 'annuler':{const r=S.rdv.find(x=>x.id===sh.id);r.statut='annule';S.sheet=null;const n=S.attente.filter(w=>w.date>=TODAY).length;
       S.flash=S.auto.attente&&n?`Créneau de ${hm(r.start)} libéré : ${n} cliente${n>1?'s':''} de la liste d’attente prévenue${n>1?'s':''} par SMS (simulation).`:`Créneau de ${hm(r.start)} libéré.`;break}
@@ -1399,13 +1529,25 @@ document.addEventListener('click',e=>{
     case 'auto':S.auto[id]=!S.auto[id];break;
     case 'camp-prep':S.campConfirm=true;break;
     case 'camp-cancel':S.campConfirm=false;break;
-    case 'camp-send':{const n=campCount(),nb=Math.max(1,Math.ceil((S.campMsg==null?100:S.campMsg.length)/160));S.sms=Math.max(0,S.sms-n*nb);S.campConfirm=false;render(true);toast('Campagne envoyée à '+n+' clientes (simulation)');return}
+    case 'camp-send':{const n=campCount();if((S.campCanal||'sms')==='sms'){const nb=Math.max(1,Math.ceil((S.campMsg==null?100:S.campMsg.length)/160));S.sms=Math.max(0,S.sms-n*nb)}S.campConfirm=false;render(true);toast('Campagne envoyée à '+n+' clientes (simulation)');return}
+    case 'canal':S.campCanal=v;S.campConfirm=false;break;
+    case 'credits':S.sheet={type:'credits',pack:500};break;
+    case 'pack':sh.pack=+v;break;
+    case 'buy':{S.sms+=sh.pack;S.sheet=null;render(true);toast(sh.pack+' crédits SMS ajoutés (simulation)');return}
+    case 'opt':if(!OPT[v])return;S.options[v]=true;render(true);toast(OPT[v][0]+' activée (simulation)');return;
+    case 'opt-off':S.options[v]=false;if(v==='rappelsMail'){S.auto.rappelMail=false;S.auto.relance=false;S.auto.avis=false}render(true);toast(OPT[v][0]+' résiliée');return;
     case 'statper':S.statPer=+v;break;
     case 'reg-toggle':S.reglages[id]=!S.reglages[id];break;
     case 'formule':S.formule=v;if(v==='essentiel')S.reglages.acompte=S.reglages.acompte;render(true);toast(v==='plus'?'Formule Plus activée (simulation)':'Retour à Essentiel');return;
     case 'copy':{const txt='https://agendelle.fr/institut-ecusson';try{navigator.clipboard.writeText(txt).then(()=>toast('Lien copié'),()=>{selectLien();toast('Sélectionné : copiez le lien')})}catch(err){selectLien();toast('Sélectionné : copiez le lien')}return}
     case 'update':{toast('Mise à jour…');setTimeout(()=>{try{if(/github\.io$/.test(location.hostname))location.replace(location.pathname+'?v='+Date.now());else location.reload()}catch(err){location.reload()}},300);return}
-    case 'reset':S=seed();S.sheet=null;return go(()=>{});
+    case 'ph-open':S.sheet={type:'photo',i:+el.dataset.i||0};break;
+    case 'ph-nav':{const n=Math.max(1,S.vitrine.photos.length);sh.i=(sh.i+(+v)+n)%n;break}
+    case 'ph-cover':{const a=S.vitrine.photos,i=a.findIndex(p=>p.id===id);if(i>0){const [x]=a.splice(i,1);a.unshift(x)}toast('Photo de couverture changée');break}
+    case 'ph-del':{S.vitrine.photos=S.vitrine.photos.filter(p=>p.id!==id);if(!S.vitrine.photos.length)S.vitrine.photos=defaultVitrine().photos;toast('Photo supprimée');break}
+    case 'atout':S.vitrine.atouts[v]=!S.vitrine.atouts[v];break;
+    case 'desc-more':S.c.descOpen=!S.c.descOpen;break;
+    case 'reset':S=seed();S.vitrine=defaultVitrine();S.sheet=null;return go(()=>{});
     /* cliente */
     case 'c-home':return go(()=>{S.mode='cliente';S.c.page='home';S.c.g={}});
     case 'c-mesrdv':return go(()=>{S.mode='cliente';S.c.page='mesrdv';S.c.cancelId=null});
@@ -1507,19 +1649,26 @@ document.addEventListener('submit',e=>{
 document.addEventListener('input',e=>{
   const t=e.target;
   if(t.id==='cq'){S.cq=t.value;const l=document.getElementById('cl-list');if(l)l.innerHTML=clientsListHTML();return}
-  if(t.id==='camp-msg'){S.campMsg=t.value;const nb=Math.max(1,Math.ceil(t.value.length/160));const i=document.getElementById('camp-info');if(i)i.textContent=t.value.length+' caractères · '+nb+' SMS par cliente · '+campCount()+' clientes ayant accepté les messages';save();return}
+  if(t.id==='camp-msg'){const ch=t.dataset.canal||'sms';if(ch==='sms')S.campMsg=t.value;else S.campMail=t.value;const n=campCount();const nb=Math.max(1,Math.ceil(t.value.length/160));const i=document.getElementById('camp-info');if(i)i.textContent=ch==='sms'?t.value.length+' caractères · '+nb+' SMS par cliente · '+n+' clientes · '+n*nb+' crédits':n+' clientes ayant accepté les messages';save();return}
   if(t.id==='reg-msg'){S.reglages.message=t.value;save();return}
+  if(t.id==='vit-desc'){S.vitrine.desc=t.value;const c=document.getElementById('vit-count');if(c)c.textContent=t.value.length+' / 600 caractères · enregistré automatiquement';save();return}
   if(t.closest('form')){const er=t.closest('form').querySelector('.err');if(er)er.textContent=''}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
+  if(t.id==='ph-in'){if(t.files&&t.files.length)addPhotos(t.files);t.value='';return}
   if(t.id==='notes'){CLIENT(t.dataset.id).notes=t.value;save();toast('Note enregistrée');return}
   if(t.dataset.reg){S.reglages[t.dataset.reg]=+t.value;save();toast('Réglage enregistré');return}
   if(t.id==='camp-cible'){S.campCible=t.value;S.campConfirm=false;render(true);return}
   if(t.id==='m-date'){S.sheet.date=t.value;S.sheet.t=null;render(true);return}
   if(t.id==='m-prat'){S.sheet.prat=t.value;S.sheet.t=null;render(true);return}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.sheet){S.sheet=null;render(true)}});
+document.addEventListener('keydown',e=>{
+  if(S.sheet&&S.sheet.type==='photo'&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){const n=Math.max(1,S.vitrine.photos.length);S.sheet.i=(S.sheet.i+(e.key==='ArrowRight'?1:-1)+n)%n;render(true);return}
+  if(e.key==='Escape'&&S.sheet){S.sheet=null;render(true)}});
+let tx=null;
+document.addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('#lb'))tx=e.touches[0].clientX;else tx=null},{passive:true});
+document.addEventListener('touchend',e=>{if(tx==null||!S.sheet||S.sheet.type!=='photo')return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>50){const n=Math.max(1,S.vitrine.photos.length);S.sheet.i=(S.sheet.i+(dx<0?1:-1)+n)%n;render(true)}},{passive:true});
 render(false);
 })();
 </script>
