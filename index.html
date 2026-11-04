@@ -284,7 +284,7 @@ p{margin:0}
   .mob-only{display:none!important}
   .desk-only{display:revert}
   .gh div em{font-style:normal;font-size:11.5px;color:var(--faint);font-weight:700;margin-left:auto}
-  .desk{display:grid;grid-template-columns:236px minmax(0,1fr);gap:28px;min-height:100vh;max-width:1560px;margin:0 auto}
+  .desk{display:grid;grid-template-columns:248px minmax(0,1fr);gap:32px;min-height:100vh;width:100%;max-width:none;margin:0}
   .side{position:sticky;top:0;height:100vh;padding:18px 0 18px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
   .side .logo{padding:2px 8px 12px}
   .navi{display:flex;align-items:center;gap:11px;min-height:42px;padding:0 12px;border-radius:12px;border:0;background:none;font-weight:700;font-size:14px;color:var(--muted);width:100%;text-align:left}
@@ -313,7 +313,7 @@ p{margin:0}
   .sheet{max-width:460px;max-height:none;height:100%;border-radius:0;border-left:1px solid var(--line);padding:22px 26px}
   .grab{display:none}
   .toast{bottom:28px}
-  .cdesk{max-width:1180px;margin:0 auto}
+  .cdesk{width:100%;max-width:1280px;margin:0 auto}
   .cdesk .dtop nav{display:flex;gap:6px}
   .cdesk .dtop nav button{border:0;background:none;font-weight:700;font-size:14px;color:var(--muted);padding:8px 12px;border-radius:10px}
   .cdesk .dtop nav button[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
@@ -375,7 +375,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='4 nov. 2026 · 17h10';
+const VERSION='4 nov. 2026 · 18h45';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
