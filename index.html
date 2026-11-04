@@ -397,7 +397,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='4 nov. 2026 · 19h40';
+const VERSION='4 nov. 2026 · 21h40';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -500,14 +500,15 @@ try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.
 if(!S)S=seed();
 function defaultVitrine(){return {desc:'Au cœur de l’Écusson, notre institut vous accueille dans un cadre doux et lumineux. Maya, Julie et Inès prennent soin de vous : épilation à la cire et au laser, soins du visage, cils et ongles.\n\nProduits de qualité, hygiène irréprochable et conseils personnalisés à chaque visite.',
   atouts:{'Climatisé':true,'Wi-Fi':true,'Produits vegan':true,'Accès PMR':false,'Parking à 2 min':true,'Paiement sans contact':true,'Thé offert':false},
-  photos:[{id:'e1',src:null,label:'L’accueil',g:1},{id:'e2',src:null,label:'Cabine de soin',g:2},{id:'e3',src:null,label:'Cabine laser',g:3},{id:'e4',src:null,label:'Espace ongles',g:4},{id:'e5',src:null,label:'Nos produits',g:5}]}}
+  photos:[{id:'r1',src:'https://centreesthetiqueecusson.com/wp-content/uploads/2022/03/photo-centre-ecusson-monptellier.webp',label:'L’institut',g:1,real:1},{id:'r2',src:'https://centreesthetiqueecusson.com/wp-content/uploads/2021/12/epilation-laser-montpellier.jpg',label:'Cabine laser',g:3,real:1},{id:'r3',src:'https://centreesthetiqueecusson.com/wp-content/uploads/2025/03/IMG_3279.jpeg',label:'Laser Nordlys',g:2,real:1},{id:'e2',src:null,label:'Cabine de soin',g:4},{id:'e5',src:null,label:'Nos produits',g:5}]}}
 if(!S.vitrine)S.vitrine=defaultVitrine();
+if(S.vitrine.photos&&S.vitrine.photos.length&&S.vitrine.photos.every(p=>!p.src&&/^e\d$/.test(p.id)))S.vitrine.photos=defaultVitrine().photos;
 if(!S.options)S.options={rappelsMail:true,campMail:false};
 let STORE_OK=true;try{localStorage.setItem('agd-t','1');localStorage.removeItem('agd-t')}catch(e){STORE_OK=false}
 S.sheet=null;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
 function photoHTML(ph,big){
-  if(ph&&ph.src)return `<img src="${ph.src}" alt="${esc(ph.label||'Photo de l’institut')}" loading="lazy">`;
+  if(ph&&ph.src)return `<img src="${ph.src}" alt="${esc(ph.label||'Photo de l’institut')}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph ph${ph.g||1}&quot;><span>${esc(ph.label||'')}</span></div>'">`;
   const g=ph?ph.g||1:1;
   return `<div class="ph ph${g}">${swallow(big?72:38,'rgba(255,255,255,.75)','')}<span>${esc(ph?ph.label:'')}</span><em>Photo d’exemple</em></div>`;
 }
