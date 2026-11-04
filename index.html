@@ -15,6 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
+.cardfield{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font:600 14px ui-monospace,Menlo,monospace;color:var(--muted)}
+.opt[aria-disabled="true"]{opacity:.55}
 .notice.ok{background:var(--ok-soft);color:var(--ink)}.notice.ok svg{color:var(--ok)}
 .share{display:grid;gap:10px}.qr{display:flex;gap:14px;align-items:center}.qrbox{width:112px;height:112px;flex-shrink:0;padding:8px;background:#fff;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
 .guide summary{cursor:pointer;list-style:none;display:flex;align-items:center}.guide summary::-webkit-details-marker{display:none}.guide summary b{display:flex;gap:8px;align-items:center}.guide summary::after{content:'+';margin-left:auto;font-weight:800;color:var(--muted)}.guide[open] summary::after{content:'−'}.guide ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--muted)}
@@ -404,7 +406,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='4 nov. 2026 · 22h30';
+const VERSION='4 nov. 2026 · 23h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -510,6 +512,11 @@ function defaultVitrine(){return {desc:'Au cœur de l’Écusson, notre institut
   photos:[{id:'u1',src:'https://images.unsplash.com/photo-1792792747504-35e67572f529?w=1200&q=75&auto=format&fit=crop',label:'L’accueil',g:1},{id:'u2',src:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=75&auto=format&fit=crop',label:'Cabine de soin',g:2},{id:'u3',src:'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=1200&q=75&auto=format&fit=crop',label:'Espace ongles',g:4},{id:'u4',src:'https://images.unsplash.com/photo-1552693673-1bf958298935?w=1200&q=75&auto=format&fit=crop',label:'Soin du visage',g:3},{id:'u5',src:'https://images.unsplash.com/photo-1780952934157-f541e70c7ece?w=1200&q=75&auto=format&fit=crop',label:'Nos produits',g:5},{id:'u6',src:'https://images.unsplash.com/photo-1695527081827-fdbc4e77be9b?w=1200&q=75&auto=format&fit=crop',label:'Cabine',g:2}],pv:2}}
 if(!S.vitrine)S.vitrine=defaultVitrine();
 if(S.reglages&&S.reglages.acompteCible==null)S.reglages.acompteCible=1;
+if(S.reglages&&S.reglages.garantie==null)S.reglages.garantie=1;
+if(!S.stripe)S.stripe={ok:true};
+function garantie(){return plus()&&S.stripe.ok?S.reglages.garantie:0}
+const GN=['Réservation simple','Empreinte bancaire','Paiement en ligne'];
+function condTxt(mode,tot){const h=S.reglages.annulation;return mode===1?`Annulation gratuite jusqu’à ${h} h avant. Plus tard, 50 % (${eur(tot/2)}) sont débités ; en cas d’absence, 100 % (${eur(tot)}).`:`Remboursement intégral si vous annulez jusqu’à ${h} h avant. Plus tard, 50 % (${eur(tot/2)}) sont remboursés ; aucun remboursement en cas d’absence.`}
 function acompteFor(tot,dur){if(!plus()||!S.reglages.acompte)return 0;const R_=S.reglages,m=me();const nouvelle=!m||!S.rdv.some(r=>r.client===m.id&&r.statut==='honore');if(R_.acompteCible===1&&!nouvelle)return 0;if(R_.acompteCible===2&&dur<60)return 0;return Math.round(tot*R_.acompte/100)}
 if(S.vitrine.pv!==2&&!(S.vitrine.photos||[]).some(p=>p.src&&p.src.startsWith('data:'))){S.vitrine.photos=defaultVitrine().photos;S.vitrine.pv=2}
 if(!S.options)S.options={rappelsMail:true,campMail:false};
@@ -1027,7 +1034,10 @@ function vReservation(){
    <div class="notice">${I.shield}<span>Votre page ne montre jamais d’autres instituts : une cliente arrivée par votre lien ne voit que vous.</span></div></div>
   ${sel('delai','Délai minimum avant un rendez-vous',[[0,'Aucun'],[60,'1 heure'],[120,'2 heures'],[1440,'24 heures']],R.delai)}
   ${sel('annulation','Annulation en ligne possible jusqu’à',[[2,'2 h avant'],[12,'12 h avant'],[24,'24 h avant'],[48,'48 h avant']],R.annulation)}
-  ${plus()?sel('acompte','Acompte demandé à la réservation',[[0,'Pas d’acompte'],[20,'20 %'],[30,'30 %'],[50,'50 %'],[100,'Paiement complet']],R.acompte)+(R.acompte?sel('acompteCible','Demander l’acompte',[[0,'À toutes les clientes'],[1,'Aux nouvelles clientes seulement'],[2,'Pour les soins de 1 h et plus']],R.acompteCible):''):'<div class="notice"><span><b>Acompte à la réservation</b> disponible avec la formule Plus.</span></div>'}
+  <div class="sec"><span class="tag">Garantie des rendez-vous</span>
+  <div class="list">${[[0,'Réservation simple','Paiement sur place. Ni empreinte, ni pénalité.',''],[1,'Empreinte bancaire','La carte est enregistrée, rien n’est débité. Annulation à moins de '+R.annulation+' h : 50 % débités. Absence : 100 %.','Plus'],[2,'Paiement en ligne','La cliente paie en réservant. Annulation à moins de '+R.annulation+' h : 50 % conservés. Absence : 100 % conservés.','Plus']].map(([v,t,d,p])=>{const lock=v>0&&!plus();return `<button class="opt" data-a="garantie" data-v="${v}" aria-pressed="${garantie()===v}" ${lock?'aria-disabled="true"':''}><span class="row between"><b>${t}</b>${p?`<span class="pill ${lock?'':'acc'}">${p}</span>`:''}</span><span class="sub small">${d}</span></button>`}).join('')}</div>
+  ${plus()&&R.garantie>0?(S.stripe.ok?`<div class="card col" style="gap:8px"><div class="row" style="gap:10px"><span class="av sm" style="background:#EEF0FF;color:#635BFF;font-weight:800">S</span><b class="grow">Compte Stripe de l’institut</b><span class="pill ok">Actif</span></div><span class="sub small">Encaissements à votre nom, versés sur votre IBAN. Frais Stripe à votre charge, déduits de chaque paiement. Agendelle n’encaisse rien pour vous.</span><button class="btn sm ghost" data-a="stripe-off">Gérer mon compte Stripe</button></div>`:`<div class="notice warn"><span><b>Compte Stripe à configurer.</b> Identité, IBAN et pièces de l’institut, comme pour Kookla : 5 minutes. <button class="btn sm" data-a="stripe-on" style="margin-top:8px">Configurer mon compte Stripe (simulation)</button></span></div>`):''}
+  </div>
   <div class="item"><span class="t"><b>Choix de la praticienne</b><span>La cliente peut choisir avec qui elle réserve.</span></span><button class="toggle" role="switch" aria-checked="${R.choixPrat}" aria-label="Choix de la praticienne" data-a="reg-toggle" data-id="choixPrat"></button></div>
   <div class="item"><span class="t"><b>Validation manuelle</b><span>Vous confirmez chaque réservation en ligne.</span></span><button class="toggle" role="switch" aria-checked="${R.validation}" aria-label="Validation manuelle" data-a="reg-toggle" data-id="validation"></button></div>
   <label class="field" for="reg-msg">Message affiché aux clientes<textarea id="reg-msg">${esc(R.message)}</textarea></label>`;
@@ -1037,7 +1047,7 @@ function vFormule(){
   const plan=(id,nom,prix,pts)=>`<div class="opt" aria-pressed="${cur===id}"><div class="row between"><h2>${nom}</h2>${cur===id?'<span class="pill acc">Votre formule</span>':''}</div><b style="font-size:20px">${prix}</b><ul style="margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex-direction:column;gap:3px">${pts.map(p=>`<li>${p}</li>`).join('')}</ul>${cur!==id?`<button class="btn ${id==='plus'?'':'ghost'}" data-a="formule" data-v="${id}">${id==='plus'?'Passer à Plus (simulation)':'Revenir à Essentiel'}</button>`:''}</div>`;
   return `<h1>Formule</h1><p class="sub">L’agenda reste gratuit. Vous payez seulement ce qui vous rapporte.</p>
   <div class="g2">${plan('essentiel','Essentiel','Gratuit',['Agenda et équipe','Prestations à cocher','Réservation en ligne, paiement sur place','Confirmation par email','Liste d’attente','Caisse et fiches clientes'])}
-  ${plan('plus','Plus','[PRIX] / mois',['Tout Essentiel','Acompte ou paiement à la réservation','Bons cadeaux, cartes et abonnements','Statistiques détaillées','Plusieurs praticiennes et cabines'])}</div>
+  ${plan('plus','Plus','[PRIX] / mois',['Tout Essentiel','Empreinte bancaire ou paiement en ligne (Stripe)','Bons cadeaux, cartes et abonnements','Statistiques détaillées','Plusieurs praticiennes et cabines'])}</div>
   <div class="sec"><span class="tag">Options de communication · à la carte, avec les deux formules</span>
    <div class="g2"><div class="card col" style="gap:10px"><div class="row between"><b>Crédits SMS</b><span class="pill acc">${S.sms} crédits</span></div><span class="sub small">Pour les rappels SMS et les campagnes SMS. Sans abonnement, sans expiration.</span>
      <div class="list">${PACKS.map(([q,p])=>`<div class="row between small"><span><b>${q.toLocaleString('fr-FR')} SMS</b> · ${eur(p)}</span><span class="sub small">${(p/q).toLocaleString('fr-FR',{minimumFractionDigits:3})} € / SMS</span></div>`).join('')}</div>
@@ -1150,7 +1160,7 @@ function vBook(){
   }
   if(c.step==='infos'){
     const m=me()||{},f=c.form;
-    const acompte=acompteFor(tot,c.cart.reduce((a,id)=>a+SOIN(id).dur,0));
+    const G=garantie();
     return cTop('Vos coordonnées','c-back',steps,steps)+`
     <div class="card col" style="gap:4px"><b>${cap(dlabel(c.date))} à ${hm(c.t)}</b><span class="sub small">avec ${PRATS[c.tp].nom} · Institut Écusson</span></div>
     ${recap}
@@ -1163,9 +1173,14 @@ function vBook(){
       ${S.auto.rappelSms&&S.sms>0?`<label class="row small" for="b-sms" style="gap:10px;font-weight:600"><input id="b-sms" type="checkbox" checked style="width:20px;height:20px"> Recevoir un rappel par SMS la veille</label>`:''}
       <label class="row small consent" for="b-optin"><input id="b-optin" type="checkbox" ${me()&&me().optin?'checked':''}> <span>J’accepte de recevoir les offres et nouveautés d’Institut Écusson (email ou SMS). Désinscription en un clic.</span></label>
       <div class="notice">${I.clock}<span>${esc(S.reglages.message)} Annulation gratuite jusqu’à ${S.reglages.annulation} h avant.</span></div>
-      ${acompte?`<div class="notice">${I.shield}<span>Acompte de <b>${eur(acompte)}</b> à régler maintenant, encaissé au nom de l’institut et déduit le jour du soin. Simulation : aucun paiement réel.</span></div>`:`<div class="notice">${I.euro}<span>Paiement sur place, le jour du soin.</span></div>`}
+      ${G===0?`<div class="notice">${I.euro}<span>Paiement sur place, le jour du soin. Aucune carte demandée.</span></div>`:`
+      <div class="card col stripe" style="gap:8px"><div class="row between"><b>${G===1?'Carte pour garantir le rendez-vous':'Paiement par carte'}</b><span class="sub small">${I.shield} Sécurisé par Stripe</span></div>
+        <div class="cardfield"><span>4242 4242 4242 4242</span><span>12/28</span><span>123</span></div>
+        <span class="sub small">Simulation : carte de test, aucun paiement réel.</span></div>
+      <div class="notice ${G===1?'':'ok'}">${G===1?I.shield:I.euro}<span>${G===1?'<b>Aucun débit aujourd’hui.</b> Vous paierez sur place, le jour du soin.':'<b>'+eur(tot)+'</b> payés maintenant à Institut Écusson.'}</span></div>
+      <label class="row small consent" for="b-cgv"><input id="b-cgv" type="checkbox"> <span>J’accepte les conditions : ${condTxt(G,tot)}</span></label>`}
       <span class="err" id="b-err"></span>
-      <button class="btn" type="submit">${acompte?'Payer '+eur(acompte)+' et réserver':(S.reglages.validation?'Envoyer ma demande':'Confirmer le rendez-vous')}</button>
+      <button class="btn" type="submit">${G===2?'Payer '+eur(tot)+' et réserver':G===1?'Enregistrer ma carte et réserver':(S.reglages.validation?'Envoyer ma demande':'Confirmer le rendez-vous')}</button>
       <p class="foot">Vous réservez auprès d’Institut Écusson, qui est seul destinataire de vos coordonnées. Agendelle ne les utilise jamais pour son propre compte.</p>
     </form>`;
   }
@@ -1175,7 +1190,7 @@ function vBook(){
       <span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check}</span>
       <h1 style="font-size:24px">${S.reglages.validation?'Demande envoyée':'C’est réservé'}, ${esc(CLIENT(r.client).nom.split(' ')[0])} !</h1>
       <p class="sub">${esc(rdvNames(r))}<br><b style="color:var(--ink)">${cap(dlabel(r.date))} à ${hm(r.start)}</b> avec ${PRATS[r.prat].nom}</p>
-      <p class="sub small">${r.acompte?'Acompte de '+eur(r.acompte)+' réglé (simulation). ':''}Confirmation envoyée par email${S.reglages.validation?' dès que l’institut aura validé':''}.</p>
+      <p class="sub small">${r.garantie===2?'Payé en ligne : '+eur(r.paid?r.paid.montant:0)+' (simulation). ':r.garantie===1?'Carte enregistrée, aucun débit. ':''}Confirmation envoyée par email${S.reglages.validation?' dès que l’institut aura validé':''}.</p>
       <button class="btn ghost" data-a="c-cal">${I.cal} Ajouter à mon agenda</button>
       <button class="btn" data-a="c-mesrdv">Voir mes rendez-vous</button></div>
     <div class="sec"><span class="tag">L’email que vous recevez</span>
@@ -1198,7 +1213,7 @@ function vMesRdv(){
       <div class="row between"><b style="font-family:var(--display);font-size:17px">${cap(dlabel(r.date))}</b>${kk?'<span class="pill k">Kookla</span>':statusPill(r)}</div>
       <span>${hm(r.start)} · ${esc(rdvNames(r))}</span><span class="sub small">avec ${PRATS[r.prat].nom} · Institut Écusson${r.pack?' · '+esc(r.pack):''}</span>
       ${future&&r.statut!=='annule'?(kk?'<span class="sub small">Séance gérée dans votre espace Kookla.</span>':(S.c.cancelId===r.id?`<div class="notice warn"><span>Annuler ce rendez-vous ?</span></div><div class="row"><button class="btn sm ghost" data-a="c-cancel-no">Garder</button><button class="btn sm" data-a="c-cancel-yes" data-id="${r.id}">Oui, annuler</button></div>`:
-        limit?`<div class="row"><button class="btn sm ghost" data-a="c-edit" data-id="${r.id}">Déplacer</button><button class="btn sm danger" data-a="c-cancel" data-id="${r.id}">Annuler</button></div>`:`<span class="sub small">Moins de ${S.reglages.annulation} h avant : contactez l’institut pour modifier.</span>`)):''}
+        limit?`<div class="row"><button class="btn sm ghost" data-a="c-edit" data-id="${r.id}">Déplacer</button><button class="btn sm danger" data-a="c-cancel" data-id="${r.id}">Annuler${r.garantie===2?' (remboursé)':''}</button></div>`:(r.garantie?`<span class="sub small">Moins de ${S.reglages.annulation} h avant : ${r.garantie===1?'50 % ('+eur(rdvPrice(r)/2)+') seront débités':'50 % ('+eur(rdvPrice(r)/2)+') seront conservés'} si vous annulez.</span><button class="btn sm danger" data-a="c-cancel" data-id="${r.id}">Annuler quand même</button>`:`<span class="sub small">Moins de ${S.reglages.annulation} h avant : contactez l’institut pour modifier.</span>`))):''}
     </div>`};
   return `<h1>Mes rendez-vous</h1>
   <div class="sec"><h3>À venir</h3>${st.next.length?`<div class="list">${st.next.map(r=>card(r,true)).join('')}</div>`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
@@ -1301,11 +1316,13 @@ function sheetHTML(){
     ${c.notes?`<div class="notice warn"><span><b>Note :</b> ${esc(c.notes)}</span></div>`:''}
     ${r.note?`<div class="notice"><span><b>Message de la cliente :</b> ${esc(r.note)}</span></div>`:''}
     ${kk?`<div class="notice k"><span class="pill k">K</span><span>Vendu par Kookla (${esc(r.pack)}). Déjà payé : ${eur(price*.75)} vous seront versés après la séance. Signalez seulement une séance irréalisable ou une contre-indication.</span></div>`
-      :`<div class="card col" style="gap:4px"><div class="row between small"><span>Total</span><b>${eur(price)}</b></div>${r.acompte?`<div class="row between small"><span>Acompte payé en ligne</span><span>− ${eur(r.acompte)}</span></div>`:''}${r.paid?`<div class="row between small"><span>Encaissé (${esc(r.paid.mode)})</span><b style="color:var(--ok)">${eur(r.paid.montant)}</b></div>`:`<div class="row between"><b>Reste à payer</b><b>${eur(price-r.acompte)}</b></div>`}</div>`}
+      :`<div class="card col" style="gap:4px"><div class="row between small"><span>Total</span><b>${eur(price)}</b></div>${r.garantie===1?`<div class="row between small"><span>${I.shield} Empreinte bancaire</span><span>carte •••• 4242</span></div>`:''}${r.acompte?`<div class="row between small"><span>Acompte payé en ligne</span><span>− ${eur(r.acompte)}</span></div>`:''}${r.penalite?`<div class="row between small"><span>${r.statut==='absent'?'Frais d’absence':'Annulation tardive'}${r.garantie===1?' débités':' conservés'}</span><b style="color:var(--ok)">${eur(r.penalite)}</b></div>`:''}${r.statut==='annule'&&!r.penalite?'':''}${r.paid?`<div class="row between small"><span>Encaissé (${esc(r.paid.mode)})</span><b style="color:var(--ok)">${eur(r.paid.montant)}</b></div>`:(r.statut==='annule'||r.statut==='absent'?'':`<div class="row between"><b>Reste à payer</b><b>${eur(price-r.acompte)}</b></div>`)}</div>`}
     ${r.statut!=='annule'?`<div class="seg" role="group" aria-label="Statut" style="display:grid;grid-template-columns:repeat(3,1fr)"><button data-a="statut" data-v="arrive" aria-pressed="${r.statut==='arrive'}">Arrivée</button><button data-a="statut" data-v="honore" aria-pressed="${r.statut==='honore'}">Honoré</button><button data-a="statut" data-v="absent" aria-pressed="${r.statut==='absent'}">Absente</button></div>`:''}
+    ${r.statut==='absent'&&r.garantie===1&&!r.penalite?`<button class="btn" data-a="penalite" data-id="${r.id}">${I.shield} Débiter 100 % (${eur(price)}) sur la carte enregistrée</button><span class="sub small" style="text-align:center">Vous décidez : rien n’est débité sans votre accord.</span>`:''}
+    ${r.statut==='absent'&&r.garantie===2&&!r.penalite?`<button class="btn" data-a="penalite" data-id="${r.id}">Conserver le paiement (${eur(price)})</button>`:''}
     ${!kk&&!r.paid&&r.statut!=='annule'&&r.statut!=='absent'?`<button class="btn" data-a="encaisser" data-id="${r.id}">${I.euro} Encaisser ${eur(price-r.acompte)}</button>`:''}
     ${r.statut!=='annule'&&!kk?`<div class="row"><button class="btn sm ghost" data-a="deplacer" style="flex:1">Déplacer</button><button class="btn sm ghost" data-a="rappel" style="flex:1">${S.sms>0?'Rappel SMS':'Rappel email'}</button></div>`:''}
-    ${r.statut!=='annule'&&!r.paid&&!kk?(sh.confirm?`<div class="notice warn"><span>Annuler ce rendez-vous ? ${S.auto.attente?'Les clientes en liste d’attente seront prévenues.':''}</span></div><div class="row"><button class="btn sm ghost" data-a="sheet-noconfirm" style="flex:1">Garder</button><button class="btn sm" data-a="annuler" style="flex:1">Oui, annuler</button></div>`:`<button class="btn danger" data-a="ask-annuler">Annuler le rendez-vous</button>`):''}`;
+    ${r.statut!=='annule'&&r.statut!=='absent'&&!r.paid&&!kk?(sh.confirm?`<div class="notice warn"><span>Annuler ce rendez-vous ? ${S.auto.attente?'Les clientes en liste d’attente seront prévenues.':''}</span></div><div class="row"><button class="btn sm ghost" data-a="sheet-noconfirm" style="flex:1">Garder</button><button class="btn sm" data-a="annuler" style="flex:1">Oui, annuler</button></div>`:`<button class="btn danger" data-a="ask-annuler">Annuler le rendez-vous</button>`):''}`;
   }
   if(sh.type==='encaisser'){const r=S.rdv.find(x=>x.id===sh.id);const price=rdvPrice(r);const rem=sh.remise||0;const due=Math.max(0,Math.round((price*(1-rem/100)-r.acompte)*100)/100);const mode=sh.mode||'CB';const c=CLIENT(r.client);
     const modes=['CB','Espèces','Chèque'].concat(c.carte?['Carte de séances']:[]).concat(['Bon cadeau']);
@@ -1413,7 +1430,7 @@ function cAsideHome(){
       :'<p class="sub small">Choisissez une ou plusieurs prestations dans la liste, elles seront faites à la suite.</p>'}
     <button class="btn" data-a="c-book">${c.length?'Choisir un créneau':'Prendre rendez-vous'}</button>
     ${nd?`<span class="row small" style="gap:6px;color:var(--ok);font-weight:800">${I.clock} Prochaine dispo : ${nd.d===TODAY?'aujourd’hui':nd.d===addDays(TODAY,1)?'demain':JOURS[dow(nd.d)]+' '+fromIso(nd.d).getDate()} à ${hm(nd.t)}</span>`:''}
-    <span class="sub small">Annulation gratuite jusqu’à ${S.reglages.annulation} h avant · ${plus()&&S.reglages.acompte?'acompte de '+S.reglages.acompte+' % à la réservation':'paiement sur place'}</span></div>
+    <span class="sub small">Annulation gratuite jusqu’à ${S.reglages.annulation} h avant · ${['paiement sur place','carte demandée en garantie, paiement sur place','paiement en ligne à la réservation'][garantie()]}</span></div>
   ${kPartner()?`<button class="notice k" data-a="k-open" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>Épilation laser :</b> séances et packs vendus et garantis par Kookla.</span></button>`:''}
   ${plus()&&(S.produits['bon-libre']||S.produits['bon-soin'])?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre, envoyé par message.</span></span>${I.right}</button>`:''}`;
 }
@@ -1540,6 +1557,10 @@ document.addEventListener('click',e=>{
     case 'dmenu':S.sheet=null;return go(()=>{S.mode='salon';S.tab='menu';S.menu=v});
     case 'new':S.sheet={type:'new',date:S.jour,client:el.dataset.client||null,prat:S.filtre!=='all'?S.filtre:'maya'};break;
     case 'rdv':S.sheet={type:'rdv',id};break;
+    case 'penalite':{const r=S.rdv.find(x=>x.id===id);r.penalite=rdvPrice(r);render(true);toast(r.garantie===1?'Débité sur la carte (simulation)':'Paiement conservé');return}
+    case 'garantie':{if(+v>0&&!plus()){toast('Disponible avec la formule Plus');return}S.reglages.garantie=+v;render(true);toast(GN[+v]+' activée');return}
+    case 'stripe-on':S.stripe.ok=true;render(true);toast('Compte Stripe configuré (simulation)');return;
+    case 'stripe-off':S.stripe.ok=false;render(true);toast('Compte Stripe déconnecté (simulation)');return;
     case 'statut':{const r=S.rdv.find(x=>x.id===sh.id);r.statut=v;render(true);toast(v==='honore'?'Marqué honoré':v==='absent'?'Marquée absente':'Arrivée notée');return}
     case 'encaisser':S.sheet={type:'encaisser',id:id||sh.id,mode:'CB',remise:0};break;
     case 'enc-mode':sh.mode=v;break;
@@ -1623,7 +1644,10 @@ document.addEventListener('click',e=>{
     case 'c-edit':{const r=S.rdv.find(x=>x.id===id);return go(()=>{S.c.page='book';S.c.cart=r.soins.slice();S.c.editId=r.id;S.c.prat=r.prat;S.c.date=r.date;S.c.t=null;S.c.step='date'})}
     case 'c-cancel':S.c.cancelId=id;break;
     case 'c-cancel-no':S.c.cancelId=null;break;
-    case 'c-cancel-yes':{const r=S.rdv.find(x=>x.id===id);r.statut='annule';S.c.cancelId=null;render(true);toast('Rendez-vous annulé');return}
+    case 'c-cancel-yes':{const r=S.rdv.find(x=>x.id===id);const late=new Date(fromIso(r.date).getTime()+r.start*60000-S.reglages.annulation*3600000)<=new Date();const p=rdvPrice(r);let msg='Rendez-vous annulé';
+      if(r.garantie===1&&late){r.penalite=p/2;msg='Annulé · 50 % débités ('+eur(p/2)+')'}
+      else if(r.garantie===2){if(late){r.penalite=p/2;if(r.paid)r.paid.montant=p/2;msg='Annulé · '+eur(p/2)+' remboursés'}else{r.paid=null;msg='Annulé · remboursement intégral'}}
+      r.statut='annule';r.late=late;S.c.cancelId=null;render(true);toast(msg);return}
     case 'g-open':return go(()=>{S.mode='cliente';S.c.page='gift';S.c.g={montant:80}});
     case 'g-m':S.c.g.montant=+v;break;
     /* kookla cliente */
@@ -1661,12 +1685,13 @@ document.addEventListener('submit',e=>{
     if(mail&&!/^\S+@\S+\.\S+$/.test(mail))return err('b-err','L’adresse email n’est pas valide.');
     const dur=c.cart.reduce((a,id)=>a+SOIN(id).dur,0);
     if(busy(c.tp,c.tdate,c.t,c.t+dur,c.editId))return err('b-err','Ce créneau vient d’être pris. Revenez en arrière pour en choisir un autre.');
-    const optEl=document.getElementById('b-optin');const ac=acompteFor(c.cart.reduce((a,id)=>a+SOIN(id).prix,0),dur);
+    const optEl=document.getElementById('b-optin');const G=c.editId?0:garantie();const cg=document.getElementById('b-cgv');
+    if(G&&cg&&!cg.checked)return err('b-err','Cochez les conditions d’annulation pour réserver.');
     const m=ensureMe(nom,tel,mail);if(optEl)m.optin=optEl.checked;
     const tot=c.cart.reduce((a,id)=>a+SOIN(id).prix,0);
     let r;
     if(c.editId){r=S.rdv.find(x=>x.id===c.editId);r.date=c.tdate;r.start=c.t;r.prat=c.tp;r.soins=c.cart.slice();r.dur=dur}
-    else{r={id:uid(),date:c.tdate,start:c.t,dur,soins:c.cart.slice(),prat:c.tp,client:m.id,statut:'confirme',source:'en ligne',paid:null,acompte:ac,note:c.form.note,pack:''};S.rdv.push(r)}
+    else{r={id:uid(),date:c.tdate,start:c.t,dur,soins:c.cart.slice(),prat:c.tp,client:m.id,statut:'confirme',source:'en ligne',paid:G===2?{mode:'En ligne',montant:tot,date:TODAY}:null,acompte:0,garantie:G,penalite:0,note:c.form.note,pack:''};S.rdv.push(r)}
     c.lastId=r.id;c.step='ok';c.cart=[];c.editId=null;c.t=null;S.jour=r.date;S.filtre='all';
     render(false);window.scrollTo(0,0);return;
   }

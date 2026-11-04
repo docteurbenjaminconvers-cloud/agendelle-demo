@@ -397,7 +397,7 @@ footer .in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;al
   <div class="in">
     <div class="prom">
       <div class="reveal"><b>Vos clientes restent les vôtres</b><p>Votre fichier vous appartient. Il n’est jamais utilisé pour contacter vos clientes ni leur proposer un autre institut.</p></div>
-      <div class="reveal"><b>Vous gardez la main</b><p>Acompte ou paiement sur place, délai d’annulation, choix de la praticienne : c’est vous qui réglez.</p></div>
+      <div class="reveal"><b>Vous gardez la main</b><p>Paiement sur place, empreinte bancaire ou paiement en ligne, délai d’annulation, choix de la praticienne : c’est vous qui réglez.</p></div>
       <div class="reveal"><b>Pas de données de santé</b><p>Les fiches gardent les préférences et l’historique de vos clientes, jamais leurs traitements ni leur santé.</p></div>
       <div class="reveal"><b>Une entreprise française</b><p>Agendelle est une marque de Kookla Platform, la société derrière Kookla.</p></div>
     </div>
@@ -412,8 +412,8 @@ footer .in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;al
       <details><summary>L’agenda est-il vraiment gratuit&nbsp;?</summary><p>Oui. L’agenda, l’équipe, les prestations, la réservation en ligne avec paiement sur place, la confirmation par email, la caisse et les fiches clientes sont gratuits. Vous payez seulement les options que vous activez : la formule Plus, les crédits SMS, les rappels ou les campagnes email.</p></details>
       <details><summary>J’ai déjà un logiciel d’agenda. Pourquoi changer&nbsp;?</summary><p>Si votre outil vous convient, gardez-le. Agendelle s’adresse surtout aux instituts qui veulent un agenda complet sans abonnement, et à ceux qui font du laser et veulent vendre leurs packs en ligne avec Kookla.</p></details>
       <details><summary>Comment mes clientes réservent-elles&nbsp;?</summary><p>Vous avez une page de réservation à votre nom, à partager sur Instagram, Google et votre site. La cliente choisit son soin, son créneau, laisse ses coordonnées : c’est dans votre agenda. Pas d’appli à télécharger.</p></details>
-      <details><summary>Et les rendez-vous non honorés&nbsp;?</summary><p>Les rappels SMS la veille réduisent fortement les oublis. Avec la formule Plus, vous pouvez demander un acompte à la réservation, encaissé à votre nom et déduit le jour du soin.</p></details>
-      <details><summary>Qui encaisse l’argent des réservations&nbsp;?</summary><p>Vous. Les acomptes, bons cadeaux et cartes de séances sont encaissés au nom de votre institut et versés sur votre compte. Agendelle est un logiciel : il ne vend jamais à votre place. Seules les séances laser vendues via Kookla, si vous choisissez le partenariat, sont vendues par Kookla.</p></details>
+      <details><summary>Et les rendez-vous non honorés&nbsp;?</summary><p>Les rappels SMS la veille réduisent fortement les oublis. Avec la formule Plus, vous pouvez demander une empreinte bancaire ou le paiement en ligne : 50 % retenus en cas d’annulation à moins de 24 h, 100 % en cas d’absence. C’est vous qui décidez de débiter.</p></details>
+      <details><summary>Qui encaisse l’argent des réservations&nbsp;?</summary><p>Vous. Les paiements en ligne, frais d’absence, bons cadeaux et cartes de séances sont encaissés au nom de votre institut, sur votre propre compte Stripe, et versés sur votre IBAN. Les frais Stripe sont à votre charge. Agendelle est un logiciel : il ne vend jamais à votre place. Seules les séances laser vendues via Kookla, si vous choisissez le partenariat, sont vendues par Kookla.</p></details>
       <details><summary>Comment fonctionne l’option laser avec Kookla&nbsp;?</summary><p>En annuaire, gratuit, votre fiche laser apparaît sur Kookla et renvoie vers votre agenda. En partenaire, Kookla vend vos séances et packs en ligne, payés d’avance et garantis, et vous verse chaque séance après sa réalisation, moins 25 % de commission. Kookla vérifie votre fiche avant la mise en ligne.</p></details>
       <details><summary>Ça marche sur téléphone et ordinateur&nbsp;?</summary><p>Oui, sur les deux, sans rien installer. Sur téléphone, vous pouvez ajouter Agendelle à votre écran d’accueil pour l’ouvrir comme une appli.</p></details>
     </div>
@@ -495,7 +495,7 @@ footer .in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;al
   // plans
   const li=a=>a.map(x=>`<li>${I.check}<span>${x}</span></li>`).join('');
   document.getElementById('pl1').innerHTML=li(['Agenda, équipe et congés','Prestations à cocher','Réservation en ligne, paiement sur place','Confirmation par email','Liste d’attente','Caisse et fiches clientes','Ma vitrine : texte et photos']);
-  document.getElementById('pl2').innerHTML=li(['Tout Essentiel','Acompte ou paiement à la réservation','Bons cadeaux, cartes et abonnements en ligne','Statistiques détaillées','Plusieurs praticiennes et cabines']);
+  document.getElementById('pl2').innerHTML=li(['Tout Essentiel','Empreinte bancaire ou paiement en ligne (Stripe)','Bons cadeaux, cartes et abonnements en ligne','Statistiques détaillées','Plusieurs praticiennes et cabines']);
   document.getElementById('pl3').innerHTML=li(['Annuaire gratuit : votre fiche laser sur Kookla','Partenaire : 25 % sur les séances vendues par Kookla','Packs de 5 ou 8 payés d’avance et garantis','Rien sur vos autres soins']);
 
   // hero screen rotation
