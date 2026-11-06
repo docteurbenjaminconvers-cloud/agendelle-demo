@@ -21,6 +21,7 @@
 .tk{background:#fffdf8;color:#1c1a17;border:1px solid var(--line);border-radius:6px;padding:14px 14px 12px;font:500 12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
 .tk hr{border:0;border-top:1px dashed #b9b2a6;margin:5px 0}.tk-r{display:flex;justify-content:space-between;gap:10px}.tk-r span:last-child,.tk-r b:last-child{text-align:right;white-space:nowrap}
 .tk-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}.tk-c em{font-style:normal;font-size:11px;color:#8a6d00}.tk-t{font-size:14.5px}.tk-h{font-size:10.5px;color:#6d665c;word-break:break-all}
+.vuecli{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--sunk);border:1px dashed var(--line);border-radius:14px;padding:10px 12px;margin:0 0 14px}.vuecli .sub{flex-basis:100%}
 .affiche-d{border:2px solid var(--ink);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;background:#fff;color:#111}.affiche-d .a-t{font-family:var(--display);font-size:24px}.affiche-d .a-g{font-size:17px}.affiche-d ul{margin:0;padding-left:20px;line-height:1.5}
 @media print{body *{visibility:hidden!important}.sheet .tk,.sheet .tk *,.sheet .affiche-d,.sheet .affiche-d *{visibility:visible!important}.sheet .tk,.sheet .affiche-d{position:fixed;left:0;top:0;box-shadow:none;border-radius:0}.sheet .tk{width:72mm;border:0;padding:0;font-size:11px}.sheet .affiche-d{width:180mm;font-size:18px}@page{margin:4mm}}
 .tk-dup{text-align:center;font-weight:800;letter-spacing:.12em;border:1.5px solid #1c1a17;padding:2px;margin:4px 0}.notice.ok svg{color:var(--ok)}
@@ -412,7 +413,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 12h30';
+const VERSION='6 nov. 2026 · 13h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1362,7 +1363,7 @@ function vMesRdv(){
   <div class="card col" style="gap:10px"><b>Tous vos rendez-vous, chez tous vos instituts, au même endroit</b><span class="sub small">Connectez-vous avec l’email donné en réservant : vous recevez un lien, sans mot de passe.</span>
     <label class="field" for="c-login-id">L’email donné en réservant<input id="c-login-id" type="email" placeholder="vous@exemple.fr" autocomplete="off"></label>
     <button class="btn" data-a="c-login">Recevoir mon lien de connexion</button></div>
-  <p class="foot">Pas encore de rendez-vous ? <button class="link" data-a="c-book">Réserver chez Institut Écusson</button></p>`;
+  <p class="foot">Pas encore de rendez-vous ? Réservez depuis le lien ou le QR code de votre institut : il apparaîtra ici.</p>`;
   const st=clientStats(m.id);
   const card=(r,future)=>{const kk=r.source==='kookla';const limit=new Date(fromIso(r.date).getTime()+r.start*60000-S.reglages.annulation*3600000)>new Date();
     return `<div class="card col" style="gap:8px;${kk?'background:var(--k-soft);border-color:transparent':''}">
@@ -1377,13 +1378,13 @@ function vMesRdv(){
   return `<span class="tag">Mon espace Agendelle · ${esc(m.nom.split(' ')[0])}</span><h1>Mes rendez-vous</h1>
   <div class="sec"><div class="sec-h"><h3>Mes instituts</h3><span class="sub small">${inst.length}</span></div><div class="list">${inst.map(([id,n,v,mt])=>`<div class="item"><span class="av" style="background:${id==='ecusson'?'var(--accent-soft);color:var(--accent)':'var(--sunk);color:var(--ink)'}">${esc(n.replace(/^(L’|Institut )/,'')[0])}</span><span class="t"><b>${esc(n)}</b><span>${esc(v)} · ${esc(mt)}</span></span><button class="btn sm ghost" data-a="${id==='ecusson'?'c-book':'c-autre'}" data-v="${id}">Réserver</button></div>`).join('')}</div>
     <button class="btn ghost" data-a="c-inst-add">${I.plus} Ajouter un institut</button></div>
-  <div class="sec"><h3>À venir</h3>${futurs.length?`<div class="list">${futurs.slice(0,S.c.tous?99:4).map(x=>x.h).join('')}</div>${futurs.length>4&&!S.c.tous?`<button class="btn ghost sm" data-a="c-tous">Voir les ${futurs.length} rendez-vous à venir</button>`:''}`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
+  <div class="sec"><h3>À venir</h3>${futurs.length?`<div class="list">${futurs.slice(0,S.c.tous?99:5).map(x=>x.h).join('')}</div>${futurs.length>5&&!S.c.tous?`<button class="btn ghost sm" data-a="c-tous">Voir les ${futurs.length} rendez-vous à venir</button>`:''}`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
   ${st.past.length?`<div class="sec"><h3>Passés chez Institut Écusson</h3><div class="list">${st.past.slice(0,5).map(r=>card(r,false)).join('')}</div></div>`:''}
   <div class="card row" style="gap:12px;align-items:flex-start"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.plus}</span><span class="col" style="gap:3px"><b>Installez Agendelle, une seule fois</b><span class="sub small">Une seule icône pour tous vos instituts. Sur iPhone : Partager, puis « Sur l’écran d’accueil ». Sur Android : menu ⋮, puis « Ajouter à l’écran d’accueil ».</span></span></div>
   <p class="foot">Seuls les instituts où vous avez réservé, ou que vous avez ajoutés, apparaissent ici. Agendelle ne vous propose jamais d’autres instituts, et chaque institut ne voit que ses propres rendez-vous.</p>
   <button class="link" data-a="c-logout" style="align-self:center;color:var(--muted)">Me déconnecter</button>`;
 }
-const AUTRES={atelier:{id:'atelier',nom:'L’Atelier des Ongles',ville:'Montpellier · Antigone',metier:'Onglerie',rdv:[[2,1050,'Semi-permanent mains','Clara']]},
+const AUTRES={atelier:{id:'atelier',nom:'L’Atelier des Ongles',ville:'Montpellier · Antigone',metier:'Onglerie',rdv:[[1,540,'Semi-permanent mains','Clara']]},
   spa:{id:'spa',nom:'Spa des Arceaux',ville:'Montpellier · Arceaux',metier:'Spa et massages',rdv:[]}};
 function espaceAutres(){const e=S.espace||{ajoutes:[]};return ['atelier',...e.ajoutes].filter((x,i,a)=>a.indexOf(x)===i).map(k=>AUTRES[k]).filter(Boolean)}
 function autreCard(o,x){return `<div class="card col" style="gap:8px"><div class="row between"><b style="font-family:var(--display);font-size:17px">${cap(dlabel(addDays(TODAY,x[0])))}</b><span class="pill ok">Confirmé</span></div>
@@ -1642,14 +1643,18 @@ function renderDesk(keepScroll){
     const p=S.c.page;const main=vCliente();
     let body;
     if(p==='home')body=`<div class="cols2"><div class="col" style="gap:18px;min-width:0">${main}</div><aside class="dside">${cAsideHome()}</aside></div>`;
-    else if(p==='mesrdv')body=`<div class="cols2"><div class="col" style="gap:14px;min-width:0">${main}</div><aside class="dside">${cInstitutCard()}<button class="btn" data-a="c-book">Prendre un nouveau rendez-vous</button></aside></div>`;
+    else if(p==='mesrdv')body=`<div class="col" style="gap:14px;max-width:640px;margin:0 auto;width:100%">${main}</div>`;
     else body=`<div class="cols2"><div class="col" style="gap:14px;min-width:0">${main}</div><aside class="dside">${cAsideFlow()}</aside></div>`;
-    const nav=`<nav aria-label="Navigation cliente"><button data-a="c-home" ${p==='home'?'aria-current="page"':''}>L’institut</button><button data-a="c-mesrdv" ${p==='mesrdv'?'aria-current="page"':''}>Mes rendez-vous${me()?' ('+clientStats(me().id).next.length+')':''}</button>${plus()?`<button data-a="g-open" ${p==='gift'?'aria-current="page"':''}>Bons cadeaux</button>`:''}</nav>`;
-    app.innerHTML=`<div class="cdesk"><header class="dtop"><span class="logo">${swallow(32,'var(--accent-ink)','var(--accent)')}<span class="wm">Agendelle</span></span>${nav}<div class="row" style="gap:10px"><span class="tag">Démo</span>${sw}</div></header><main>${body}</main></div>`+sheetHTML();
+    const nav=p==='mesrdv'?`<nav aria-label="Navigation cliente"><button aria-current="page" data-a="c-mesrdv">Mes rendez-vous</button></nav>`
+      :`<nav aria-label="Navigation cliente"><button data-a="c-home" ${p==='home'?'aria-current="page"':''}>Institut Écusson</button>${plus()?`<button data-a="g-open" ${p==='gift'?'aria-current="page"':''}>Bons cadeaux</button>`:''}<button data-a="c-mesrdv">+ Ajouter à mes rendez-vous</button></nav>`;
+    app.innerHTML=`<div class="cdesk"><header class="dtop"><span class="logo">${swallow(32,'var(--accent-ink)','var(--accent)')}<span class="wm">Agendelle</span></span>${nav}<div class="row" style="gap:10px"><span class="tag">Démo</span>${sw}</div></header><main>${(p==='home'||p==='mesrdv')?vueCli():''}${body}</main></div>`+sheetHTML();
   }
   if(keepScroll)window.scrollTo(0,y);
   save();
 }
+function vueCli(){const app_=S.c.page==='mesrdv';
+  return `<div class="vuecli"><span class="tag">Vue cliente</span><div class="seg" role="group" aria-label="Vue cliente"><button data-a="c-home" aria-pressed="${!app_}">Page d’un institut</button><button data-a="c-mesrdv" aria-pressed="${app_}">Son appli Agendelle</button></div>
+  <span class="sub small">${app_?'Ce qu’elle voit en ouvrant Agendelle sur son téléphone : ses instituts et ses rendez-vous, sans aucun institut mis en avant.':'Ce qu’elle voit en arrivant par le lien d’Institut Écusson (Instagram, Google, QR code en vitrine) : uniquement cet institut.'}</span></div>`}
 function render(keepScroll){
   if(DESK)return renderDesk(keepScroll);
   const y=window.scrollY;
@@ -1664,12 +1669,12 @@ function render(keepScroll){
     main=vCliente();
     const p=S.c.page;
     if(p==='home'||p==='mesrdv'){
-      if(p==='mesrdv')nav=`<nav class="tabs" aria-label="Navigation cliente"><div class="in" style="grid-template-columns:repeat(2,minmax(0,1fr))"><button data-a="c-home">${I.home}<span>L’institut</span></button><button aria-current="page" data-a="c-mesrdv">${I.cal}<span>Mes rendez-vous</span></button></div></nav>`;
+
     }
   }
   const topbar=`<header class="top"><span class="logo">${swallow(30,'var(--accent-ink)','var(--accent)')}<span class="wm">Agendelle</span></span>
     <div class="seg" role="group" aria-label="Point de vue"><button data-a="mode" data-v="salon" aria-pressed="${S.mode==='salon'}">Salon</button><button data-a="mode" data-v="cliente" aria-pressed="${S.mode==='cliente'}">Cliente</button></div></header>
-    ${S.mode==='cliente'&&S.c.page==='home'?`<div class="row between small" style="margin:-4px 0 10px"><span class="tag">Démo · données d’exemple</span>${`<button class="link" data-a="c-mesrdv">${me()?'Mes rendez-vous ('+clientStats(me().id).next.length+')':'Mes rendez-vous'}</button>`}</div>`:`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
+    ${S.mode==='cliente'&&(S.c.page==='home'||S.c.page==='mesrdv')?vueCli()+(S.c.page==='home'?`<button class="link small" data-a="c-mesrdv" style="align-self:flex-start;margin:-2px 0 10px">+ Ajouter à mes rendez-vous Agendelle</button>`:''):`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
   app.innerHTML=topbar+`<main>${main}</main>`+nav+sheetHTML();
   setupStrip();
   if(keepScroll)window.scrollTo(0,y);
