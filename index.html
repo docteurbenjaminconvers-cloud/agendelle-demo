@@ -17,7 +17,11 @@
 <style>
 .cardfield{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font:600 14px ui-monospace,Menlo,monospace;color:var(--muted)}
 .opt[aria-disabled="true"]{opacity:.55}
-.notice.ok{background:var(--ok-soft);color:var(--ink)}.notice.ok svg{color:var(--ok)}
+.notice.ok{background:var(--ok-soft);color:var(--ink)}
+.tk{background:#fffdf8;color:#1c1a17;border:1px solid var(--line);border-radius:6px;padding:14px 14px 12px;font:500 12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
+.tk hr{border:0;border-top:1px dashed #b9b2a6;margin:5px 0}.tk-r{display:flex;justify-content:space-between;gap:10px}.tk-r span:last-child,.tk-r b:last-child{text-align:right;white-space:nowrap}
+.tk-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}.tk-c em{font-style:normal;font-size:11px;color:#8a6d00}.tk-t{font-size:14.5px}.tk-h{font-size:10.5px;color:#6d665c;word-break:break-all}
+.tk-dup{text-align:center;font-weight:800;letter-spacing:.12em;border:1.5px solid #1c1a17;padding:2px;margin:4px 0}.notice.ok svg{color:var(--ok)}
 .share{display:grid;gap:10px}.qr{display:flex;gap:14px;align-items:center}.qrbox{width:112px;height:112px;flex-shrink:0;padding:8px;background:#fff;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
 .guide summary{cursor:pointer;list-style:none;display:flex;align-items:center}.guide summary::-webkit-details-marker{display:none}.guide summary b{display:flex;gap:8px;align-items:center}.guide summary::after{content:'+';margin-left:auto;font-weight:800;color:var(--muted)}.guide[open] summary::after{content:'−'}.guide ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--muted)}
 .gdot{width:24px;height:24px;border-radius:7px;background:var(--accent-soft);color:var(--accent);display:inline-grid;place-items:center;font-size:12px;font-weight:800}.snip{display:block;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:12px;word-break:break-all;color:var(--ink)}
@@ -406,7 +410,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='4 nov. 2026 · 23h00';
+const VERSION='6 nov. 2026 · 10h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -523,6 +527,7 @@ if(!S.options)S.options={rappelsMail:true,campMail:false};
 let STORE_OK=true;try{localStorage.setItem('agd-t','1');localStorage.removeItem('agd-t')}catch(e){STORE_OK=false}
 S.sheet=null;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname))window.__agd={st:()=>S,verify:()=>verify(),render:()=>render(true)};
 function photoHTML(ph,big){
   if(ph&&ph.src)return `<img src="${ph.src}" alt="${esc(ph.label||'Photo de l’institut')}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph ph${ph.g||1}&quot;><span>${esc(ph.label||'')}</span></div>'">`;
   const g=ph?ph.g||1:1;
@@ -875,22 +880,153 @@ function vKookla(){
   <div class="kpis two"><div class="opt"><b>Annuaire</b><span class="sub small">Gratuit. Votre fiche laser renvoie vers votre agenda.</span></div><div class="opt"><b>Partenaire</b><span class="sub small">Commission de 25 % sur les séances vendues par Kookla.</span></div></div>`;
 }
 
-/* ----- caisse ----- */
+/* ----- caisse conforme (démo) ----- */
+const CAISSE_V='Agendelle Caisse 1.0';
+const SOC={rs:'Institut Écusson SAS',adr:'Rue de la Démo, 34000 Montpellier',siret:'000 000 000 00000',tva:'FR00000000000'};
+const PRODUITS=[['p1','Crème hydratante',29],['p2','Sérum éclat',39],['p3','Huile sèche',24],['p4','Baume lèvres',9],['p5','Lime et soin ongles',12],['p6','Bon cadeau 50 €',50]];
+const MOTIFS=['Erreur d’encaissement','Prestation non réalisée','Geste commercial','Retour produit'];
+const sha256=(function(){const K=[];let n=2,c=0;const isP=x=>{for(let i=2;i*i<=x;i++)if(x%i===0)return false;return true};while(c<64){if(isP(n)){K[c++]=(Math.pow(n,1/3)%1)*4294967296|0}n++}
+  return function(str){const b=unescape(encodeURIComponent(str));const l=b.length;const w=[];for(let i=0;i<l;i++)w[i>>2]|=b.charCodeAt(i)<<(24-(i%4)*8);w[l>>2]|=0x80<<(24-(l%4)*8);const nb=((l+8)>>6)+1;w[nb*16-1]=l*8;
+    let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];const W=new Array(64);const r=(x,y)=>(x>>>y)|(x<<(32-y));
+    for(let j=0;j<nb*16;j+=16){let [a,bb,cc,d,e,f,g,h]=H;for(let i=0;i<64;i++){if(i<16)W[i]=w[j+i]|0;else{const s0=r(W[i-15],7)^r(W[i-15],18)^(W[i-15]>>>3),s1=r(W[i-2],17)^r(W[i-2],19)^(W[i-2]>>>10);W[i]=(W[i-16]+s0+W[i-7]+s1)|0}
+      const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+W[i])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&bb)^(a&cc)^(bb&cc)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=cc;cc=bb;bb=a;a=(t1+t2)|0}
+      H=[a,bb,cc,d,e,f,g,h].map((x,i)=>(x+H[i])|0)}
+    return H.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('')}})();
+const r2=n=>Math.round(n*100)/100;
+const nTk=n=>String(n).padStart(6,'0');
+const tsOf=(date,min)=>date+'T'+pad(Math.floor(min/60))+':'+pad(min%60);
+const tsNow=()=>{const d=new Date();return TODAY+'T'+pad(d.getHours())+':'+pad(d.getMinutes())};
+const tsLabel=ts=>dshort(ts.slice(0,10))+' '+fromIso(ts.slice(0,10)).getFullYear()+' à '+ts.slice(11,13)+'h'+ts.slice(14,16);
+function body(o){const x={...o};delete x.prev;delete x.h;return JSON.stringify(x)}
+function chain(list,o){o.prev=list.length?list[list.length-1].h:'0'.repeat(64);o.h=sha256(o.prev+'|'+body(o));list.push(o);return o}
+function jrnl(ev,d,ref,ts){return chain(S.caisse.jn,{n:S.caisse.jn.length+1,ts:ts||tsNow(),ev,d,ref:ref==null?null:ref})}
+function addTicket(t,ts){const C=S.caisse;t={n:C.tk.length+1,ts:ts||tsNow(),...t};t.date=t.ts.slice(0,10);chain(C.tk,t);C.gt=r2(C.gt+t.ttc);
+  jrnl(t.type==='avoir'?'avoir':'ticket',(t.type==='avoir'?'Avoir n° '+nTk(t.n)+' sur ticket n° '+nTk(t.ref)+' · ':'Ticket n° '+nTk(t.n)+' · ')+eur(t.ttc),t.n,t.ts);return t}
+function tkFromRdv(r,pay,remise,rendu){const lignes=r.soins.map(id=>[SOIN(id).nom,1,SOIN(id).prix]);const brut=lignes.reduce((a,l)=>a+l[1]*l[2],0);
+  return {type:'vente',client:r.client,rdv:r.id,op:PRATS[r.prat].nom,lignes,remise:r2(remise||0),acompte:r.acompte||0,ttc:r2(brut-(remise||0)-(r.acompte||0)),pay,rendu:rendu||0}}
+const tkOfRdv=id=>S.caisse?S.caisse.tk.find(t=>t.rdv===id&&t.type==='vente'):null;
+const avoirOf=n=>S.caisse.tk.find(t=>t.type==='avoir'&&t.ref===n);
+const dupCount=n=>S.caisse.jn.filter(j=>j.ev==='duplicata'&&j.ref===n).length;
+function totaux(list){const v=list.filter(t=>t.ttc>=0),a=list.filter(t=>t.ttc<0);return {nb:list.length,premier:list.length?list[0].n:null,dernier:list.length?list[list.length-1].n:null,ventes:r2(v.reduce((s,t)=>s+t.ttc,0)),avoirs:r2(a.reduce((s,t)=>s+t.ttc,0)),net:r2(list.reduce((s,t)=>s+t.ttc,0))}}
+const MOISL=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const perLabel=c=>c.type==='jour'?cap(dlabel(c.per)):c.type==='mois'?cap(MOISL[+c.per.slice(5,7)-1])+' '+c.per.slice(0,4):'Exercice '+c.per;
+function closeOne(type,per,ts){const C=S.caisse;const list=C.tk.filter(t=>t.date.startsWith(per));const last=list.length?list[list.length-1].n:0;
+  const gt=r2(C.tk.filter(t=>t.date<=(type==='jour'?per:per+'-99')).reduce((s,t)=>s+t.ttc,0));
+  const c=chain(C.cl,{n:C.cl.length+1,type,per,ts,...totaux(list),gt});
+  jrnl('cloture','Clôture '+(type==='jour'?'journalière':type==='mois'?'mensuelle':'annuelle')+' · '+perLabel(c)+' · net '+eur(c.net),c.n,ts);return c}
+function autoClose(){const C=S.caisse;const done=new Set(C.cl.map(c=>c.type+c.per));const days=[...new Set(C.tk.map(t=>t.date))].filter(d=>d<TODAY).sort();
+  const curM=TODAY.slice(0,7),curY=TODAY.slice(0,4);let prevM=null,prevY=null;
+  const closeM=m=>{if(m&&m<curM&&!done.has('mois'+m)){const last=fromIso(m+'-01');last.setMonth(last.getMonth()+1);last.setDate(0);closeOne('mois',m,iso(last)+'T23:59');done.add('mois'+m)}};
+  const closeY=y=>{if(y&&y<curY&&!done.has('annee'+y)){closeOne('annee',y,y+'-12-31T23:59');done.add('annee'+y)}};
+  days.forEach(d=>{const m=d.slice(0,7),y=d.slice(0,4);if(prevM&&m!==prevM)closeM(prevM);if(prevY&&y!==prevY)closeY(prevY);
+    if(!done.has('jour'+d)){closeOne('jour',d,d+'T23:59');done.add('jour'+d)}prevM=m;prevY=y});
+  closeM(prevM);closeY(prevY)}
+function ensureCaisse(){
+  if(S.caisse){const n=S.caisse.cl.length;autoClose();if(S.caisse.cl.length!==n)save();return}
+  S.caisse={tk:[],cl:[],jn:[],gt:0,tamper:null};
+  const hist=S.rdv.filter(r=>r.paid&&r.paid.mode!=='En ligne'&&r.source!=='kookla').sort((a,b)=>(a.paid.date+pad(a.start)).localeCompare(b.paid.date+pad(b.start))||a.start-b.start);
+  const first=hist.length?hist[0].paid.date:TODAY;jrnl('ouverture','Mise en service de '+CAISSE_V+' · '+SOC.rs,null,first+'T09:00');
+  const dDoublon=addDays(TODAY,-9),dDup=addDays(TODAY,-4);let didD=false,didP=false;
+  hist.forEach(r=>{const end=r.date===r.paid.date?Math.min(r.start+r.dur,1199):1140;const ts=tsOf(r.paid.date,end);
+    const t=addTicket(tkFromRdv(r,[[r.paid.mode,r2(r.paid.montant-(r.acompte||0))]]),ts);
+    if(!didD&&r.paid.date>=dDoublon&&r.paid.date<TODAY){didD=true;const d2=addTicket({...tkFromRdv(r,[[r.paid.mode,t.ttc]])},tsOf(r.paid.date,end+1));
+      addTicket({type:'avoir',client:r.client,rdv:null,op:t.op,ref:d2.n,motif:'Erreur d’encaissement',lignes:d2.lignes.map(l=>[l[0],-l[1],l[2]]),remise:-d2.remise,acompte:-d2.acompte,ttc:-d2.ttc,pay:d2.pay.map(p=>[p[0],-p[1]]),rendu:0},tsOf(r.paid.date,end+3))}
+    if(!didP&&r.paid.date>=dDup&&r.paid.date<TODAY){didP=true;jrnl('duplicata','Duplicata n° 1 du ticket n° '+nTk(t.n)+' · demandé par la cliente',t.n,tsOf(r.paid.date,end+20))}});
+  autoClose();save()}
+function verify(){const C=S.caisse;const bad=[];
+  [['tk','Ticket'],['cl','Clôture'],['jn','Événement du journal']].forEach(([k,lab])=>{let prev='0'.repeat(64);C[k].forEach((o,i)=>{
+    if(o.n!==i+1)bad.push(lab+' : numéro '+o.n+' hors séquence');
+    if(o.prev!==prev||sha256(o.prev+'|'+body(o))!==o.h)bad.push(lab+' n° '+(k==='tk'?nTk(o.n):o.n)+' : contenu modifié après enregistrement');prev=o.h})});
+  const gt=r2(C.tk.reduce((s,t)=>s+t.ttc,0));if(gt!==C.gt)bad.push('Grand total perpétuel incohérent avec les tickets');
+  return bad}
+function payModes(c){return ['CB','Espèces','Chèque'].concat(c&&c.carte?['Carte de séances']:[]).concat(['Bon cadeau'])}
+function payPlan(sh,due){const m1=sh.split?Math.min(Math.max(+sh.m1||0,0),due):due;const pay=[[sh.p1||'CB',r2(m1)]];if(sh.split&&due-m1>0)pay.push([sh.p2||'Espèces',r2(due-m1)]);
+  const cash=pay.filter(p=>p[0]==='Espèces').reduce((s,p)=>s+p[1],0);const recu=+sh.recu||0;return {pay,cash:r2(cash),rendu:cash&&recu>cash?r2(recu-cash):0,manque:cash&&recu&&recu<cash}}
+function payInfo(sh,due){const p=payPlan(sh,due);return (sh.split?p.pay.map(x=>x[0]+' '+eur(x[1])).join(' + '):'')+(p.cash?(sh.split?' · ':'')+(sh.recu?(p.manque?'Montant reçu insuffisant':'Monnaie à rendre : '+eur(p.rendu)):'Saisissez le montant reçu pour calculer la monnaie'):'')}
+function payHTML(sh,due,c){sh.due=due;const modes=payModes(c);const p1=sh.p1||'CB';const p2=sh.p2&&sh.p2!==p1?sh.p2:modes.find(m=>m!==p1);const p=payPlan({...sh,p2},due);
+  return `<span class="tag">Moyen de paiement</span><div class="chips">${modes.map(m=>`<button class="chip" data-a="pay-mode" data-v="${m}" aria-pressed="${p1===m}">${m}</button>`).join('')}</div>
+  <label class="row small" style="gap:8px"><input type="checkbox" data-a="pay-split" ${sh.split?'checked':''}> Régler avec deux moyens de paiement</label>
+  ${sh.split?`<label class="field" for="pay-m1">Montant en ${esc(p1)}<input id="pay-m1" inputmode="decimal" value="${sh.m1!=null?esc(String(sh.m1)):''}" placeholder="Par exemple ${eur(Math.round(due/2))}"></label>
+    <span class="tag">Reste payé en</span><div class="chips">${modes.filter(m=>m!==p1).map(m=>`<button class="chip" data-a="pay-mode2" data-v="${m}" aria-pressed="${p2===m}">${m}</button>`).join('')}</div>`:''}
+  ${p.cash?`<label class="field" for="pay-recu">Espèces reçues<input id="pay-recu" inputmode="decimal" value="${sh.recu?esc(String(sh.recu)):''}" placeholder="${eur(p.cash)}"></label>`:''}
+  <p class="sub small" id="pay-info" aria-live="polite">${esc(payInfo({...sh,p2},due))}</p>`}
+function tkHTML(t,dup){const c=t.client?CLIENT(t.client):null;const ht=r2(t.ttc/1.2);
+  return `<div class="tk"><div class="tk-c"><b>${esc(SOC.rs)}</b><span>${esc(SOC.adr)}</span><span>SIRET ${SOC.siret} · TVA ${SOC.tva}</span><em>Données fictives de démonstration</em></div>
+  ${dup?`<div class="tk-dup">DUPLICATA n° ${dup}</div>`:''}
+  <div class="tk-r"><b>${t.type==='avoir'?'AVOIR':'TICKET'} n° ${nTk(t.n)}</b><span>${tsLabel(t.ts)}</span></div>
+  <div class="tk-r"><span>Opérateur : ${esc(t.op)}</span><span>${c?'Cliente : '+esc(court(c.nom)):''}</span></div>
+  ${t.type==='avoir'?`<div class="tk-r"><span>Sur ticket n° ${nTk(t.ref)}</span><span>Motif : ${esc(t.motif)}</span></div>`:''}
+  <hr>${t.lignes.map(l=>`<div class="tk-r"><span>${l[1]!==1?l[1]+' × ':''}${esc(l[0])}</span><span>${eur(l[1]*l[2])}</span></div>`).join('')}
+  ${t.remise?`<div class="tk-r"><span>Remise</span><span>− ${eur(Math.abs(t.remise))}</span></div>`:''}
+  ${t.acompte?`<div class="tk-r"><span>Acompte payé en ligne</span><span>− ${eur(Math.abs(t.acompte))}</span></div>`:''}
+  <hr><div class="tk-r tk-t"><b>Total TTC</b><b>${eur(t.ttc)}</b></div>
+  <div class="tk-r"><span>dont TVA 20 % (HT ${eur(ht)})</span><span>${eur(r2(t.ttc-ht))}</span></div>
+  <hr>${t.pay.map(p=>`<div class="tk-r"><span>${t.type==='avoir'?'Remboursé · ':''}${esc(p[0])}</span><span>${eur(Math.abs(p[1]))}</span></div>`).join('')}
+  ${t.rendu?`<div class="tk-r"><span>Monnaie rendue</span><span>${eur(t.rendu)}</span></div>`:''}
+  <hr><div class="tk-c small"><span>${CAISSE_V} · édité par Kookla Platform</span><span class="tk-h">Empreinte ${t.h.slice(0,16)}…</span></div></div>`}
+function tkItem(t){const c=t.client?CLIENT(t.client):null;const av=t.type==='vente'&&avoirOf(t.n);
+    return `<button class="item" data-a="tk" data-v="${t.n}"><span class="t"><b>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)}${c?' · '+esc(court(c.nom)):''}</b><span>${t.date===TODAY?'Aujourd’hui':dshort(t.date)} ${t.ts.slice(11,13)}h${t.ts.slice(14,16)} · ${esc(t.pay.map(p=>p[0]).join(' + '))}${t.type==='avoir'?' · '+esc(t.motif):''}</span></span>${av?'<span class="pill warn">Avoir</span>':''}<span class="price"${t.ttc<0?' style="color:var(--bad)"':''}>${eur(t.ttc)}</span></button>`}
+function tkListHTML(){const q=(S.tq||'').trim().toLowerCase();
+  const list=S.caisse.tk.slice().reverse().filter(t=>!q||nTk(t.n).includes(q)||String(t.n)===q||(t.client&&CLIENT(t.client).nom.toLowerCase().includes(q)));
+  return (list.slice(0,60).map(tkItem).join('')||'<p class="sub">Aucun ticket trouvé.</p>')+(list.length>60?`<p class="sub small">${list.length-60} tickets plus anciens : précisez la recherche.</p>`:'')}
 function vCaisse(){
-  const paid=S.rdv.filter(r=>r.paid&&r.paid.date===TODAY);
-  const ventes=S.ventes.filter(v=>v.date===TODAY);
+  ensureCaisse();const C=S.caisse;const tab=S.ctab||'jour';
+  const seg=`<div class="seg" role="group" aria-label="Caisse" style="max-width:100%;overflow-x:auto">${[['jour','Aujourd’hui'],['tickets','Tickets'],['clotures','Clôtures'],['controle','Contrôle']].map(([k,l])=>`<button data-a="ctab" data-v="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>`;
+  const head=`<span class="tag">${cap(dlabel(TODAY))}</span><h1>Caisse</h1>${seg}`;
+  if(tab==='tickets')return head+`<label class="field" for="tq">Rechercher un ticket<input id="tq" value="${esc(S.tq||'')}" placeholder="N° de ticket ou nom de la cliente" autocomplete="off"></label>
+    <div class="notice">${I.shield}<span>Un ticket enregistré ne peut être ni modifié ni supprimé. Pour corriger une erreur, ouvrez le ticket et faites un avoir.</span></div>
+    <div class="list" id="tk-list">${tkListHTML()}</div>`;
+  if(tab==='clotures'){const mois=C.cl.filter(c=>c.type==='mois').reverse(),ans=C.cl.filter(c=>c.type==='annee').reverse(),jours=C.cl.filter(c=>c.type==='jour').reverse();
+    const cur=totaux(C.tk.filter(t=>t.date===TODAY));
+    const clItem=c=>`<div class="item"><span class="t"><b>${perLabel(c)}</b><span>Clôture n° ${c.n} · ${c.nb} ticket${c.nb>1?'s':''}${c.nb?' (n° '+nTk(c.premier)+' à '+nTk(c.dernier)+')':''} · grand total ${eur(c.gt)}</span></span><span class="price">${eur(c.net)}</span>${c.type!=='jour'?`<button class="btn sm ghost" data-a="archive" data-v="${c.n}">Archive</button>`:''}</div>`;
+    return head+`<div class="card col" style="gap:6px"><span class="sub">Journée en cours · clôturée automatiquement à minuit</span><b style="font-family:var(--display);font-size:28px">${eur(cur.net)}</b><span class="sub small">${cur.nb} ticket${cur.nb>1?'s':''} · ventes ${eur(cur.ventes)} · avoirs ${eur(cur.avoirs)}</span><span class="sub small">Grand total perpétuel : <b>${eur(C.gt)}</b></span></div>
+    <div class="g2"><div class="sec"><h3>Clôtures mensuelles et annuelles</h3>${mois.length+ans.length?`<div class="list">${ans.concat(mois).map(clItem).join('')}</div>`:'<p class="sub">La première clôture mensuelle aura lieu à la fin du mois.</p>'}
+      <p class="sub small">Chaque archive est scellée et horodatée. Gardez-la 6 ans : c’est la durée de conservation exigée par l’administration fiscale.</p></div>
+    <div class="sec"><h3>Clôtures journalières</h3><div class="list">${jours.slice(0,14).map(clItem).join('')}</div></div></div>`}
+  if(tab==='controle'){const bad=verify();
+    return head+`<div class="card col" style="gap:8px;${bad.length?'border-color:var(--bad)':''}"><span class="pill ${bad.length?'bad':'ok'}" style="align-self:flex-start">${bad.length?'Anomalie détectée':'Intégrité vérifiée'}</span>
+      <b>${bad.length?bad.length+' anomalie'+(bad.length>1?'s':''):'Aucune donnée de caisse n’a été modifiée'}</b>
+      ${bad.length?`<div class="list small">${bad.map(b=>`<span class="row">${esc(b)}</span>`).join('')}</div>`:`<span class="sub small">${C.tk.length} tickets, ${C.cl.length} clôtures et ${C.jn.length} événements du journal contrôlés : numérotation continue et chaîne d’empreintes SHA-256 intacte.</span>`}
+      <button class="btn sm ghost" data-a="ctl-run" style="align-self:flex-start">Relancer le contrôle</button></div>
+    <div class="card col" style="gap:8px;background:var(--sunk)"><span class="tag">Pour la démonstration</span><span class="small">Simulez une modification faite directement dans la base, sans passer par la caisse : le contrôle la repère aussitôt.</span>
+      ${C.tamper?`<button class="btn sm" data-a="ctl-restore" style="align-self:flex-start">Annuler la simulation</button>`:`<button class="btn sm ghost" data-a="ctl-tamper" style="align-self:flex-start">Modifier un ticket en cachette</button>`}</div>
+    <div class="g2"><div class="sec"><h3>Ce que fait la caisse</h3><div class="list small">${[['Inaltérable','Tickets, clôtures et journal ne se modifient pas et ne se suppriment pas. Une erreur se corrige par un avoir.'],['Sécurisée','Numérotation continue et chaque enregistrement scellé par l’empreinte du précédent.'],['Conservée','Clôtures automatiques par jour, mois et année, avec un grand total perpétuel.'],['Archivée','Une archive scellée par mois, à télécharger et à garder 6 ans.']].map(([a,b])=>`<span class="row" style="align-items:flex-start">${I.check}<span><b>${a}.</b> ${b}</span></span>`).join('')}</div>
+      <p class="sub small">${CAISSE_V}, éditée par Kookla Platform.</p></div>
+    <div class="sec"><h3>Journal des événements</h3><div class="list">${C.jn.slice().reverse().slice(0,12).map(j=>`<div class="item"><span class="t"><b>${esc(j.d)}</b><span>N° ${j.n} · ${tsLabel(j.ts)}</span></span></div>`).join('')}</div></div></div>`}
+  const tdy=C.tk.filter(t=>t.date===TODAY);const ventes=S.ventes.filter(v=>v.date===TODAY);
   const kToday=S.rdv.filter(r=>r.date===TODAY&&r.source==='kookla'&&r.statut==='honore');
-  const tot=paid.reduce((a,r)=>a+r.paid.montant,0)+ventes.reduce((a,v)=>a+v.montant,0);
-  const modes={};paid.forEach(r=>{modes[r.paid.mode]=(modes[r.paid.mode]||0)+r.paid.montant});ventes.forEach(v=>{modes['En ligne']=(modes['En ligne']||0)+v.montant});
+  const tot=tdy.reduce((a,t)=>a+t.ttc,0);
+  const modes={};tdy.forEach(t=>t.pay.forEach(p=>{modes[p[0]]=r2((modes[p[0]]||0)+p[1])}));
   const todo=S.rdv.filter(r=>r.source!=='kookla'&&!r.paid&&(r.statut==='honore'||r.statut==='arrive'||(r.statut==='confirme'&&r.date===TODAY&&r.start+r.dur<=nowMin()))&&r.date<=TODAY&&r.date>=addDays(TODAY,-7));
-  return `<span class="tag">${cap(dlabel(TODAY))}</span><h1>Caisse</h1>
-  <div class="card col" style="gap:6px"><span class="sub">Encaissé aujourd’hui</span><b style="font-family:var(--display);font-size:34px;letter-spacing:-.02em">${eur(tot)}</b>
+  return head+`<div class="card col" style="gap:6px"><span class="sub">Encaissé en caisse aujourd’hui</span><b style="font-family:var(--display);font-size:34px;letter-spacing:-.02em">${eur(tot)}</b>
     <div class="row wrap" style="gap:6px">${Object.entries(modes).map(([m,v])=>`<span class="pill">${esc(m)} · ${eur(v)}</span>`).join('')||'<span class="sub small">Rien encaissé pour l’instant.</span>'}</div>
     ${kToday.length&&kPartner()?`<span class="pill ks" style="align-self:flex-start">+ ${eur(kToday.reduce((a,r)=>a+rdvPrice(r)*.75,0))} versés par Kookla après les séances</span>`:''}</div>
+  <div class="row" style="gap:8px"><button class="btn" data-a="vente-new" style="flex:1">${I.euro} Nouvelle vente</button></div>
   <div class="g2"><div class="sec"><div class="sec-h"><h3>À encaisser</h3><span class="sub small">${todo.length}</span></div>
     ${todo.length?`<div class="list">${todo.map(r=>`<div class="item"><span class="t"><b>${esc(court(CLIENT(r.client).nom))} · ${esc(rdvNames(r))}</b><span>${r.date===TODAY?'Aujourd’hui':dshort(r.date)} ${hm(r.start)}${r.acompte?' · acompte '+eur(r.acompte)+' déjà payé':''}</span></span><button class="btn sm" data-a="encaisser" data-id="${r.id}">${eur(rdvPrice(r)-r.acompte)}</button></div>`).join('')}</div>`:'<p class="sub">Tout est encaissé.</p>'}</div>
-  <div class="sec"><h3>Encaissements du jour</h3>${paid.length+ventes.length?`<div class="list">${paid.map(r=>`<button class="item" data-a="rdv" data-id="${r.id}"><span class="t"><b>${esc(court(CLIENT(r.client).nom))}</b><span>${esc(rdvNames(r))} · ${esc(r.paid.mode)}</span></span><span class="price">${eur(r.paid.montant)}</span></button>`).join('')}${ventes.map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>Vente en ligne · ${esc(v.acheteur)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div>`:'<p class="sub">Aucun encaissement aujourd’hui.</p>'}</div></div>`;
+  <div class="sec"><h3>Tickets du jour</h3>${tdy.length?`<div class="list">${tdy.slice().reverse().map(tkItem).join('')}</div>`:'<p class="sub">Aucun ticket aujourd’hui.</p>'}
+    ${ventes.length?`<span class="tag" style="margin-top:6px">Ventes en ligne · hors caisse, réglées par Stripe</span><div class="list">${ventes.map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>${esc(v.acheteur)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div>`:''}</div></div>`;
 }
+function caisseSheet(sh){
+  if(sh.type==='ticket'){const t=S.caisse.tk.find(x=>x.n===sh.n);if(!t)return '';const av=t.type==='vente'&&avoirOf(t.n);
+    return `<h2>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)}</h2>${tkHTML(t,sh.dup||0)}
+    ${av?`<div class="notice warn"><span>Ce ticket a été annulé par l’avoir n° ${nTk(av.n)} (${esc(av.motif)}).</span></div>`:''}
+    <div class="row" style="gap:8px"><button class="btn sm ghost" data-a="tk-dup" data-v="${t.n}" style="flex:1">Imprimer un duplicata</button>${t.type==='vente'&&!av?`<button class="btn sm ghost" data-a="tk-avoir" data-v="${t.n}" style="flex:1">Faire un avoir</button>`:''}</div>
+    <span class="sub small" style="text-align:center">${dupCount(t.n)?dupCount(t.n)+' duplicata'+(dupCount(t.n)>1?'s':'')+' déjà imprimé'+(dupCount(t.n)>1?'s':'')+'. ':''}Ni modification, ni suppression possible.</span>`}
+  if(sh.type==='avoir'){const t=S.caisse.tk.find(x=>x.n===sh.n);const m=sh.motif;
+    return `<h2>Avoir sur le ticket n° ${nTk(t.n)}</h2><p class="sub">Le ticket reste enregistré. L’avoir de ${eur(-t.ttc)} l’annule et apparaît dans la clôture du jour.</p>
+    <span class="tag">Motif</span><div class="chips" style="flex-wrap:wrap">${MOTIFS.map(x=>`<button class="chip" data-a="avoir-motif" data-v="${x}" aria-pressed="${m===x}">${x}</button>`).join('')}</div>
+    <div class="card col" style="gap:4px">${t.pay.map(p=>`<div class="row between small"><span>Remboursement ${esc(p[0])}</span><b>${eur(p[1])}</b></div>`).join('')}</div>
+    <button class="btn" data-a="avoir-ok" data-v="${t.n}" ${m?'':'disabled aria-disabled="true"'}>Créer l’avoir de ${eur(-t.ttc)}</button>`}
+  if(sh.type==='vente'){const cart=sh.cart||{};const lignes=PRODUITS.filter(p=>cart[p[0]]);const due=r2(lignes.reduce((s,p)=>s+p[2]*cart[p[0]],0));
+    return `<h2>Nouvelle vente</h2><p class="sub">Produits ou bon cadeau vendus au comptoir.</p>
+    <div class="list">${PRODUITS.map(p=>`<div class="item"><span class="t"><b>${esc(p[1])}</b><span>${eur(p[2])}</span></span>${cart[p[0]]?`<button class="btn sm ghost" data-a="v-rm" data-v="${p[0]}" aria-label="Retirer ${esc(p[1])}">−</button><b>${cart[p[0]]}</b>`:''}<button class="btn sm ghost" data-a="v-add" data-v="${p[0]}" aria-label="Ajouter ${esc(p[1])}">+</button></div>`).join('')}</div>
+    ${due?`<div class="row between"><b>À payer</b><b style="font-family:var(--display);font-size:22px">${eur(due)}</b></div>${payHTML(sh,due,null)}<button class="btn" data-a="vente-ok">Encaisser ${eur(due)}</button>`:'<p class="sub small">Ajoutez au moins un article.</p>'}`}
+  return null}
+function finishPay(sh,due){const p=payPlan(sh,due);
+  if(sh.split&&(!(+sh.m1>0)||+sh.m1>=due)){toast('Indiquez la part payée avec le premier moyen de paiement');return null}
+  if(p.manque){toast('Le montant reçu en espèces est insuffisant');return null}
+  return p}
 
 /* ----- menu ----- */
 const MENU=[['vitrine','Ma vitrine',ic('<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2.5h5L16 6"/>'),'Présentation, photos, points forts'],['prestations','Prestations',I.list,'Catalogue à cocher, prix et durées'],['equipe','Équipe & horaires',I.team,'Horaires, congés, réservable en ligne'],
@@ -1304,6 +1440,7 @@ function vCliente(){
    ========================================================= */
 function sheetHTML(){
   const sh=S.sheet;if(!sh)return '';
+  {const ch=caisseSheet(sh);if(ch!=null){return `<div class="sheet-bg" data-a="close-bg"><div class="sheet" role="dialog" aria-modal="true" aria-label="Caisse"><span class="grab"></span>${ch}<button class="link" data-a="close" style="align-self:center;color:var(--muted)">Fermer</button></div></div>`}}
   if(sh.type==='photo'){const ph=S.vitrine.photos.length?S.vitrine.photos:[{src:null,label:'',g:1}];const i=Math.max(0,Math.min(sh.i,ph.length-1));
     return `<div class="lb" role="dialog" aria-modal="true" aria-label="Photos de l’institut" id="lb"><div class="lb-top"><span>${i+1} / ${ph.length}</span><button class="ibtn" data-a="close" aria-label="Fermer">${I.x}</button></div>
       <div class="lb-img">${photoHTML(ph[i],true)}</div>${ph[i].label?`<p class="lb-cap">${esc(ph[i].label)}</p>`:''}
@@ -1320,19 +1457,19 @@ function sheetHTML(){
     ${r.statut!=='annule'?`<div class="seg" role="group" aria-label="Statut" style="display:grid;grid-template-columns:repeat(3,1fr)"><button data-a="statut" data-v="arrive" aria-pressed="${r.statut==='arrive'}">Arrivée</button><button data-a="statut" data-v="honore" aria-pressed="${r.statut==='honore'}">Honoré</button><button data-a="statut" data-v="absent" aria-pressed="${r.statut==='absent'}">Absente</button></div>`:''}
     ${r.statut==='absent'&&r.garantie===1&&!r.penalite?`<button class="btn" data-a="penalite" data-id="${r.id}">${I.shield} Débiter 100 % (${eur(price)}) sur la carte enregistrée</button><span class="sub small" style="text-align:center">Vous décidez : rien n’est débité sans votre accord.</span>`:''}
     ${r.statut==='absent'&&r.garantie===2&&!r.penalite?`<button class="btn" data-a="penalite" data-id="${r.id}">Conserver le paiement (${eur(price)})</button>`:''}
+    ${r.paid&&tkOfRdv(r.id)?`<button class="btn sm ghost" data-a="tk" data-v="${tkOfRdv(r.id).n}">Voir le ticket n° ${nTk(tkOfRdv(r.id).n)}</button>`:''}
     ${!kk&&!r.paid&&r.statut!=='annule'&&r.statut!=='absent'?`<button class="btn" data-a="encaisser" data-id="${r.id}">${I.euro} Encaisser ${eur(price-r.acompte)}</button>`:''}
     ${r.statut!=='annule'&&!kk?`<div class="row"><button class="btn sm ghost" data-a="deplacer" style="flex:1">Déplacer</button><button class="btn sm ghost" data-a="rappel" style="flex:1">${S.sms>0?'Rappel SMS':'Rappel email'}</button></div>`:''}
     ${r.statut!=='annule'&&r.statut!=='absent'&&!r.paid&&!kk?(sh.confirm?`<div class="notice warn"><span>Annuler ce rendez-vous ? ${S.auto.attente?'Les clientes en liste d’attente seront prévenues.':''}</span></div><div class="row"><button class="btn sm ghost" data-a="sheet-noconfirm" style="flex:1">Garder</button><button class="btn sm" data-a="annuler" style="flex:1">Oui, annuler</button></div>`:`<button class="btn danger" data-a="ask-annuler">Annuler le rendez-vous</button>`):''}`;
   }
-  if(sh.type==='encaisser'){const r=S.rdv.find(x=>x.id===sh.id);const price=rdvPrice(r);const rem=sh.remise||0;const due=Math.max(0,Math.round((price*(1-rem/100)-r.acompte)*100)/100);const mode=sh.mode||'CB';const c=CLIENT(r.client);
-    const modes=['CB','Espèces','Chèque'].concat(c.carte?['Carte de séances']:[]).concat(['Bon cadeau']);
+  if(sh.type==='encaisser'){const r=S.rdv.find(x=>x.id===sh.id);const price=rdvPrice(r);const rem=sh.remise||0;const due=Math.max(0,Math.round((price*(1-rem/100)-r.acompte)*100)/100);const mode=sh.p1||'CB';const c=CLIENT(r.client);
     h=`<h2>Encaisser</h2><p class="sub">${esc(c.nom)} · ${esc(rdvNames(r))}</p>
     <div class="card col" style="gap:4px">${r.soins.map(id=>`<div class="row between small"><span>${esc(SOIN(id).nom)}</span><span>${eur(SOIN(id).prix)}</span></div>`).join('')}
       ${rem?`<div class="row between small"><span>Remise ${rem} %</span><span>− ${eur(price*rem/100)}</span></div>`:''}
       ${r.acompte?`<div class="row between small"><span>Acompte déjà payé</span><span>− ${eur(r.acompte)}</span></div>`:''}
       <div class="row between" style="border-top:1px solid var(--line);padding-top:6px"><b>À payer</b><b style="font-family:var(--display);font-size:22px">${eur(due)}</b></div></div>
     <span class="tag">Remise</span><div class="chips">${[0,10,15,20].map(x=>`<button class="chip" data-a="enc-remise" data-v="${x}" aria-pressed="${rem===x}">${x?x+' %':'Aucune'}</button>`).join('')}</div>
-    <span class="tag">Moyen de paiement</span><div class="chips">${modes.map(m=>`<button class="chip" data-a="enc-mode" data-v="${m}" aria-pressed="${mode===m}">${m}</button>`).join('')}</div>
+    ${payHTML(sh,due,c)}
     ${mode==='Carte de séances'&&c.carte?`<div class="notice"><span>${esc(c.carte.nom)} : il restera ${c.carte.reste-1} séance${c.carte.reste-1>1?'s':''}.</span></div>`:''}
     <button class="btn" data-a="enc-ok" data-id="${r.id}">Encaisser ${eur(due)}</button>`;
   }
@@ -1562,13 +1699,38 @@ document.addEventListener('click',e=>{
     case 'stripe-on':S.stripe.ok=true;render(true);toast('Compte Stripe configuré (simulation)');return;
     case 'stripe-off':S.stripe.ok=false;render(true);toast('Compte Stripe déconnecté (simulation)');return;
     case 'statut':{const r=S.rdv.find(x=>x.id===sh.id);r.statut=v;render(true);toast(v==='honore'?'Marqué honoré':v==='absent'?'Marquée absente':'Arrivée notée');return}
-    case 'encaisser':S.sheet={type:'encaisser',id:id||sh.id,mode:'CB',remise:0};break;
-    case 'enc-mode':sh.mode=v;break;
+    case 'encaisser':S.sheet={type:'encaisser',id:id||sh.id,p1:'CB',remise:0};break;
     case 'enc-remise':sh.remise=+v;break;
-    case 'enc-ok':{const r=S.rdv.find(x=>x.id===id);const c=CLIENT(r.client);const price=rdvPrice(r);const due=Math.max(0,Math.round((price*(1-(sh.remise||0)/100)-r.acompte)*100)/100);
-      r.paid={mode:sh.mode||'CB',montant:due+r.acompte,date:TODAY};if(r.statut!=='honore')r.statut='honore';
-      if(sh.mode==='Carte de séances'&&c.carte){c.carte.reste--;if(c.carte.reste<=0)c.carte=null}
-      S.sheet=null;render(true);toast('Encaissé · '+eur(due));return}
+    case 'pay-mode':sh.p1=v;if(sh.p2===v)sh.p2=null;sh.recu='';break;
+    case 'pay-mode2':sh.p2=v;sh.recu='';break;
+    case 'pay-split':sh.split=!sh.split;if(sh.split&&sh.m1==null)sh.m1='';sh.recu='';break;
+    case 'enc-ok':{ensureCaisse();const r=S.rdv.find(x=>x.id===id);const c=CLIENT(r.client);const price=rdvPrice(r);const remise=r2(price*(sh.remise||0)/100);const due=Math.max(0,r2(price-remise-r.acompte));
+      const p=finishPay(sh,due);if(!p)return;
+      r.paid={mode:p.pay.map(x=>x[0]).join(' + '),montant:due+r.acompte,date:TODAY};if(r.statut!=='honore')r.statut='honore';
+      if(p.pay.some(x=>x[0]==='Carte de séances')&&c.carte){c.carte.reste--;if(c.carte.reste<=0)c.carte=null}
+      const t=addTicket(tkFromRdv(r,p.pay,remise,p.rendu));S.sheet={type:'ticket',n:t.n};render(true);toast('Encaissé · ticket n° '+nTk(t.n));return}
+    case 'ctab':S.ctab=v;S.sheet=null;break;
+    case 'tk':ensureCaisse();S.sheet={type:'ticket',n:+v};break;
+    case 'tk-dup':{const n=+v;const k=dupCount(n)+1;jrnl('duplicata','Duplicata n° '+k+' du ticket n° '+nTk(n),n);sh.dup=k;render(true);toast('Duplicata n° '+k+' imprimé (simulation)');return}
+    case 'tk-avoir':S.sheet={type:'avoir',n:+v};break;
+    case 'avoir-motif':sh.motif=v;break;
+    case 'avoir-ok':{const t=S.caisse.tk.find(x=>x.n===+v);if(!sh.motif||avoirOf(t.n))return;
+      const a_=addTicket({type:'avoir',client:t.client,rdv:null,op:'Maya',ref:t.n,motif:sh.motif,lignes:t.lignes.map(l=>[l[0],-l[1],l[2]]),remise:-t.remise,acompte:-t.acompte,ttc:-t.ttc,pay:t.pay.map(p=>[p[0],-p[1]]),rendu:0});
+      S.sheet={type:'ticket',n:a_.n};render(true);toast('Avoir n° '+nTk(a_.n)+' créé');return}
+    case 'vente-new':S.sheet={type:'vente',cart:{},p1:'CB'};break;
+    case 'v-add':sh.cart[v]=(sh.cart[v]||0)+1;sh.recu='';break;
+    case 'v-rm':sh.cart[v]=Math.max(0,(sh.cart[v]||0)-1);if(!sh.cart[v])delete sh.cart[v];sh.recu='';break;
+    case 'vente-ok':{ensureCaisse();const lignes=PRODUITS.filter(p=>sh.cart[p[0]]).map(p=>[p[1],sh.cart[p[0]],p[2]]);const due=r2(lignes.reduce((s_,l)=>s_+l[1]*l[2],0));if(!due)return;
+      const p=finishPay(sh,due);if(!p)return;
+      const t=addTicket({type:'vente',client:null,rdv:null,op:'Maya',lignes,remise:0,acompte:0,ttc:due,pay:p.pay,rendu:p.rendu});S.sheet={type:'ticket',n:t.n};render(true);toast('Encaissé · ticket n° '+nTk(t.n));return}
+    case 'ctl-run':{const b=verify();jrnl('controle','Contrôle d’intégrité · '+(b.length?b.length+' anomalie(s)':'aucune anomalie'));render(true);toast(b.length?'Anomalie détectée':'Intégrité vérifiée');return}
+    case 'ctl-tamper':{const C=S.caisse;const t=C.tk.filter(x=>x.type==='vente'&&x.date<TODAY).slice(-3)[0];if(!t)return;C.tamper={n:t.n,ttc:t.ttc};t.ttc=r2(t.ttc-10);render(true);toast('Ticket n° '+nTk(t.n)+' modifié en base : −10 €');return}
+    case 'ctl-restore':{const C=S.caisse;if(C.tamper){const t=C.tk.find(x=>x.n===C.tamper.n);t.ttc=C.tamper.ttc;C.tamper=null}render(true);return}
+    case 'archive':{const C=S.caisse;const c=C.cl.find(x=>x.n===+v);const per=c.per;const inP=x=>(x.date||x.ts.slice(0,10)).startsWith(per);
+      const data={logiciel:CAISSE_V,editeur:'Kookla Platform',institut:SOC,periode:perLabel(c),creeLe:tsNow(),cloture:c,tickets:C.tk.filter(inP),clotures:C.cl.filter(x=>x.per.startsWith(per)),journal:C.jn.filter(x=>x.ts.slice(0,10).startsWith(per)),conservation:'À conserver 6 ans (article L102 B du livre des procédures fiscales)'};
+      const txt=JSON.stringify(data,null,1);const sceau=sha256(txt);
+      try{const bl=new Blob([JSON.stringify({...data,sceau},null,1)],{type:'application/json'});const u=URL.createObjectURL(bl);const l=document.createElement('a');l.href=u;l.download='caisse-institut-ecusson-'+per+'.json';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}catch(err){}
+      jrnl('archive','Archive '+perLabel(c)+' · sceau '+sceau.slice(0,12)+'…',c.n);render(true);toast('Archive téléchargée et scellée');return}
     case 'deplacer':S.sheet={type:'deplacer',id:sh.id,t:null};break;
     case 'm-slot':sh.t=+el.dataset.t;break;
     case 'm-ok':{const r=S.rdv.find(x=>x.id===sh.id);r.date=sh.date||r.date;r.prat=sh.prat||r.prat;r.start=sh.t;S.jour=r.date;S.sheet=null;render(true);toast('Rendez-vous déplacé · cliente prévenue');return}
@@ -1728,6 +1890,8 @@ document.addEventListener('submit',e=>{
 });
 document.addEventListener('input',e=>{
   const t=e.target;
+  if(t.id==='tq'){S.tq=t.value;const l=document.getElementById('tk-list');if(l)l.innerHTML=tkListHTML();return}
+  if((t.id==='pay-m1'||t.id==='pay-recu')&&S.sheet){const sh=S.sheet;const val=t.value.replace(',','.').replace(/[^0-9.]/g,'');if(t.id==='pay-m1')sh.m1=val;else sh.recu=val;const i=document.getElementById('pay-info');if(i)i.textContent=payInfo({...sh,p2:sh.p2&&sh.p2!==sh.p1?sh.p2:payModes(sh.type==='encaisser'?CLIENT(S.rdv.find(x=>x.id===sh.id).client):null).find(m=>m!==(sh.p1||'CB'))},sh.due);return}
   if(t.id==='cq'){S.cq=t.value;const l=document.getElementById('cl-list');if(l)l.innerHTML=clientsListHTML();return}
   if(t.id==='camp-msg'){const ch=t.dataset.canal||'sms';if(ch==='sms')S.campMsg=t.value;else S.campMail=t.value;const n=campCount();const nb=Math.max(1,Math.ceil(t.value.length/160));const i=document.getElementById('camp-info');if(i)i.textContent=ch==='sms'?t.value.length+' caractères · '+nb+' SMS par cliente · '+n+' clientes · '+n*nb+' crédits':n+' clientes ayant accepté les messages';save();return}
   if(t.id==='reg-msg'){S.reglages.message=t.value;save();return}
