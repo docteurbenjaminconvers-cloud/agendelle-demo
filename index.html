@@ -413,7 +413,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 13h00';
+const VERSION='6 nov. 2026 · 13h45';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1376,7 +1376,7 @@ function vMesRdv(){
   const futurs=st.next.map(r=>({k:r.date+pad(r.start),h:card(r,true)})).concat(autres.flatMap(o=>o.rdv.filter(x=>x[0]>=0).map(x=>({k:addDays(TODAY,x[0])+pad(x[1]),h:autreCard(o,x)})))).sort((x,y)=>x.k.localeCompare(y.k));
   const inst=[['ecusson','Institut Écusson','Montpellier · Écusson','Soins, cire, laser'],...autres.map(o=>[o.id,o.nom,o.ville,o.metier])];
   return `<span class="tag">Mon espace Agendelle · ${esc(m.nom.split(' ')[0])}</span><h1>Mes rendez-vous</h1>
-  <div class="sec"><div class="sec-h"><h3>Mes instituts</h3><span class="sub small">${inst.length}</span></div><div class="list">${inst.map(([id,n,v,mt])=>`<div class="item"><span class="av" style="background:${id==='ecusson'?'var(--accent-soft);color:var(--accent)':'var(--sunk);color:var(--ink)'}">${esc(n.replace(/^(L’|Institut )/,'')[0])}</span><span class="t"><b>${esc(n)}</b><span>${esc(v)} · ${esc(mt)}</span></span><button class="btn sm ghost" data-a="${id==='ecusson'?'c-book':'c-autre'}" data-v="${id}">Réserver</button></div>`).join('')}</div>
+  <div class="sec"><div class="sec-h"><h3>Mes instituts</h3><span class="sub small">${inst.length}</span></div><div class="list">${inst.map(([id,n,v,mt])=>`<div class="item"><span class="av" style="background:${id==='ecusson'?'var(--accent-soft);color:var(--accent)':'var(--sunk);color:var(--ink)'}">${esc(n.replace(/^(L’|Institut )/,'')[0])}</span><button class="t" data-a="${id==='ecusson'?'c-home':'c-autre'}" data-v="${id}" style="all:unset;flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer"><b>${esc(n)}</b><span class="sub small">${esc(v)} · ${esc(mt)} · voir la page</span></button><button class="btn sm ghost" data-a="${id==='ecusson'?'c-book':'c-autre'}" data-v="${id}">Réserver</button></div>`).join('')}</div>
     <button class="btn ghost" data-a="c-inst-add">${I.plus} Ajouter un institut</button></div>
   <div class="sec"><h3>À venir</h3>${futurs.length?`<div class="list">${futurs.slice(0,S.c.tous?99:5).map(x=>x.h).join('')}</div>${futurs.length>5&&!S.c.tous?`<button class="btn ghost sm" data-a="c-tous">Voir les ${futurs.length} rendez-vous à venir</button>`:''}`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
   ${st.past.length?`<div class="sec"><h3>Passés chez Institut Écusson</h3><div class="list">${st.past.slice(0,5).map(r=>card(r,false)).join('')}</div></div>`:''}
@@ -1852,7 +1852,7 @@ document.addEventListener('click',e=>{
     case 'c-inst-add':S.sheet={type:'c-inst-add'};break;
     case 'c-inst-ok':{const l=(document.getElementById('c-add-lien').value||'').trim().toLowerCase();const k=l.includes('spa')?'spa':l.includes('ongle')||l.includes('atelier')?'atelier':null;
       if(!k){toast('Lien non reconnu : vérifiez-le ou scannez le QR code');return}S.espace=S.espace||{ajoutes:[]};if(!S.espace.ajoutes.includes(k))S.espace.ajoutes.push(k);S.sheet=null;render(true);toast(AUTRES[k].nom+' ajouté à votre espace');return}
-    case 'c-autre':toast('Ouvre la page de '+AUTRES[v].nom+' (autre institut, hors démo)');return;
+    case 'c-autre':toast('Ouvre la page de '+AUTRES[v].nom+' (institut fictif, hors démo)');return;
     case 'c-login':{const v_=(document.getElementById('c-login-id').value||'').trim();if(v_.length<5){toast('Indiquez votre email');return}
       S.me=(S.clients.find(c=>c.mail===v_.toLowerCase())||S.clients[0]).id;toast('Lien de connexion envoyé · démo : vous êtes connectée');break}
     case 'c-logout':S.me=null;break;
