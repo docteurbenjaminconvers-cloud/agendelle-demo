@@ -21,6 +21,8 @@
 .tk{background:#fffdf8;color:#1c1a17;border:1px solid var(--line);border-radius:6px;padding:14px 14px 12px;font:500 12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
 .tk hr{border:0;border-top:1px dashed #b9b2a6;margin:5px 0}.tk-r{display:flex;justify-content:space-between;gap:10px}.tk-r span:last-child,.tk-r b:last-child{text-align:right;white-space:nowrap}
 .tk-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}.tk-c em{font-style:normal;font-size:11px;color:#8a6d00}.tk-t{font-size:14.5px}.tk-h{font-size:10.5px;color:#6d665c;word-break:break-all}
+.affiche-d{border:2px solid var(--ink);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;background:#fff;color:#111}.affiche-d .a-t{font-family:var(--display);font-size:24px}.affiche-d .a-g{font-size:17px}.affiche-d ul{margin:0;padding-left:20px;line-height:1.5}
+@media print{body *{visibility:hidden!important}.sheet .tk,.sheet .tk *,.sheet .affiche-d,.sheet .affiche-d *{visibility:visible!important}.sheet .tk,.sheet .affiche-d{position:fixed;left:0;top:0;box-shadow:none;border-radius:0}.sheet .tk{width:72mm;border:0;padding:0;font-size:11px}.sheet .affiche-d{width:180mm;font-size:18px}@page{margin:4mm}}
 .tk-dup{text-align:center;font-weight:800;letter-spacing:.12em;border:1.5px solid #1c1a17;padding:2px;margin:4px 0}.notice.ok svg{color:var(--ok)}
 .share{display:grid;gap:10px}.qr{display:flex;gap:14px;align-items:center}.qrbox{width:112px;height:112px;flex-shrink:0;padding:8px;background:#fff;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
 .guide summary{cursor:pointer;list-style:none;display:flex;align-items:center}.guide summary::-webkit-details-marker{display:none}.guide summary b{display:flex;gap:8px;align-items:center}.guide summary::after{content:'+';margin-left:auto;font-weight:800;color:var(--muted)}.guide[open] summary::after{content:'−'}.guide ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--muted)}
@@ -410,7 +412,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 10h00';
+const VERSION='6 nov. 2026 · 11h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1001,17 +1003,27 @@ function vCaisse(){
   return head+`<div class="card col" style="gap:6px"><span class="sub">Encaissé en caisse aujourd’hui</span><b style="font-family:var(--display);font-size:34px;letter-spacing:-.02em">${eur(tot)}</b>
     <div class="row wrap" style="gap:6px">${Object.entries(modes).map(([m,v])=>`<span class="pill">${esc(m)} · ${eur(v)}</span>`).join('')||'<span class="sub small">Rien encaissé pour l’instant.</span>'}</div>
     ${kToday.length&&kPartner()?`<span class="pill ks" style="align-self:flex-start">+ ${eur(kToday.reduce((a,r)=>a+rdvPrice(r)*.75,0))} versés par Kookla après les séances</span>`:''}</div>
-  <div class="row" style="gap:8px"><button class="btn" data-a="vente-new" style="flex:1">${I.euro} Nouvelle vente</button></div>
+  <div class="row" style="gap:8px"><button class="btn" data-a="vente-new" style="flex:1">${I.euro} Nouvelle vente</button><button class="btn ghost" data-a="affiche" style="flex:0 0 auto;width:auto">Affiche ticket</button></div>
   <div class="g2"><div class="sec"><div class="sec-h"><h3>À encaisser</h3><span class="sub small">${todo.length}</span></div>
     ${todo.length?`<div class="list">${todo.map(r=>`<div class="item"><span class="t"><b>${esc(court(CLIENT(r.client).nom))} · ${esc(rdvNames(r))}</b><span>${r.date===TODAY?'Aujourd’hui':dshort(r.date)} ${hm(r.start)}${r.acompte?' · acompte '+eur(r.acompte)+' déjà payé':''}</span></span><button class="btn sm" data-a="encaisser" data-id="${r.id}">${eur(rdvPrice(r)-r.acompte)}</button></div>`).join('')}</div>`:'<p class="sub">Tout est encaissé.</p>'}</div>
   <div class="sec"><h3>Tickets du jour</h3>${tdy.length?`<div class="list">${tdy.slice().reverse().map(tkItem).join('')}</div>`:'<p class="sub">Aucun ticket aujourd’hui.</p>'}
     ${ventes.length?`<span class="tag" style="margin-top:6px">Ventes en ligne · hors caisse, réglées par Stripe</span><div class="list">${ventes.map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>${esc(v.acheteur)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div>`:''}</div></div>`;
 }
+function envoiHTML(t,sh){const c=t.client?CLIENT(t.client):null;const canal=sh.canal||(c&&c.mail?'email':c&&c.tel?'sms':'email');
+  const val=canal==='email'?(c?c.mail:''):(c&&!c.tel.includes('•')?c.tel:'');
+  return `<div class="card col" style="gap:8px"><b>Remettre le ticket</b><span class="sub small">Il n’est plus imprimé d’office : remettez-le si la cliente le souhaite. Pour une prestation de 25 € TTC ou plus, une note doit lui être remise.</span>
+  <div class="seg" role="group" aria-label="Envoyer par"><button data-a="tk-canal" data-v="email" aria-pressed="${canal==='email'}">Par email</button><button data-a="tk-canal" data-v="sms" aria-pressed="${canal==='sms'}">Par SMS</button></div>
+  <label class="field" for="env-dest">${canal==='email'?'Adresse email':'Numéro de mobile'}<input id="env-dest" type="${canal==='email'?'email':'tel'}" value="${esc(val||'')}" placeholder="${canal==='email'?'cliente@exemple.fr':'06 12 34 56 78'}" autocomplete="off"></label>
+  <label class="row small" style="gap:8px;align-items:flex-start"><input type="checkbox" id="env-accord" style="margin-top:3px"> <span>La cliente accepte de recevoir son ticket ${canal==='email'?'par email. Son adresse':'par SMS. Son numéro'} ne sert qu’à cet envoi.</span></label>
+  <button class="btn sm" data-a="tk-send" data-v="${t.n}" style="align-self:flex-start">${canal==='email'?'Envoyer par email':'Envoyer par SMS (1 crédit)'}</button></div>`}
+function afficheHTML(){return `<div class="affiche-d"><b class="a-t">Votre ticket de caisse</b><b class="a-g">Il ne vous est plus remis d’office.<br>Demandez-le : il est gratuit.</b><ul><li><b>Sur papier</b>, imprimé tout de suite.</li><li><b>Par email ou par SMS</b>, si vous le souhaitez. Votre adresse ou votre numéro ne servent qu’à cet envoi.</li><li>Pour toute prestation de <b>25 € TTC ou plus</b>, une note vous est remise.</li></ul><span class="sub">Institut Écusson</span></div>`}
 function caisseSheet(sh){
+  if(sh.type==='affiche')return `<h2>Affiche ticket</h2><p class="sub">À imprimer et à afficher près de la caisse, bien visible au moment du paiement.</p>${afficheHTML()}<button class="btn" data-a="print">Imprimer l’affiche</button>`;
   if(sh.type==='ticket'){const t=S.caisse.tk.find(x=>x.n===sh.n);if(!t)return '';const av=t.type==='vente'&&avoirOf(t.n);
     return `<h2>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)}</h2>${tkHTML(t,sh.dup||0)}
     ${av?`<div class="notice warn"><span>Ce ticket a été annulé par l’avoir n° ${nTk(av.n)} (${esc(av.motif)}).</span></div>`:''}
-    <div class="row" style="gap:8px"><button class="btn sm ghost" data-a="tk-dup" data-v="${t.n}" style="flex:1">Imprimer un duplicata</button>${t.type==='vente'&&!av?`<button class="btn sm ghost" data-a="tk-avoir" data-v="${t.n}" style="flex:1">Faire un avoir</button>`:''}</div>
+    <div class="row" style="gap:8px"><button class="btn sm ghost" data-a="tk-dup" data-v="${t.n}" style="flex:1">Imprimer</button>${t.type==='vente'&&!av?`<button class="btn sm ghost" data-a="tk-avoir" data-v="${t.n}" style="flex:1">Faire un avoir</button>`:''}</div>
+    ${envoiHTML(t,sh)}
     <span class="sub small" style="text-align:center">${dupCount(t.n)?dupCount(t.n)+' duplicata'+(dupCount(t.n)>1?'s':'')+' déjà imprimé'+(dupCount(t.n)>1?'s':'')+'. ':''}Ni modification, ni suppression possible.</span>`}
   if(sh.type==='avoir'){const t=S.caisse.tk.find(x=>x.n===sh.n);const m=sh.motif;
     return `<h2>Avoir sur le ticket n° ${nTk(t.n)}</h2><p class="sub">Le ticket reste enregistré. L’avoir de ${eur(-t.ttc)} l’annule et apparaît dans la clôture du jour.</p>
@@ -1711,8 +1723,18 @@ document.addEventListener('click',e=>{
       const t=addTicket(tkFromRdv(r,p.pay,remise,p.rendu));S.sheet={type:'ticket',n:t.n};render(true);toast('Encaissé · ticket n° '+nTk(t.n));return}
     case 'ctab':S.ctab=v;S.sheet=null;break;
     case 'tk':ensureCaisse();S.sheet={type:'ticket',n:+v};break;
-    case 'tk-dup':{const n=+v;const k=dupCount(n)+1;jrnl('duplicata','Duplicata n° '+k+' du ticket n° '+nTk(n),n);sh.dup=k;render(true);toast('Duplicata n° '+k+' imprimé (simulation)');return}
+    case 'tk-dup':{const n=+v;const k=dupCount(n)+1;jrnl('duplicata','Duplicata n° '+k+' du ticket n° '+nTk(n),n);sh.dup=k;render(true);toast('Duplicata n° '+k);setTimeout(()=>{try{window.print()}catch(err){}},50);return}
     case 'tk-avoir':S.sheet={type:'avoir',n:+v};break;
+    case 'tk-canal':sh.canal=v;break;
+    case 'affiche':S.sheet={type:'affiche'};break;
+    case 'print':setTimeout(()=>{try{window.print()}catch(err){}},50);return;
+    case 'tk-send':{const canal=sh.canal||(document.getElementById('env-dest').type==='tel'?'sms':'email');const dest=(document.getElementById('env-dest').value||'').trim();const n=+v;
+      if(!document.getElementById('env-accord').checked){toast('La cliente doit accepter l’envoi');return}
+      if(canal==='email'&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dest)){toast('Adresse email invalide');return}
+      if(canal==='sms'&&dest.replace(/\D/g,'').length<10){toast('Numéro de mobile invalide');return}
+      if(canal==='sms'){if(S.sms<1){toast('Crédits SMS insuffisants : envoyez par email ou imprimez');return}S.sms--}
+      const m=canal==='email'?dest[0]+'•••'+dest.slice(dest.indexOf('@')):'•• •• •• '+dest.replace(/\D/g,'').slice(-4,-2)+' '+dest.replace(/\D/g,'').slice(-2);
+      jrnl('envoi','Ticket n° '+nTk(n)+' · envoyé par '+(canal==='email'?'email':'SMS')+' à '+m+', avec l’accord de la cliente',n);render(true);toast(canal==='email'?'Ticket envoyé par email (simulation)':'Ticket envoyé par SMS · 1 crédit (simulation)');return}
     case 'avoir-motif':sh.motif=v;break;
     case 'avoir-ok':{const t=S.caisse.tk.find(x=>x.n===+v);if(!sh.motif||avoirOf(t.n))return;
       const a_=addTicket({type:'avoir',client:t.client,rdv:null,op:'Maya',ref:t.n,motif:sh.motif,lignes:t.lignes.map(l=>[l[0],-l[1],l[2]]),remise:-t.remise,acompte:-t.acompte,ttc:-t.ttc,pay:t.pay.map(p=>[p[0],-p[1]]),rendu:0});
