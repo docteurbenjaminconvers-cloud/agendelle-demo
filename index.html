@@ -412,7 +412,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 11h00';
+const VERSION='6 nov. 2026 · 12h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1018,6 +1018,10 @@ function envoiHTML(t,sh){const c=t.client?CLIENT(t.client):null;const canal=sh.c
   <button class="btn sm" data-a="tk-send" data-v="${t.n}" style="align-self:flex-start">${canal==='email'?'Envoyer par email':'Envoyer par SMS (1 crédit)'}</button></div>`}
 function afficheHTML(){return `<div class="affiche-d"><b class="a-t">Votre ticket de caisse</b><b class="a-g">Il ne vous est plus remis d’office.<br>Demandez-le : il est gratuit.</b><ul><li><b>Sur papier</b>, imprimé tout de suite.</li><li><b>Par email ou par SMS</b>, si vous le souhaitez. Votre adresse ou votre numéro ne servent qu’à cet envoi.</li><li>Pour toute prestation de <b>25 € TTC ou plus</b>, une note vous est remise.</li></ul><span class="sub">Institut Écusson</span></div>`}
 function caisseSheet(sh){
+  if(sh.type==='c-inst-add')return `<h2>Ajouter un institut</h2><p class="sub">Scannez le QR code affiché dans l’institut, ou collez le lien qu’il vous a donné (Instagram, Google, SMS).</p>
+    <label class="field" for="c-add-lien">Lien de l’institut<input id="c-add-lien" placeholder="agendelle.fr/…" autocomplete="off" value="agendelle.fr/spa-des-arceaux"></label>
+    <button class="btn" data-a="c-inst-ok">Ajouter à mon espace</button>
+    <span class="sub small">Démo : le lien prérempli ajoute le Spa des Arceaux.</span>`;
   if(sh.type==='affiche')return `<h2>Affiche ticket</h2><p class="sub">À imprimer et à afficher près de la caisse, bien visible au moment du paiement.</p>${afficheHTML()}<button class="btn" data-a="print">Imprimer l’affiche</button>`;
   if(sh.type==='ticket'){const t=S.caisse.tk.find(x=>x.n===sh.n);if(!t)return '';const av=t.type==='vente'&&avoirOf(t.n);
     return `<h2>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)}</h2>${tkHTML(t,sh.dup||0)}
@@ -1347,14 +1351,18 @@ function vBook(){
       <span class="small">Bonjour ${esc(CLIENT(r.client).nom.split(' ')[0])}, ${PRATS[r.prat].nom} vous attend pour : ${esc(rdvNames(r))}. Rue de la Valfère, Montpellier.</span>
       <div class="row wrap" style="gap:6px"><span class="mbtn">Ajouter à mon agenda</span><span class="mbtn">Déplacer ou annuler</span><span class="mbtn acc">Reprendre rendez-vous</span></div>
       <span class="sub small">Envoyé au nom de l’institut, gratuitement.</span></div></div>
-    <div class="card row" style="gap:12px;align-items:flex-start"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.plus}</span><span class="col" style="gap:3px"><b>Retrouvez l’institut en un geste</b><span class="sub small">Ajoutez sa page sur l’écran d’accueil de votre téléphone : sur iPhone, touchez Partager puis « Sur l’écran d’accueil » ; sur Android, menu ⋮ puis « Ajouter à l’écran d’accueil ».</span></span></div>
+    <div class="card row" style="gap:12px;align-items:flex-start"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.plus}</span><span class="col" style="gap:3px"><b>Installez Agendelle, une seule fois</b><span class="sub small">Ce rendez-vous et ceux de vos autres instituts Agendelle, au même endroit, sans mot de passe. Sur iPhone : Partager, puis « Sur l’écran d’accueil ». Sur Android : menu ⋮, puis « Ajouter à l’écran d’accueil ».</span></span></div>
     <p class="foot">Astuce démo : passez côté salon, le rendez-vous est dans l’agenda.</p>`;
   }
   return '';
 }
 function vMesRdv(){
   const m=me();
-  if(!m)return `<h1>Mes rendez-vous</h1><div class="card empty">Vous n’avez pas encore de rendez-vous.<br><button class="btn" data-a="c-book" style="margin-top:12px">Prendre rendez-vous</button></div>`;
+  if(!m)return `<span class="tag">Mon espace Agendelle</span><h1>Mes rendez-vous</h1>
+  <div class="card col" style="gap:10px"><b>Tous vos rendez-vous, chez tous vos instituts, au même endroit</b><span class="sub small">Connectez-vous avec l’email ou le mobile donné en réservant : vous recevez un lien, sans mot de passe.</span>
+    <label class="field" for="c-login-id">Email ou mobile<input id="c-login-id" placeholder="vous@exemple.fr ou 06…" autocomplete="off"></label>
+    <button class="btn" data-a="c-login">Recevoir mon lien de connexion</button></div>
+  <p class="foot">Pas encore de rendez-vous ? <button class="link" data-a="c-book">Réserver chez Institut Écusson</button></p>`;
   const st=clientStats(m.id);
   const card=(r,future)=>{const kk=r.source==='kookla';const limit=new Date(fromIso(r.date).getTime()+r.start*60000-S.reglages.annulation*3600000)>new Date();
     return `<div class="card col" style="gap:8px;${kk?'background:var(--k-soft);border-color:transparent':''}">
@@ -1363,12 +1371,24 @@ function vMesRdv(){
       ${future&&r.statut!=='annule'?(kk?'<span class="sub small">Séance gérée dans votre espace Kookla.</span>':(S.c.cancelId===r.id?`<div class="notice warn"><span>Annuler ce rendez-vous ?</span></div><div class="row"><button class="btn sm ghost" data-a="c-cancel-no">Garder</button><button class="btn sm" data-a="c-cancel-yes" data-id="${r.id}">Oui, annuler</button></div>`:
         limit?`<div class="row"><button class="btn sm ghost" data-a="c-edit" data-id="${r.id}">Déplacer</button><button class="btn sm danger" data-a="c-cancel" data-id="${r.id}">Annuler${r.garantie===2?' (remboursé)':''}</button></div>`:(r.garantie?`<span class="sub small">Moins de ${S.reglages.annulation} h avant : ${r.garantie===1?'50 % ('+eur(rdvPrice(r)/2)+') seront débités':'50 % ('+eur(rdvPrice(r)/2)+') seront conservés'} si vous annulez.</span><button class="btn sm danger" data-a="c-cancel" data-id="${r.id}">Annuler quand même</button>`:`<span class="sub small">Moins de ${S.reglages.annulation} h avant : contactez l’institut pour modifier.</span>`))):''}
     </div>`};
-  return `<h1>Mes rendez-vous</h1>
-  <div class="sec"><h3>À venir</h3>${st.next.length?`<div class="list">${st.next.map(r=>card(r,true)).join('')}</div>`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
-  ${st.past.length?`<div class="sec"><h3>Passés</h3><div class="list">${st.past.slice(0,5).map(r=>card(r,false)).join('')}</div></div>`:''}
-  <button class="btn ghost" data-a="c-book">Reprendre rendez-vous</button>
-  <p class="foot">Seuls les instituts où vous avez réservé apparaissent ici.</p>`;
+  const autres=espaceAutres();
+  const futurs=st.next.map(r=>({k:r.date+pad(r.start),h:card(r,true)})).concat(autres.flatMap(o=>o.rdv.filter(x=>x[0]>=0).map(x=>({k:addDays(TODAY,x[0])+pad(x[1]),h:autreCard(o,x)})))).sort((x,y)=>x.k.localeCompare(y.k));
+  const inst=[['ecusson','Institut Écusson','Montpellier · Écusson','Soins, cire, laser'],...autres.map(o=>[o.id,o.nom,o.ville,o.metier])];
+  return `<span class="tag">Mon espace Agendelle · ${esc(m.nom.split(' ')[0])}</span><h1>Mes rendez-vous</h1>
+  <div class="sec"><div class="sec-h"><h3>Mes instituts</h3><span class="sub small">${inst.length}</span></div><div class="list">${inst.map(([id,n,v,mt])=>`<div class="item"><span class="av" style="background:${id==='ecusson'?'var(--accent-soft);color:var(--accent)':'var(--sunk);color:var(--ink)'}">${esc(n.replace(/^(L’|Institut )/,'')[0])}</span><span class="t"><b>${esc(n)}</b><span>${esc(v)} · ${esc(mt)}</span></span><button class="btn sm ghost" data-a="${id==='ecusson'?'c-book':'c-autre'}" data-v="${id}">Réserver</button></div>`).join('')}</div>
+    <button class="btn ghost" data-a="c-inst-add">${I.plus} Ajouter un institut</button></div>
+  <div class="sec"><h3>À venir</h3>${futurs.length?`<div class="list">${futurs.slice(0,S.c.tous?99:4).map(x=>x.h).join('')}</div>${futurs.length>4&&!S.c.tous?`<button class="btn ghost sm" data-a="c-tous">Voir les ${futurs.length} rendez-vous à venir</button>`:''}`:'<p class="sub">Aucun rendez-vous à venir.</p>'}</div>
+  ${st.past.length?`<div class="sec"><h3>Passés chez Institut Écusson</h3><div class="list">${st.past.slice(0,5).map(r=>card(r,false)).join('')}</div></div>`:''}
+  <div class="card row" style="gap:12px;align-items:flex-start"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.plus}</span><span class="col" style="gap:3px"><b>Installez Agendelle, une seule fois</b><span class="sub small">Une seule icône pour tous vos instituts. Sur iPhone : Partager, puis « Sur l’écran d’accueil ». Sur Android : menu ⋮, puis « Ajouter à l’écran d’accueil ».</span></span></div>
+  <p class="foot">Seuls les instituts où vous avez réservé, ou que vous avez ajoutés, apparaissent ici. Agendelle ne vous propose jamais d’autres instituts, et chaque institut ne voit que ses propres rendez-vous.</p>
+  <button class="link" data-a="c-logout" style="align-self:center;color:var(--muted)">Me déconnecter</button>`;
 }
+const AUTRES={atelier:{id:'atelier',nom:'L’Atelier des Ongles',ville:'Montpellier · Antigone',metier:'Onglerie',rdv:[[2,1050,'Semi-permanent mains','Clara']]},
+  spa:{id:'spa',nom:'Spa des Arceaux',ville:'Montpellier · Arceaux',metier:'Spa et massages',rdv:[]}};
+function espaceAutres(){const e=S.espace||{ajoutes:[]};return ['atelier',...e.ajoutes].filter((x,i,a)=>a.indexOf(x)===i).map(k=>AUTRES[k]).filter(Boolean)}
+function autreCard(o,x){return `<div class="card col" style="gap:8px"><div class="row between"><b style="font-family:var(--display);font-size:17px">${cap(dlabel(addDays(TODAY,x[0])))}</b><span class="pill ok">Confirmé</span></div>
+  <span>${hm(x[1])} · ${esc(x[2])}</span><span class="sub small">avec ${esc(x[3])} · ${esc(o.nom)}</span>
+  <div class="row"><button class="btn sm ghost" data-a="c-autre" data-v="${o.id}" style="flex:1">Déplacer</button><button class="btn sm danger" data-a="c-autre" data-v="${o.id}" style="flex:1">Annuler</button></div></div>`}
 function vKClient(){
   const k=S.c.k;const lasers=S.catalogue.filter(s=>s.cat==='laser'&&s.actif);
   const band=`<div class="kcard"><div class="kh"><div class="row between"><span class="kword">Kookla</span><button class="ibtn" data-a="k-close" aria-label="Fermer" style="background:rgba(255,255,255,.18);border-color:transparent;color:inherit">${I.x}</button></div><b>Épilation laser chez Institut Écusson</b><span style="font-size:13px;opacity:.9">Vendu et garanti par Kookla · avec Maya</span></div></div>`;
@@ -1649,7 +1669,7 @@ function render(keepScroll){
   }
   const topbar=`<header class="top"><span class="logo">${swallow(30,'var(--accent-ink)','var(--accent)')}<span class="wm">Agendelle</span></span>
     <div class="seg" role="group" aria-label="Point de vue"><button data-a="mode" data-v="salon" aria-pressed="${S.mode==='salon'}">Salon</button><button data-a="mode" data-v="cliente" aria-pressed="${S.mode==='cliente'}">Cliente</button></div></header>
-    ${S.mode==='cliente'&&S.c.page==='home'?`<div class="row between small" style="margin:-4px 0 10px"><span class="tag">Démo · données d’exemple</span>${me()?`<button class="link" data-a="c-mesrdv">Mes rendez-vous (${clientStats(me().id).next.length})</button>`:''}</div>`:`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
+    ${S.mode==='cliente'&&S.c.page==='home'?`<div class="row between small" style="margin:-4px 0 10px"><span class="tag">Démo · données d’exemple</span>${`<button class="link" data-a="c-mesrdv">${me()?'Mes rendez-vous ('+clientStats(me().id).next.length+')':'Mes rendez-vous'}</button>`}</div>`:`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
   app.innerHTML=topbar+`<main>${main}</main>`+nav+sheetHTML();
   setupStrip();
   if(keepScroll)window.scrollTo(0,y);
@@ -1824,6 +1844,14 @@ document.addEventListener('click',e=>{
     case 'c-date':S.c.date=v;break;
     case 'c-slot':S.c.t=+el.dataset.t;S.c.tp=el.dataset.p;S.c.tdate=S.c.date;break;
     case 'c-wait':S.sheet={type:'wait'};break;
+    case 'c-inst-add':S.sheet={type:'c-inst-add'};break;
+    case 'c-inst-ok':{const l=(document.getElementById('c-add-lien').value||'').trim().toLowerCase();const k=l.includes('spa')?'spa':l.includes('ongle')||l.includes('atelier')?'atelier':null;
+      if(!k){toast('Lien non reconnu : vérifiez-le ou scannez le QR code');return}S.espace=S.espace||{ajoutes:[]};if(!S.espace.ajoutes.includes(k))S.espace.ajoutes.push(k);S.sheet=null;render(true);toast(AUTRES[k].nom+' ajouté à votre espace');return}
+    case 'c-autre':toast('Ouvre la page de '+AUTRES[v].nom+' (autre institut, hors démo)');return;
+    case 'c-login':{const v_=(document.getElementById('c-login-id').value||'').trim();if(v_.length<5){toast('Indiquez votre email ou votre mobile');return}
+      S.me=(S.clients.find(c=>c.mail===v_.toLowerCase())||S.clients[0]).id;toast('Lien de connexion envoyé · démo : vous êtes connectée');break}
+    case 'c-logout':S.me=null;break;
+    case 'c-tous':S.c.tous=true;break;
     case 'c-cal':toast('Ajout à l’agenda du téléphone : disponible dans la vraie appli');return;
     case 'c-edit':{const r=S.rdv.find(x=>x.id===id);return go(()=>{S.c.page='book';S.c.cart=r.soins.slice();S.c.editId=r.id;S.c.prat=r.prat;S.c.date=r.date;S.c.t=null;S.c.step='date'})}
     case 'c-cancel':S.c.cancelId=id;break;
