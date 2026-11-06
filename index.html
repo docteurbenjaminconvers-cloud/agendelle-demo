@@ -21,6 +21,26 @@
 .tk{background:#fffdf8;color:#1c1a17;border:1px solid var(--line);border-radius:6px;padding:14px 14px 12px;font:500 12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
 .tk hr{border:0;border-top:1px dashed #b9b2a6;margin:5px 0}.tk-r{display:flex;justify-content:space-between;gap:10px}.tk-r span:last-child,.tk-r b:last-child{text-align:right;white-space:nowrap}
 .tk-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}.tk-c em{font-style:normal;font-size:11px;color:#8a6d00}.tk-t{font-size:14.5px}.tk-h{font-size:10.5px;color:#6d665c;word-break:break-all}
+.cli-app{--accent:#B5386F;--accent-ink:#fff;--accent-soft:#FCE3EE;--bg:#FFF5F8;--line:#F5DCE7;--line2:#FBEAF1;background:linear-gradient(180deg,#FFF0F5 0%,#FFF8F3 60%,#FFF5F8 100%) fixed}
+.cli-app .appcli{background:linear-gradient(180deg,#FFF0F6,#FFF9F4);border-color:#F6D6E4;box-shadow:0 20px 50px rgba(181,56,111,.14)}
+.cli-app h1,.cli-app .h-app{font-family:var(--display);letter-spacing:-.02em}.cli-app .h-app{font-size:19px;margin:2px 0 -4px}
+.hello{display:flex;flex-direction:column;gap:0}.hello span{font-size:14px;font-weight:700;color:var(--accent)}.hello b{font-family:var(--display);font-size:28px;line-height:1.15;letter-spacing:-.02em}
+.cli-app .card{border-radius:22px;border-color:var(--line);box-shadow:0 4px 14px rgba(181,56,111,.06)}
+.cli-app .nextrdv{background:linear-gradient(135deg,#F7B8D0 0%,#FBD3C0 55%,#FDE8D4 100%);border:0;box-shadow:0 14px 30px rgba(214,96,134,.25)}
+.cli-app .nextrdv .pill{background:rgba(255,255,255,.75);color:#8A2453}.cli-app .nextrdv .link,.cli-app .nextrdv .sub{color:#5B2340}
+.cli-app .qa button{border:0;background:rgba(255,255,255,.85);border-radius:18px;box-shadow:0 3px 10px rgba(138,36,83,.08)}
+.cli-app .qa button svg{width:34px;height:34px;padding:7px;border-radius:12px}
+.qa .q1 svg{background:#FFE1EC;color:#C2336F}.qa .q2 svg{background:#E3F4EC;color:#2F8A5B}.qa .q3 svg{background:#EAE4FF;color:#6A4FCF}.qa .q4 svg{background:#FFEBD9;color:#C46A1F}
+.cli-app .btn{background:linear-gradient(135deg,#C2417A,#E0678C);border:0;box-shadow:0 6px 14px rgba(194,65,122,.25)}.cli-app .btn.ghost,.cli-app .btn.danger{background:var(--surface);box-shadow:none;border:1px solid var(--line)}
+.cli-app .appfab{background:linear-gradient(135deg,#C2417A,#F08A73);box-shadow:0 10px 24px rgba(194,65,122,.38)}
+.cli-app .tabs,.cli-app .appnav{background:rgba(255,255,255,.94);backdrop-filter:blur(10px)}
+.cli-app .tabs button[aria-current="page"] svg,.cli-app .appnav button[aria-current="page"] svg{background:var(--accent-soft);border-radius:14px;padding:3px 12px;width:46px;box-sizing:content-box;margin:0 -12px}
+.cli-app .chip[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cli-app .wtile{border:0!important;color:#3A1730}.wtile .sub{color:#5B3550}.wtile .bar{background:rgba(255,255,255,.6)}
+.cli-app .w-carte{background:linear-gradient(135deg,#E9DDFF,#FBE2F1)}.w-carte .bar i{background:#7B5BD6}
+.cli-app .w-pack{background:linear-gradient(135deg,#FFD6CF,#FCE7D6)}.w-pack .bar i{background:var(--k)}
+.cli-app .w-bon{background:linear-gradient(135deg,#FFE7A8,#FFD1DE);gap:12px}.wgift{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.7);display:grid;place-items:center;color:#B5386F;flex:none}
+.cli-app .av{background:linear-gradient(135deg,#FBD0E1,#FDE3D3)!important;color:#9C2A5E!important}
 .appcli{max-width:430px;margin:0 auto;width:100%;border:1px solid var(--line);border-radius:30px;background:var(--bg);padding:20px 16px 0;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);min-height:72vh}
 .appnav{position:sticky;bottom:0;margin:auto -16px 0;background:var(--surface);border-top:1px solid var(--line);border-radius:0 0 30px 30px;padding:6px 6px 12px;z-index:3}
 .tabs button span,.appnav button span{white-space:nowrap}.appnav .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
@@ -421,7 +441,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 14h30';
+const VERSION='6 nov. 2026 · 15h00';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1397,10 +1417,10 @@ function vMesRdv(){
     const big=n?(n.r?{date:n.r.date,start:n.r.start,soin:rdvNames(n.r),avec:PRATS[n.r.prat].nom,inst:'Institut Écusson',adr:'Rue de la Démo, Montpellier',id:'ecusson',rid:n.r.id,kk:n.r.source==='kookla'}
       :{date:addDays(TODAY,n.x[0]),start:n.x[1],soin:n.x[2],avec:n.x[3],inst:n.o.nom,adr:n.o.ville,id:n.o.id}):null;
     const dans=big?Math.round((fromIso(big.date)-fromIso(TODAY))/86400000):0;
-    v=`<span class="tag">Bonjour ${prenom}</span><h1>Votre prochain rendez-vous</h1>
+    v=`<div class="hello"><span>Bonjour ${prenom}</span><b>Prenez soin de vous ✿</b></div><h2 class="h-app">Votre prochain rendez-vous</h2>
     ${big?`<div class="card col nextrdv"><span class="pill ok" style="align-self:flex-start">${dans===0?'Aujourd’hui':dans===1?'Demain':'Dans '+dans+' jours'}</span>
       <b class="nr-d">${cap(dlabel(big.date))} · ${hm(big.start)}</b><span>${esc(big.soin)}</span><span class="sub small">avec ${esc(big.avec)} · <button class="link" data-a="${big.id==='ecusson'?'c-home':'c-autre'}" data-v="${big.id}">${esc(big.inst)}</button></span>
-      <div class="qa">${[['Itinéraire','pin','qa-map'],['Appeler','phone','qa-call'],['Agenda','cal','c-cal'],['Déplacer','left','qa-move']].map(([l,ic_,a])=>`<button data-a="${a}" data-v="${big.id}" data-id="${big.rid||''}">${I[ic_]||I.cal}<span>${l}</span></button>`).join('')}</div></div>`
+      <div class="qa">${[['Itinéraire','pin','qa-map','q1'],['Appeler','phone','qa-call','q2'],['Agenda','cal','c-cal','q3'],['Déplacer','left','qa-move','q4']].map(([l,ic_,a,q])=>`<button class="${q}" data-a="${a}" data-v="${big.id}" data-id="${big.rid||''}">${I[ic_]||I.cal}<span>${l}</span></button>`).join('')}</div></div>`
       :`<div class="card col" style="gap:8px"><b>Aucun rendez-vous à venir</b><span class="sub small">Touchez « Réserver » en bas pour choisir l’un de vos instituts.</span></div>`}
     ${last?`<div class="sec"><h3>Reprendre rendez-vous</h3><div class="item"><span class="t"><b>${esc(rdvNames(last))}</b><span>Dernière fois ${dshort(last.date)} · Institut Écusson</span></span><button class="btn sm" data-a="c-rebook" data-id="${last.id}">Reprendre</button></div></div>`:''}
     ${futurs.length>1?`<div class="sec"><div class="sec-h"><h3>Ensuite</h3><button class="link small" data-a="c-at" data-v="rdv">Tout voir</button></div><div class="list">${futurs.slice(1,3).map(x=>x.h).join('')}</div></div>`:''}
@@ -1419,9 +1439,9 @@ function vMesRdv(){
     const cartes=[...(m.carte?[[m.carte,'Institut Écusson']]:[]),...(autres.some(o=>o.id==='atelier')?[[E.carteAtelier,'L’Atelier des Ongles']]:[])];
     const packs=E.packs;
     v=`<h1>Mon portefeuille</h1>
-    <div class="sec"><h3>Cartes de séances</h3>${cartes.length?cartes.map(([c_,i_])=>`<div class="card col" style="gap:6px"><div class="row between"><b>${esc(c_.nom)}</b><span class="pill ok">${c_.reste} restante${c_.reste>1?'s':''}</span></div><span class="sub small">${esc(i_)}</span><div class="bar"><i style="width:${Math.round((c_.total-c_.reste)/c_.total*100)}%"></i></div><span class="sub small">${c_.total-c_.reste} séance${c_.total-c_.reste>1?'s':''} utilisée${c_.total-c_.reste>1?'s':''} sur ${c_.total}</span></div>`).join(''):'<p class="sub small">Aucune carte en cours.</p>'}</div>
-    <div class="sec"><h3>Packs laser Kookla</h3>${packs.map(p=>`<div class="card col" style="gap:6px;background:var(--k-soft);border-color:transparent"><div class="row between"><b>${esc(p.nom)}</b><span class="pill k">Kookla</span></div><span class="sub small">Institut Écusson · garanti par Kookla</span><div class="bar"><i style="width:${Math.round(p.faites/p.total*100)}%;background:var(--k)"></i></div><span class="sub small">${p.faites} séance${p.faites>1?'s':''} sur ${p.total} · prochaine à réserver</span></div>`).join('')}</div>
-    <div class="sec"><h3>Bons cadeaux</h3>${E.bons.map(b_=>`<div class="card row between"><span class="col" style="gap:2px"><b>${esc(b_.nom)}</b><span class="sub small">${esc(b_.inst)} · offert par ${esc(b_.de)} · valable jusqu’au ${dshort(b_.fin)}</span></span><b style="white-space:nowrap">${eur(b_.solde)}</b></div>`).join('')}</div>
+    <div class="sec"><h3>Cartes de séances</h3>${cartes.length?cartes.map(([c_,i_])=>`<div class="card col wtile w-carte" style="gap:6px"><div class="row between"><b>${esc(c_.nom)}</b><span class="pill ok">${c_.reste} restante${c_.reste>1?'s':''}</span></div><span class="sub small">${esc(i_)}</span><div class="bar"><i style="width:${Math.round((c_.total-c_.reste)/c_.total*100)}%"></i></div><span class="sub small">${c_.total-c_.reste} séance${c_.total-c_.reste>1?'s':''} utilisée${c_.total-c_.reste>1?'s':''} sur ${c_.total}</span></div>`).join(''):'<p class="sub small">Aucune carte en cours.</p>'}</div>
+    <div class="sec"><h3>Packs laser Kookla</h3>${packs.map(p=>`<div class="card col wtile w-pack" style="gap:6px"><div class="row between"><b>${esc(p.nom)}</b><span class="pill k">Kookla</span></div><span class="sub small">Institut Écusson · garanti par Kookla</span><div class="bar"><i style="width:${Math.round(p.faites/p.total*100)}%;background:var(--k)"></i></div><span class="sub small">${p.faites} séance${p.faites>1?'s':''} sur ${p.total} · prochaine à réserver</span></div>`).join('')}</div>
+    <div class="sec"><h3>Bons cadeaux</h3>${E.bons.map(b_=>`<div class="card row between wtile w-bon"><span class="wgift">${I.gift}</span><span class="col" style="gap:2px;flex:1"><b>${esc(b_.nom)}</b><span class="sub small">${esc(b_.inst)} · offert par ${esc(b_.de)} · valable jusqu’au ${dshort(b_.fin)}</span></span><b style="white-space:nowrap">${eur(b_.solde)}</b></div>`).join('')}</div>
     <div class="sec"><h3>Mes tickets</h3>${tks.length?`<div class="list">${tks.map(t=>`<button class="item" data-a="tk-cli" data-v="${t.n}" style="width:100%;text-align:left"><span class="t"><b>${dshort(t.date)} · ${esc(t.lignes.map(l=>l[0]).join(', '))}</b><span>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)} · Institut Écusson</span></span><span class="price">${eur(t.ttc)}</span></button>`).join('')}</div>`:'<p class="sub small">Les tickets envoyés par vos instituts apparaîtront ici.</p>'}</div>`}
   if(at==='profil'){const e=S.espace||{};const nt=e.notif||{veille:true,attente:true};
     const sw=(a,on,l,d)=>`<div class="item"><span class="t"><b>${l}</b><span>${d}</span></span><button class="toggle" role="switch" aria-checked="${on}" aria-label="${l}" data-a="${a}"></button></div>`;
@@ -1713,6 +1733,7 @@ function vueCli(){const app_=S.c.page==='mesrdv';
   return `<div class="vuecli"><span class="tag">Vue cliente</span><div class="seg" role="group" aria-label="Vue cliente"><button data-a="c-home" aria-pressed="${!app_}">Page d’un institut</button><button data-a="c-mesrdv" aria-pressed="${app_}">Son appli Agendelle</button></div>
   <span class="sub small">${app_?'Ce qu’elle voit en ouvrant Agendelle sur son téléphone : ses instituts et ses rendez-vous, sans aucun institut mis en avant.':'Ce qu’elle voit en arrivant par le lien d’Institut Écusson (Instagram, Google, QR code en vitrine) : uniquement cet institut.'}</span></div>`}
 function render(keepScroll){
+  document.body.classList.toggle('cli-app',S.mode==='cliente'&&S.c.page==='mesrdv'&&!!me());
   if(DESK)return renderDesk(keepScroll);
   const y=window.scrollY;
   const app=document.getElementById('app');
