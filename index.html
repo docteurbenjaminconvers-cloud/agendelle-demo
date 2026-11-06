@@ -41,6 +41,18 @@
 .cli-app .w-pack{background:linear-gradient(135deg,#FFD6CF,#FCE7D6)}.w-pack .bar i{background:var(--k)}
 .cli-app .w-bon{background:linear-gradient(135deg,#FFE7A8,#FFD1DE);gap:12px}.wgift{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.7);display:grid;place-items:center;color:#B5386F;flex:none}
 .cli-app .av{background:linear-gradient(135deg,#FBD0E1,#FDE3D3)!important;color:#9C2A5E!important}
+.phonewrap{display:flex;justify-content:center;padding:6px 0 30px}
+.phone{position:relative;width:390px;height:844px;border-radius:58px;background:linear-gradient(180deg,#FFF0F6,#FFF9F4);border:12px solid #1D1A1F;box-shadow:0 0 0 2px #3A3540,0 0 0 4px #CFC7D2,0 40px 80px rgba(120,40,80,.28),inset 0 0 0 1px rgba(255,255,255,.4);overflow:hidden;display:flex;flex-direction:column}
+.phone .island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0D0B0E;z-index:6}
+.phone .sbar{height:50px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 34px;font-size:15px;color:#1D1A1F;z-index:5}
+.phone .sbar b{font-weight:700;letter-spacing:-.01em}.phone .sic{display:flex;align-items:flex-end;gap:2px}.phone .sic i{width:3.5px;background:#1D1A1F;border-radius:1px}
+.phone .sic i:nth-child(1){height:5px}.phone .sic i:nth-child(2){height:7px}.phone .sic i:nth-child(3){height:9px}.phone .sic i:nth-child(4){height:11px;margin-right:6px}
+.phone .appscr{flex:1;overflow-y:auto;overflow-x:hidden;max-width:none;width:auto;border:0!important;border-radius:0;box-shadow:none!important;background:transparent!important;min-height:0;padding:6px 16px 90px;scrollbar-width:none}
+.phone .appscr::-webkit-scrollbar{display:none}
+.phone .appnav{position:absolute;left:0;right:0;bottom:0;margin:0;border-radius:0;padding:6px 6px 26px;z-index:5}
+.phone .appnav::before{display:none!important}
+.phone .appfab{display:flex!important;position:absolute;right:16px;bottom:104px;z-index:6}
+.phone .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#1D1A1F;z-index:7}
 .appcli{max-width:430px;margin:0 auto;width:100%;border:1px solid var(--line);border-radius:30px;background:var(--bg);padding:20px 16px 0;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);min-height:72vh}
 .appnav{position:sticky;bottom:0;margin:auto -16px 0;background:var(--surface);border-top:1px solid var(--line);border-radius:0 0 30px 30px;padding:6px 6px 12px;z-index:3}
 .tabs button span,.appnav button span{white-space:nowrap}.appnav .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
@@ -441,7 +453,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 15h00';
+const VERSION='6 nov. 2026 · 15h45';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1720,7 +1732,7 @@ function renderDesk(keepScroll){
     const p=S.c.page;const main=vCliente();
     let body;
     if(p==='home')body=`<div class="cols2"><div class="col" style="gap:18px;min-width:0">${main}</div><aside class="dside">${cAsideHome()}</aside></div>`;
-    else if(p==='mesrdv')body=me()?`<div class="appcli">${main}${appNav('appnav')}</div>`:`<div class="col" style="gap:14px;max-width:640px;margin:0 auto;width:100%">${main}</div>`;
+    else if(p==='mesrdv')body=me()?`<div class="phonewrap"><div class="phone" role="region" aria-label="Appli Agendelle de la cliente"><div class="island" aria-hidden="true"></div><div class="sbar" aria-hidden="true"><b>9:41</b><span class="sic"><i></i><i></i><i></i><i></i><svg viewBox="0 0 26 12" width="25" height="12"><rect x=".5" y=".5" width="22" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2.5" y="2.5" width="16" height="7" rx="2" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".45"/></svg></span></div><div class="appscr appcli">${main}</div>${appNav('appnav')}<div class="homebar" aria-hidden="true"></div></div></div>`:`<div class="col" style="gap:14px;max-width:640px;margin:0 auto;width:100%">${main}</div>`;
     else body=`<div class="cols2"><div class="col" style="gap:14px;min-width:0">${main}</div><aside class="dside">${cAsideFlow()}</aside></div>`;
     const nav=p==='mesrdv'?`<nav aria-label="Navigation cliente"><button aria-current="page" data-a="c-mesrdv">Mes rendez-vous</button></nav>`
       :`<nav aria-label="Navigation cliente"><button data-a="c-home" ${p==='home'?'aria-current="page"':''}>Institut Écusson</button>${plus()?`<button data-a="g-open" ${p==='gift'?'aria-current="page"':''}>Bons cadeaux</button>`:''}<button data-a="c-mesrdv">+ Ajouter à mes rendez-vous</button></nav>`;
