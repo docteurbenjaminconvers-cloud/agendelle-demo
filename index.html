@@ -412,7 +412,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='6 nov. 2026 · 12h00';
+const VERSION='6 nov. 2026 · 12h30';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1359,8 +1359,8 @@ function vBook(){
 function vMesRdv(){
   const m=me();
   if(!m)return `<span class="tag">Mon espace Agendelle</span><h1>Mes rendez-vous</h1>
-  <div class="card col" style="gap:10px"><b>Tous vos rendez-vous, chez tous vos instituts, au même endroit</b><span class="sub small">Connectez-vous avec l’email ou le mobile donné en réservant : vous recevez un lien, sans mot de passe.</span>
-    <label class="field" for="c-login-id">Email ou mobile<input id="c-login-id" placeholder="vous@exemple.fr ou 06…" autocomplete="off"></label>
+  <div class="card col" style="gap:10px"><b>Tous vos rendez-vous, chez tous vos instituts, au même endroit</b><span class="sub small">Connectez-vous avec l’email donné en réservant : vous recevez un lien, sans mot de passe.</span>
+    <label class="field" for="c-login-id">L’email donné en réservant<input id="c-login-id" type="email" placeholder="vous@exemple.fr" autocomplete="off"></label>
     <button class="btn" data-a="c-login">Recevoir mon lien de connexion</button></div>
   <p class="foot">Pas encore de rendez-vous ? <button class="link" data-a="c-book">Réserver chez Institut Écusson</button></p>`;
   const st=clientStats(m.id);
@@ -1848,7 +1848,7 @@ document.addEventListener('click',e=>{
     case 'c-inst-ok':{const l=(document.getElementById('c-add-lien').value||'').trim().toLowerCase();const k=l.includes('spa')?'spa':l.includes('ongle')||l.includes('atelier')?'atelier':null;
       if(!k){toast('Lien non reconnu : vérifiez-le ou scannez le QR code');return}S.espace=S.espace||{ajoutes:[]};if(!S.espace.ajoutes.includes(k))S.espace.ajoutes.push(k);S.sheet=null;render(true);toast(AUTRES[k].nom+' ajouté à votre espace');return}
     case 'c-autre':toast('Ouvre la page de '+AUTRES[v].nom+' (autre institut, hors démo)');return;
-    case 'c-login':{const v_=(document.getElementById('c-login-id').value||'').trim();if(v_.length<5){toast('Indiquez votre email ou votre mobile');return}
+    case 'c-login':{const v_=(document.getElementById('c-login-id').value||'').trim();if(v_.length<5){toast('Indiquez votre email');return}
       S.me=(S.clients.find(c=>c.mail===v_.toLowerCase())||S.clients[0]).id;toast('Lien de connexion envoyé · démo : vous êtes connectée');break}
     case 'c-logout':S.me=null;break;
     case 'c-tous':S.c.tous=true;break;
