@@ -240,6 +240,25 @@ footer .in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;al
   .opts td:nth-child(2){grid-column:1/-1;grid-row:2;color:var(--muted);font-size:14px}
   .opts td:last-child{grid-column:2;grid-row:1}
 }
+/* Petits écrans et texte agrandi (Safari « Aa », taille du texte iOS) : rien ne dépasse */
+.nav .btn{white-space:nowrap}
+.kgrid>*,.capp>*{min-width:0}.kc,.kc li,.capp-t,.kgrid h2{overflow-wrap:anywhere}
+@media (max-width:560px){
+  .kphones{gap:10px}
+  .kphones .phone{--w:min(150px,calc((100vw - 52px)/2))!important}
+  .capp .kphones .phone{--w:min(150px,calc((100vw - 92px)/2))!important}
+  .kc{padding:18px}.kc ul{font-size:14px}
+}
+@media (max-width:340px){
+  .nav .logo>*:not(:first-child){display:none}
+  .fstage .phone,.step .phone{--w:min(240px,calc(100vw - 48px))!important}
+  .flist,.fstage,.step{min-width:0;max-width:100%}
+}
+@media (max-width:400px){
+  .nav .btn{padding:0 12px;font-size:13px;min-height:38px}
+  .nav .logo svg+*{max-width:120px}
+  .capp{padding:20px 16px}
+}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .notif{opacity:1;position:absolute}
