@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 9h05';
+const VERSION='7 nov. 2026 · 9h30';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1252,14 +1252,37 @@ function vEquipe(){
     ${S.conges.filter(c=>c.prat===p).map(c=>`<div class="row between small"><span>Congé le ${dlabel(c.date)}</span><button class="link" data-a="conge-del" data-id="${c.id}">Retirer</button></div>`).join('')}</div>`}).join('')}
   <button class="btn ghost" data-a="conge-new">${I.plus} Ajouter un congé</button>`;
 }
+/* Offres en vente (bons, cartes de séances, abonnements). Une offre déjà achetée n'est jamais effacée :
+   elle est retirée de la vente, et ce que les clientes ont acheté (séances restantes, bons, prix payé) ne change pas. */
+const OTYPES={bonlibre:'Bon cadeau libre',bon:'Bon cadeau prestation',carte:'Carte de séances',abo:'Abonnement'};
+function OFFRES(){
+  if(!S.offres){const pr=S.produits||{};
+    S.offres=[{id:'bon-libre',type:'bonlibre',nom:'Bon cadeau libre',prix:0,validite:12},
+      {id:'bon-soin',type:'bon',nom:'Bon « Soin hydratant »',prix:65,validite:12,contenu:''},
+      {id:'bon-pause',type:'bon',nom:'Bon « Pause beauté »',prix:64,validite:12,contenu:'Soin éclat + beauté des mains'},
+      {id:'carte-dj',type:'carte',nom:'Carte 5 demi-jambes',prix:93,seances:5,remise:15,validite:12},
+      {id:'carte-rh',type:'carte',nom:'Carte 10 rehaussements',prix:495,seances:10,remise:10,validite:18},
+      {id:'abo-visage',type:'abo',nom:'Abonnement visage',prix:55,contenu:'1 soin hydratant par mois'}].map(o=>({...o,actif:pr[o.id]!==false&&(o.id!=='abo-visage'||!!pr[o.id]),retire:false}));
+    /* Relie les achats déjà faits à leur offre, une fois pour toutes (le nom de l'offre pourra ensuite changer) */
+    S.offres.forEach(o=>{(S.ventes||[]).forEach(v=>{if(!v.offre&&v.nom===o.nom)v.offre=o.id});(S.clients||[]).forEach(c=>{if(c.carte&&!c.carte.offre&&c.carte.nom===o.nom)c.carte.offre=o.id})})}
+  return S.offres}
+function OFFRE(id){return OFFRES().find(o=>o.id===id)}
+function offreEnVente(type){return OFFRES().some(o=>o.actif&&!o.retire&&(!type||type.split('|').includes(o.type)))}
+function offreAcheteuses(o){const ids=new Set();(S.ventes||[]).forEach(v=>{if(v.offre===o.id)ids.add('v'+v.id)});(S.clients||[]).forEach(c=>{if(c.carte&&c.carte.offre===o.id)ids.add('c'+c.id)});return ids.size}
+function offreResume(o){const val=o.validite?`à utiliser en ${o.validite} mois`:'';
+  if(o.type==='bonlibre')return ['Montant au choix de l’acheteuse',o.validite?`valable ${o.validite} mois`:''].filter(Boolean).join(' · ');
+  if(o.type==='bon')return [o.contenu,o.validite?`valable ${o.validite} mois`:'',eur(o.prix)].filter(Boolean).join(' · ');
+  if(o.type==='carte')return [`${o.seances} séances`,o.remise?`−${o.remise} %`:'',val,eur(o.prix)].filter(Boolean).join(' · ');
+  return [o.contenu,eur(o.prix)+'/mois'].filter(Boolean).join(' · ')}
 function vVentes(){
   if(!plus())return plusGate('Ventes en ligne','Vendez des bons cadeaux et des cartes de séances sur votre page, même la nuit.');
   const mois=S.ventes.filter(v=>v.date>=addDays(TODAY,-30));
-  const items=[['bon-libre','Bon cadeau libre','Montant au choix de l’acheteuse'],['bon-soin','Bon « Soin hydratant »','Valable 12 mois · 65 €'],['bon-pause','Bon « Pause beauté »','Soin éclat + beauté des mains · 64 €'],
-    ['carte-dj','Carte 5 demi-jambes','−15 % · à utiliser en 12 mois · 93 €'],['carte-rh','Carte 10 rehaussements','−10 % · à utiliser en 18 mois · 495 €'],['abo-visage','Abonnement visage','1 soin hydratant par mois · 55 €/mois']];
+  const offres=OFFRES(),vis=offres.filter(o=>!o.retire),ret=offres.filter(o=>o.retire);
   return `<h1>Ventes en ligne</h1>
   <div class="kpis two"><div class="kpi"><b>${eur(mois.reduce((a,v)=>a+v.montant,0))}</b><span>vendus sur 30 jours</span></div><div class="kpi"><b>${mois.length}</b><span>ventes</span></div></div>
-  <div class="sec"><span class="tag">En vente sur votre page</span><div class="list">${items.map(([id,n,s])=>`<div class="item"><span class="t"><b>${n}</b><span>${s}</span></span><button class="toggle" role="switch" aria-checked="${!!S.produits[id]}" aria-label="${n}" data-a="produit" data-id="${id}"></button></div>`).join('')}</div></div>
+  <div class="sec"><span class="tag">En vente sur votre page</span><div class="list">${vis.map(o=>{const n=offreAcheteuses(o);return `<div class="item"><button class="t" data-a="offre-edit" data-id="${o.id}" style="all:unset;flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;cursor:pointer"><b>${esc(o.nom)}</b><span class="sub small">${esc(offreResume(o))}${n?` · ${n} vendue${n>1?'s':''}`:''}</span><span class="link small" style="margin-top:2px">Modifier</span></button><button class="toggle" role="switch" aria-checked="${!!o.actif}" aria-label="${esc(o.nom)} en vente" data-a="produit" data-id="${o.id}"></button></div>`}).join('')||'<p class="sub small">Aucune offre pour l’instant.</p>'}</div>
+  <button class="btn ghost" data-a="offre-new">${I.plus} Créer une offre</button></div>
+  ${ret.length?`<div class="sec"><span class="tag">Retirées de la vente</span><div class="list">${ret.map(o=>{const n=offreAcheteuses(o);return `<div class="item"><span class="t"><b>${esc(o.nom)}</b><span>${n?`${n} cliente${n>1?'s l’ont':' l’a'} encore : séances et bons toujours valables`:'Plus proposée'}</span></span><button class="btn sm ghost" data-a="offre-remettre" data-id="${o.id}">Remettre en vente</button></div>`}).join('')}</div></div>`:''}
   <div class="sec"><span class="tag">Dernières ventes</span><div class="list">${S.ventes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(v=>`<div class="item"><span class="t"><b>${esc(v.nom)}</b><span>${esc(v.acheteur)} · ${dshort(v.date)}</span></span><span class="price">${eur(v.montant)}</span></div>`).join('')}</div></div>
   <div class="notice">${I.shield}<span>Les ventes sont encaissées au nom de l’institut et versées sur votre compte. Agendelle ne vend jamais à votre place.</span></div>`;
 }
@@ -1416,7 +1439,7 @@ function vClienteHome(){
      return `<div><button class="acc-h" data-a="c-open" data-v="${c}" aria-expanded="${open}"><span>${nom}</span><span class="row"><span class="n">${list.length} soins</span>${open?ic('<path d="m6 15 6-6 6 6"/>',18):ic('<path d="m6 9 6 6 6-6"/>',18)}</span></button>
      ${open?`<div class="list plist" style="padding-top:10px">${list.map(s=>{const inC=S.c.cart.includes(s.id);return `<div class="item"><span class="t"><b>${esc(s.nom)}</b><span>${s.dur} min${s.desc?' · '+esc(s.desc):''}</span></span><span class="col" style="align-items:flex-end;gap:6px"><span class="price">${eur(s.prix)}</span><button class="btn sm ${inC?'soft':''}" data-a="c-add" data-id="${s.id}">${inC?'Ajouté':'Choisir'}</button></span></div>`}).join('')}</div>`:''}</div>`}).join('')}</div>
   <div class="sec"><h2>L’équipe</h2><div class="row" style="gap:14px;overflow-x:auto">${PK.map(p=>`<div class="col" style="align-items:center;gap:4px;min-width:84px">${pAv(p).replace('av sm','av lg')}<b class="small">${PRATS[p].nom}</b><span class="sub small" style="text-align:center">${PRATS[p].role}</span></div>`).join('')}</div></div>
-  ${plus()&&(S.produits['bon-libre']||S.produits['bon-soin'])?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre ou soin, envoyé par message.</span></span>${I.right}</button>`:''}
+  ${plus()&&offreEnVente('bonlibre|bon')?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre ou soin, envoyé par message.</span></span>${I.right}</button>`:''}
   <div class="sec"><div class="sec-h"><h2>Avis</h2><span class="sub small">128 avis vérifiés</span></div><span class="sub small" style="margin-top:-4px">Seules les clientes venues à un rendez-vous peuvent laisser un avis. Aucun avis n’est supprimé ni trié par l’institut.</span>
    <div class="list avis">${AVIS.slice(0,3).map(([n,s,t,w])=>`<div class="card col" style="gap:4px"><div class="row between"><b class="small">${n}</b><span class="sub small">${w}</span></div><span class="stars small">${'★'.repeat(s)}${'☆'.repeat(5-s)}</span><span class="small">${t}</span></div>`).join('')}</div></div>
   <div class="sec"><h2>Infos pratiques</h2><div class="card infos"><div class="col" style="gap:6px">
@@ -1754,6 +1777,21 @@ function sheetHTML(){
       <label class="field" for="p-desc">Description affichée<input id="p-desc" value="${esc(s.desc)}"></label>
       <span class="err" id="p-err"></span><button class="btn" type="submit">Enregistrer</button></form>`;
   }
+  if(sh.type==='offre'){const o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte'),n=o?offreAcheteuses(o):0,d=o||{validite:12};
+    h=`<h2>${o?'Modifier l’offre':'Créer une offre'}</h2>
+    ${o?`<p class="sub">${OTYPES[t]}</p>`:`<div class="chips" role="group" aria-label="Type d’offre">${Object.entries(OTYPES).map(([k,l])=>`<button class="chip" data-a="offre-type" data-v="${k}" aria-pressed="${t===k}">${l}</button>`).join('')}</div>`}
+    ${n?`<div class="notice">${I.shield}<span>Déjà achetée par ${n} cliente${n>1?'s':''}. Vos changements ne valent que pour les prochains achats : leurs séances restantes, leurs bons et le prix qu’elles ont payé ne bougent pas.</span></div>`:''}
+    <form id="f-offre" class="list" novalidate>
+      <label class="field" for="of-nom">Nom affiché<input id="of-nom" value="${esc(d.nom||'')}" placeholder="${t==='carte'?'Ex. Carte 5 demi-jambes':t==='abo'?'Ex. Abonnement visage':t==='bon'?'Ex. Bon « Soin hydratant »':'Bon cadeau libre'}"></label>
+      ${t!=='bonlibre'?`<label class="field" for="of-prix">Prix${t==='abo'?' par mois':''} (€)<input id="of-prix" type="number" min="1" step="1" inputmode="decimal" value="${d.prix||''}"></label>`:''}
+      ${t==='carte'?`<div class="kpis two"><label class="field" for="of-seances">Nombre de séances<input id="of-seances" type="number" min="2" step="1" value="${d.seances||5}"></label><label class="field" for="of-remise">Remise affichée (%)<input id="of-remise" type="number" min="0" max="90" step="1" value="${d.remise||0}"></label></div>`:''}
+      ${t==='bon'||t==='abo'?`<label class="field" for="of-contenu">${t==='abo'?'Ce qui est compris':'Prestations comprises'}<input id="of-contenu" value="${esc(d.contenu||'')}" placeholder="${t==='abo'?'Ex. 1 soin hydratant par mois':'Ex. Soin éclat + beauté des mains'}"></label>`:''}
+      ${t!=='abo'?`<label class="field" for="of-val">Validité<select id="of-val">${[3,6,12,18,24].map(m=>`<option value="${m}" ${(d.validite||12)===m?'selected':''}>${m} mois</option>`).join('')}</select></label>`:''}
+      <span class="err" id="of-err"></span><button class="btn" type="submit">${o?'Enregistrer':'Créer et mettre en vente'}</button></form>
+    ${o?(sh.del?(n?`<div class="notice warn"><span>Retirer « ${esc(o.nom)} » de la vente ? Elle disparaît de votre page. Les ${n} cliente${n>1?'s':''} qui l’ont déjà gardent tout ce qu’elles ont acheté.</span></div><div class="row"><button class="btn ghost" data-a="offre-nodel" style="flex:1">Garder</button><button class="btn danger" data-a="offre-retire" data-id="${o.id}" style="flex:1">Retirer de la vente</button></div>`
+      :`<div class="notice warn"><span>Supprimer « ${esc(o.nom)} » ? Personne ne l’a encore achetée.</span></div><div class="row"><button class="btn ghost" data-a="offre-nodel" style="flex:1">Garder</button><button class="btn danger" data-a="offre-del" data-id="${o.id}" style="flex:1">Supprimer</button></div>`)
+      :`<button class="link" data-a="offre-askdel" style="align-self:center;color:var(--bad)">${n?'Retirer de la vente':'Supprimer l’offre'}</button>`):''}`;
+  }
   if(sh.type==='conge'){
     h=`<h2>Ajouter un congé</h2><form id="f-conge" class="list" novalidate>
       <label class="field" for="cg-p">Praticienne<select id="cg-p">${PK.map(p=>`<option value="${p}">${PRATS[p].nom}</option>`).join('')}</select></label>
@@ -1817,7 +1855,7 @@ function cAsideHome(){
     ${nd?`<span class="row small" style="gap:6px;color:var(--ok);font-weight:800">${I.clock} Prochaine dispo : ${nd.d===TODAY?'aujourd’hui':nd.d===addDays(TODAY,1)?'demain':JOURS[dow(nd.d)]+' '+fromIso(nd.d).getDate()} à ${hm(nd.t)}</span>`:''}
     <span class="sub small">Annulation gratuite jusqu’à ${S.reglages.annulation} h avant · ${['paiement sur place','carte demandée en garantie, paiement sur place','paiement en ligne à la réservation'][garantie()]}</span></div>
   ${kPartner()?`<button class="notice k" data-a="k-open" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>Épilation laser :</b> séances et packs vendus et garantis par Kookla.</span></button>`:''}
-  ${plus()&&(S.produits['bon-libre']||S.produits['bon-soin'])?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre, envoyé par message.</span></span>${I.right}</button>`:''}`;
+  ${plus()&&offreEnVente('bonlibre|bon')?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre, envoyé par message.</span></span>${I.right}</button>`:''}`;
 }
 function cAsideFlow(){
   const p=S.c.page;
@@ -2028,7 +2066,15 @@ document.addEventListener('click',e=>{
     case 'presta-edit':S.sheet={type:'presta',id};break;
     case 'conge-new':S.sheet={type:'conge'};break;
     case 'conge-del':S.conges=S.conges.filter(c=>c.id!==id);break;
-    case 'produit':S.produits[id]=!S.produits[id];break;
+    case 'produit':{const o=OFFRE(id);if(o){o.actif=!o.actif;toast(o.actif?'« '+o.nom+' » est en vente sur votre page':'« '+o.nom+' » n’est plus proposée sur votre page')}break}
+    case 'offre-new':S.sheet={type:'offre',id:null,t:'carte'};break;
+    case 'offre-edit':S.sheet={type:'offre',id};break;
+    case 'offre-type':if(sh&&sh.type==='offre'&&!sh.id)sh.t=v;break;
+    case 'offre-askdel':if(sh)sh.del=true;break;
+    case 'offre-nodel':if(sh)sh.del=false;break;
+    case 'offre-del':{const o=OFFRE(id);if(!o)break;if(offreAcheteuses(o)){o.retire=true;o.actif=false}else S.offres=S.offres.filter(x=>x.id!==id);S.sheet=null;toast('Offre supprimée');break}
+    case 'offre-retire':{const o=OFFRE(id);if(!o)break;o.retire=true;o.actif=false;S.sheet=null;toast('Offre retirée de la vente · les achats des clientes restent valables');break}
+    case 'offre-remettre':{const o=OFFRE(id);if(!o)break;o.retire=false;o.actif=true;toast('« '+o.nom+' » est de nouveau en vente');break}
     case 'auto':S.auto[id]=!S.auto[id];break;
     case 'camp-prep':S.campConfirm=true;break;
     case 'camp-cancel':S.campConfirm=false;break;
@@ -2173,6 +2219,17 @@ document.addEventListener('submit',e=>{
   if(f.id==='f-presta'){const s=SOIN(S.sheet.id);const prix=parseFloat(val('p-prix'));const prats=PK.filter(p=>document.getElementById('pp-'+p).checked);
     if(!(prix>=0))return err('p-err','Indiquez un prix valide.');if(!prats.length)return err('p-err','Choisissez au moins une praticienne.');
     s.prix=prix;s.dur=+val('p-dur');s.prats=prats;s.desc=val('p-desc');S.sheet=null;render(true);toast('Prestation enregistrée');return}
+  if(f.id==='f-offre'){const sh=S.sheet,o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte');
+    const nom=val('of-nom')||(t==='bonlibre'?'Bon cadeau libre':''),prix=t==='bonlibre'?0:parseFloat(val('of-prix').replace(',','.'));
+    if(!nom)return err('of-err','Donnez un nom à l’offre.');
+    if(t!=='bonlibre'&&!(prix>0))return err('of-err','Indiquez un prix valide.');
+    const x={nom,prix:t==='bonlibre'?0:Math.round(prix*100)/100};
+    if(t==='carte'){x.seances=parseInt(val('of-seances'),10);x.remise=parseInt(val('of-remise')||'0',10)||0;if(!(x.seances>=2))return err('of-err','Une carte compte au moins 2 séances.');if(x.remise<0||x.remise>90)return err('of-err','La remise doit être entre 0 et 90 %.')}
+    if(t==='bon'||t==='abo')x.contenu=val('of-contenu');
+    if(t!=='abo')x.validite=+val('of-val');
+    if(OFFRES().some(y=>y!==o&&!y.retire&&y.nom.toLowerCase()===nom.toLowerCase()))return err('of-err','Une offre porte déjà ce nom.');
+    if(o)Object.assign(o,x);else S.offres.push({id:'of'+uid(),type:t,...x,actif:true,retire:false});
+    S.sheet=null;render(true);toast(o?'Offre enregistrée':'Offre créée et mise en vente');return}
   if(f.id==='f-conge'){const p=val('cg-p'),d=val('cg-d');if(!d)return err('cg-err','Choisissez une date.');
     if(S.conges.some(c=>c.prat===p&&c.date===d))return err('cg-err','Ce congé existe déjà.');
     S.conges.push({id:uid(),prat:p,date:d});S.sheet=null;render(true);toast('Congé ajouté');return}
