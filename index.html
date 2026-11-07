@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 14h30';
+const VERSION='7 nov. 2026 · 14h50';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -754,6 +754,7 @@ const I={
  clock:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',18),
  shield:ic('<path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/>',18),
  check:ic('<path d="m5 12 5 5 9-10"/>',18),
+ box:ic('<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/>'),
  bag:ic('<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>'),
  gift:ic('<rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M12 9v11.5M3.5 13h17M12 9c-1.8-3.6-5.5-3.6-5.5-1.3S10 9 12 9zm0 0c1.8-3.6 5.5-3.6 5.5-1.3S14 9 12 9z"/>'),
  star:ic('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9z"/>'),
@@ -1232,10 +1233,10 @@ function finishPay(sh,due){const p=payPlan(sh,due);
 
 /* ----- menu ----- */
 const MENU=[['vitrine','Ma vitrine',ic('<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2.5h5L16 6"/>'),'Présentation, photos, points forts'],['prestations','Prestations',I.list,'Catalogue à cocher, prix et durées'],['equipe','Équipe & horaires',I.team,'Horaires, congés, réservable en ligne'],
- ['ventes','Ventes en ligne',I.gift,'Bons cadeaux, cartes de séances'],['produits','Produits',I.bag,'Catalogue, stock, retraits en institut'],['marketing','Marketing',I.mega,'Rappels, relances, campagnes SMS'],
+ ['ventes','Ventes en ligne',I.gift,'Bons cadeaux, cartes de séances'],['produits','Produits',I.bag,'Catalogue, stock, boutique en ligne'],['fournisseurs','Fournisseurs',I.box||I.bag,'Commander consommables et produits'],['marketing','Marketing',I.mega,'Rappels, relances, campagnes SMS'],
  ['stats','Statistiques',I.chart,'Chiffre d’affaires, remplissage, sources'],['reservation','Page de réservation',I.globe,'Règles, acompte, lien à partager'],['formule','Formule',I.crown,'Essentiel ou Plus, option Kookla']];
 function vMenu(){
-  if(S.menu){const f={vitrine:vVitrine,prestations:vPrestations,equipe:vEquipe,ventes:vVentes,produits:vProduits,marketing:vMarketing,stats:vStats,reservation:vReservation,formule:vFormule}[S.menu];
+  if(S.menu){const f={vitrine:vVitrine,prestations:vPrestations,equipe:vEquipe,ventes:vVentes,produits:vProduits,fournisseurs:vFournisseurs,marketing:vMarketing,stats:vStats,reservation:vReservation,formule:vFormule}[S.menu];
     return `<button class="link mob-only" data-a="menu-back">${I.left} Menu</button>`+f()}
   return `<h1>Menu</h1>
   <div class="card row" style="gap:12px"><span class="av lg" style="width:52px;height:52px">É</span><div class="grow"><b>Institut Écusson</b><div class="sub small">Montpellier · formule ${plus()?'Plus':'Essentiel'}</div></div></div>
@@ -1299,6 +1300,33 @@ function offreResume(o){const val=o.validite?`à utiliser en ${o.validite} mois`
   if(o.type==='bon')return [o.contenu,o.validite?`valable ${o.validite} mois`:'',eur(o.prix)].filter(Boolean).join(' · ');
   if(o.type==='carte')return [`${o.seances} séances`,o.remise?`−${o.remise} %`:'',val,eur(o.prix)].filter(Boolean).join(' · ');
   return [o.contenu,eur(o.prix)+'/mois'].filter(Boolean).join(' · ')}
+/* Fournisseurs (B2B) : des fournisseurs vendent consommables et produits aux instituts depuis l'interface du salon.
+   Agendelle prend 5 % sur ces ventes, payés par le fournisseur (l'institut paie le prix affiché). Fournisseurs fictifs de démo. */
+const COMM_FOURN=0.05;
+const FOURN=[{id:'f1',nom:'Cires du Midi',ville:'Nîmes',delai:'48 h',franco:150,port:9.9,desc:'Cires, bandes et hygiène pour l’épilation'},
+  {id:'f2',nom:'Labo Garrigue',ville:'Montpellier',delai:'3 à 4 jours',franco:200,port:12,desc:'Soins visage et corps à revendre en institut'},
+  {id:'f3',nom:'Atelier Vernis Pro',ville:'Lyon',delai:'3 jours',franco:120,port:8.5,desc:'Vernis, semi-permanent et accessoires ongles'}];
+const FPROD=[{id:'fp1',f:'f1',nom:'Cire tiède aux pigments, pot 800 ml',cond:'1 pot',ht:17.5},{id:'fp2',f:'f1',nom:'Bandes non tissées',cond:'Rouleau de 100 m',ht:8.9},{id:'fp3',f:'f1',nom:'Huile post-épilation 500 ml',cond:'1 flacon',ht:11.2},{id:'fp4',f:'f1',nom:'Spatules bois',cond:'Boîte de 500',ht:6.4},
+  {id:'fp5',f:'f2',nom:'Crème hydratante 50 ml',cond:'Lot de 6',ht:57,revente:'Crème hydratante',pc:29,qte:6},{id:'fp6',f:'f2',nom:'Sérum éclat 30 ml',cond:'Lot de 6',ht:78,revente:'Sérum éclat',pc:39,qte:6},{id:'fp7',f:'f2',nom:'Huile sèche 100 ml',cond:'Lot de 6',ht:48,revente:'Huile sèche',pc:24,qte:6},{id:'fp8',f:'f2',nom:'Masque argile cabine 500 g',cond:'1 pot',ht:22},
+  {id:'fp9',f:'f3',nom:'Base et top coat semi-permanent',cond:'Duo 10 ml',ht:14.9},{id:'fp10',f:'f3',nom:'Vernis semi-permanent, 12 teintes',cond:'Coffret',ht:96},{id:'fp11',f:'f3',nom:'Lime et soin ongles',cond:'Lot de 10',ht:42,revente:'Lime et soin ongles',pc:12,qte:10}];
+function FCMD(){if(!S.cmdF)S.cmdF=[];return S.cmdF}
+function fTotaux(f,lignes){const ht=r2(Object.entries(lignes).reduce((a,[k,q])=>a+FPROD.find(x=>x.id===k).ht*q,0)),port=ht>=f.franco?0:f.port,tva=r2((ht+port)*0.2);return {ht,port,tva,ttc:r2(ht+port+tva)}}
+function vFournisseurs(){const fv=S.fView||'achat';
+  const seg=`<div class="seg" role="group" aria-label="Vue"><button data-a="f-view" data-v="achat" aria-pressed="${fv==='achat'}">Commander</button><button data-a="f-view" data-v="fourn" aria-pressed="${fv==='fourn'}">Côté fournisseur</button></div>`;
+  if(fv==='fourn'){const fid=S.fSel||'f1',f=FOURN.find(x=>x.id===fid),cs=FCMD().filter(c=>c.f===fid),ca=r2(cs.reduce((a,c)=>a+c.ht,0)),com=r2(ca*COMM_FOURN);
+    return `<h1>Fournisseurs</h1>${seg}<div class="notice">${I.shield}<span>Aperçu de l’espace d’un fournisseur. Il reçoit les commandes des instituts et paie ${Math.round(COMM_FOURN*100)} % de commission à Agendelle.</span></div>
+    <div class="chips">${FOURN.map(x=>`<button class="chip" data-a="f-sel" data-v="${x.id}" aria-pressed="${x.id===fid}">${esc(x.nom)}</button>`).join('')}</div>
+    <div class="kpis two"><div class="kpi"><b>${eur(ca)}</b><span>vendus HT aux instituts</span></div><div class="kpi"><b>${eur(r2(ca-com))}</b><span>pour ${esc(f.nom)} après ${eur(com)} de commission</span></div></div>
+    <div class="sec"><span class="tag">Commandes reçues</span><div class="list">${cs.slice().reverse().map(c=>`<div class="item"><span class="t"><b>Institut Écusson · ${eur(c.ttc)} TTC</b><span>${esc(c.detail)} · le ${dshort(c.date)}</span></span>${c.statut==='payee'?`<button class="btn sm" data-a="f-expedier" data-id="${c.id}">Expédier</button>`:`<span class="pill ${c.statut==='recue'?'':'ok'}">${c.statut==='recue'?'Reçue':'Expédiée'}</span>`}</div>`).join('')||'<p class="sub small">Aucune commande pour l’instant. Passez-en une dans « Commander ».</p>'}</div></div>`}
+  const cart=S.fCart||{},fid=S.fSel||'f1',f=FOURN.find(x=>x.id===fid),lignes=Object.fromEntries(Object.entries(cart).filter(([k,q])=>q>0&&FPROD.find(x=>x.id===k).f===fid)),t=fTotaux(f,lignes),n=Object.values(lignes).reduce((a,q)=>a+q,0);
+  const enCours=FCMD().filter(c=>c.statut!=='recue');
+  return `<h1>Fournisseurs</h1>${seg}
+  ${enCours.length?`<div class="sec"><span class="tag">Mes commandes en cours</span><div class="list">${enCours.slice().reverse().map(c=>`<div class="item"><span class="t"><b>${esc(FOURN.find(x=>x.id===c.f).nom)} · ${eur(c.ttc)} TTC</b><span>${esc(c.detail)} · ${c.statut==='payee'?'en préparation':'expédiée'}</span></span>${c.statut==='expediee'?`<button class="btn sm" data-a="f-recue" data-id="${c.id}">Reçue</button>`:''}</div>`).join('')}</div><p class="sub small">« Reçue » ajoute au stock de vos produits ceux que vous revendez.</p></div>`:''}
+  <div class="chips">${FOURN.map(x=>`<button class="chip" data-a="f-sel" data-v="${x.id}" aria-pressed="${x.id===fid}">${esc(x.nom)}</button>`).join('')}</div>
+  <div class="card col" style="gap:4px"><b>${esc(f.nom)}</b><span class="sub small">${esc(f.desc)} · ${esc(f.ville)} · livré en ${esc(f.delai)} · port offert dès ${eur(f.franco)} HT</span></div>
+  <div class="list">${FPROD.filter(x=>x.f===fid).map(x=>`<div class="item"><span class="t"><b>${esc(x.nom)}</b><span>${esc(x.cond)} · ${eur(x.ht)} HT${x.revente?` · revente conseillée ${eur(x.pc)} l’unité`:''}</span></span>${cart[x.id]?`<button class="btn sm ghost" data-a="f-rm" data-v="${x.id}" aria-label="Retirer ${esc(x.nom)}">−</button><b>${cart[x.id]}</b>`:''}<button class="btn sm ghost" data-a="f-add" data-v="${x.id}" aria-label="Ajouter ${esc(x.nom)}">+</button></div>`).join('')}</div>
+  ${n?`<div class="card col" style="gap:6px"><div class="row between"><span>Produits HT</span><b>${eur(t.ht)}</b></div><div class="row between"><span>Port HT</span><b>${t.port?eur(t.port):'Offert'}</b></div><div class="row between"><span>TVA 20 %</span><b>${eur(t.tva)}</b></div><div class="row between"><b>Total TTC</b><b style="font-family:var(--display);font-size:22px">${eur(t.ttc)}</b></div>
+    <button class="btn" data-a="f-commander">Commander et payer ${eur(t.ttc)}</button><p class="foot">Payé par carte à ${esc(f.nom)}, facture du fournisseur envoyée par email. Démo : aucun paiement réel.</p></div>`:''}`}
 function vProduits(){
   const cat=CAT(),vis=cat.filter(x=>!x.retire),ret=cat.filter(x=>x.retire),att=S.retraits.filter(r=>r.statut==='attente'),bas=vis.filter(x=>x.stock<=x.seuil);
   const ligne=r=>Object.entries(r.lignes).map(([k,q])=>{const x=PROD(k);return (q>1?q+' × ':'')+(x?x.nom:'Produit')}).join(', ');
@@ -2193,6 +2221,18 @@ document.addEventListener('click',e=>{
     case 'prod-remettre':{const x=PROD(id);if(x){x.retire=false;toast('« '+x.nom+' » est de nouveau au catalogue')}break}
     case 'boutique':S.sheet={type:'boutique',id,q:1,rdv:v||null};break;
     case 'achat':S.sheet={type:'achat',id};break;
+    case 'f-view':S.fView=v;break;
+    case 'f-sel':S.fSel=v;break;
+    case 'f-add':S.fCart=S.fCart||{};S.fCart[v]=(S.fCart[v]||0)+1;break;
+    case 'f-rm':S.fCart=S.fCart||{};S.fCart[v]=Math.max(0,(S.fCart[v]||0)-1);break;
+    case 'f-commander':{const fid=S.fSel||'f1',f=FOURN.find(x=>x.id===fid),cart=S.fCart||{},lignes=Object.fromEntries(Object.entries(cart).filter(([k,q])=>q>0&&FPROD.find(x=>x.id===k).f===fid));if(!Object.keys(lignes).length)break;
+      const t=fTotaux(f,lignes);FCMD().push({id:'fc'+uid(),f:fid,lignes,detail:Object.entries(lignes).map(([k,q])=>q+' × '+FPROD.find(x=>x.id===k).nom).join(', '),...t,commission:r2(t.ht*COMM_FOURN),date:TODAY,statut:'payee'});
+      Object.keys(lignes).forEach(k=>delete S.fCart[k]);toast('Commande envoyée à '+f.nom);break}
+    case 'f-expedier':{const c=FCMD().find(z=>z.id===id);if(c){c.statut='expediee';toast('Commande expédiée · l’institut est prévenu')}break}
+    case 'f-recue':{const c=FCMD().find(z=>z.id===id);if(!c)break;c.statut='recue';let aj=[];
+      Object.entries(c.lignes).forEach(([k,q])=>{const fp=FPROD.find(x=>x.id===k);if(!fp.revente)return;const n=q*(fp.qte||1);let x=CAT().find(y=>y.nom===fp.revente&&!y.retire);
+        if(!x){x={id:'pr'+uid(),nom:fp.revente,marque:FOURN.find(z=>z.id===c.f).nom,prix:fp.pc,stock:0,seuil:3,enLigne:false,retire:false,desc:'',vendus:0};S.boutique.push(x)}x.stock+=n;aj.push(n+' '+x.nom)});
+      toast(aj.length?'Reçue · ajouté au stock : '+aj.join(', '):'Commande reçue');break}
     case 'shop-opt':{const o=SHOP();if((v==='retrait'||v==='exp')&&o[v]&&!o[v==='retrait'?'exp':'retrait']){toast('Gardez au moins le retrait ou l’expédition');return}o[v]=!o[v];break}
     case 'mode-new':S.sheet={type:'mode-exp',id:null};break;
     case 'mode-edit':S.sheet={type:'mode-exp',id};break;
