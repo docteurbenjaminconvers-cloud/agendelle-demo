@@ -21,26 +21,79 @@
 .tk{background:#fffdf8;color:#1c1a17;border:1px solid var(--line);border-radius:6px;padding:14px 14px 12px;font:500 12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
 .tk hr{border:0;border-top:1px dashed #b9b2a6;margin:5px 0}.tk-r{display:flex;justify-content:space-between;gap:10px}.tk-r span:last-child,.tk-r b:last-child{text-align:right;white-space:nowrap}
 .tk-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}.tk-c em{font-style:normal;font-size:11px;color:#8a6d00}.tk-t{font-size:14.5px}.tk-h{font-size:10.5px;color:#6d665c;word-break:break-all}
-.cli-app{--accent:#B5386F;--accent-ink:#fff;--accent-soft:#FCE3EE;--bg:#FFF5F8;--line:#F5DCE7;--line2:#FBEAF1;background:linear-gradient(180deg,#FFF0F5 0%,#FFF8F3 60%,#FFF5F8 100%) fixed}
-.cli-app .appcli{background:linear-gradient(180deg,#FFF0F6,#FFF9F4);border-color:#F6D6E4;box-shadow:0 20px 50px rgba(181,56,111,.14)}
+/* Skins de l'appli cliente : chaque skin ne change que ces variables (Pétales = valeurs d'origine) */
+.cli-app{--accent:#B5386F;--accent-ink:#fff;--accent-soft:#FCE3EE;--bg:#FFF5F8;--line:#F5DCE7;--line2:#FBEAF1;
+  --surface:#FFFFFF;--sunk:#F3ECF0;--ink:#241A22;--muted:#5E5159;--faint:#867880;
+  --sk-bg:linear-gradient(180deg,#FFF0F5 0%,#FFF8F3 60%,#FFF5F8 100%);--sk-phone:linear-gradient(180deg,#FFF0F6,#FFF9F4);--sk-phone-line:#F6D6E4;
+  --sk-rgb:181,56,111;--sk-btn:linear-gradient(135deg,#C2417A,#E0678C);--sk-fab:linear-gradient(135deg,#C2417A,#F08A73);--sk-btn-rgb:194,65,122;
+  --sk-next:linear-gradient(135deg,#F7B8D0 0%,#FBD3C0 55%,#FDE8D4 100%);--sk-next-rgb:214,96,134;--sk-next-pill:#8A2453;--sk-next-ink:#5B2340;--sk-qa-rgb:138,36,83;
+  --sk-av:linear-gradient(135deg,#FBD0E1,#FDE3D3);--sk-av-ink:#9C2A5E;--sk-card:rgba(255,255,255,.88);--sk-qa:rgba(255,255,255,.85);--sk-tabs:rgba(255,255,255,.94);--sk-status:rgba(255,242,247,.92);
+  --sk-f1:url(flora-1.svg);--sk-f2:url(flora-2.svg);--sk-f3:url(flora-3.svg);--sk-sbar:#1D1A1F;
+  background:var(--sk-bg) fixed}
+body.cli-app[data-skin="lavande"]{--accent:#6B4BB0;--accent-soft:#ECE4FA;--bg:#F6F2FC;--line:#E4DAF3;--line2:#EFE9F8;
+  --sk-bg:linear-gradient(180deg,#F3EEFB 0%,#F8F5FD 60%,#F6F2FC 100%);--sk-phone:linear-gradient(180deg,#F2ECFB,#FAF7FD);--sk-phone-line:#E2D6F3;
+  --sk-rgb:107,75,176;--sk-btn:linear-gradient(135deg,#5B3F98,#8460BD);--sk-fab:linear-gradient(135deg,#5B3F98,#9B72C9);--sk-btn-rgb:91,63,152;
+  --sk-next:linear-gradient(135deg,#D9C8F4 0%,#E8DCF8 55%,#F4ECFB 100%);--sk-next-rgb:120,90,190;--sk-next-pill:#4E3388;--sk-next-ink:#3B2A63;--sk-qa-rgb:91,63,152;
+  --sk-av:linear-gradient(135deg,#E2D4F6,#F0E8FB);--sk-av-ink:#553896;--sk-status:rgba(245,240,252,.92);
+  --sk-f1:url(skins/lavande-a.svg);--sk-f2:url(skins/lavande-b.svg);--sk-f3:url(skins/lavande-a.svg)}
+body.cli-app[data-skin="peche"]{--accent:#B8442A;--accent-soft:#FFE4D6;--bg:#FFF6F0;--line:#F6DFD2;--line2:#FBEDE4;
+  --sk-bg:linear-gradient(180deg,#FFF1E8 0%,#FFF8F0 60%,#FFF6F0 100%);--sk-phone:linear-gradient(180deg,#FFEFE5,#FFF9F2);--sk-phone-line:#F7D9C8;
+  --sk-rgb:184,68,42;--sk-btn:linear-gradient(135deg,#B8442A,#CF6338);--sk-fab:linear-gradient(135deg,#B8442A,#D9733F);--sk-btn-rgb:184,68,42;
+  --sk-next:linear-gradient(135deg,#FFC9AE 0%,#FFDDB8 55%,#FFEFD2 100%);--sk-next-rgb:226,120,80;--sk-next-pill:#8C3418;--sk-next-ink:#6A2B14;--sk-qa-rgb:160,70,40;
+  --sk-av:linear-gradient(135deg,#FFD5C2,#FFE8CF);--sk-av-ink:#9A3A1E;--sk-status:rgba(255,243,235,.92);
+  --sk-f1:url(skins/peche-a.svg);--sk-f2:url(skins/peche-b.svg);--sk-f3:url(skins/peche-a.svg)}
+body.cli-app[data-skin="menthe"]{--accent:#1F6650;--accent-soft:#DDF1E7;--bg:#F1F8F4;--line:#D6EADF;--line2:#E6F2EB;
+  --sk-bg:linear-gradient(180deg,#EBF6F0 0%,#F4FAF6 60%,#F1F8F4 100%);--sk-phone:linear-gradient(180deg,#EAF5EF,#F6FBF8);--sk-phone-line:#CFE6DA;
+  --sk-rgb:31,102,80;--sk-btn:linear-gradient(135deg,#1F6650,#3A876A);--sk-fab:linear-gradient(135deg,#1F6650,#47957A);--sk-btn-rgb:31,102,80;
+  --sk-next:linear-gradient(135deg,#BFE6D3 0%,#D6EFD9 55%,#E9F6E4 100%);--sk-next-rgb:60,140,105;--sk-next-pill:#185443;--sk-next-ink:#1A4636;--sk-qa-rgb:31,102,80;
+  --sk-av:linear-gradient(135deg,#CFEBDD,#E3F3E2);--sk-av-ink:#1D5E49;--sk-status:rgba(237,247,241,.92);
+  --sk-f1:url(skins/menthe-a.svg);--sk-f2:url(skins/menthe-b.svg);--sk-f3:url(skins/menthe-a.svg)}
+body.cli-app[data-skin="lagon"]{--accent:#145A76;--accent-soft:#DCEEF6;--bg:#F1F7FB;--line:#D5E6EF;--line2:#E5F0F6;
+  --sk-bg:linear-gradient(180deg,#EAF4F9 0%,#F3F9FB 60%,#F1F7FB 100%);--sk-phone:linear-gradient(180deg,#E9F3F9,#F5FAFC);--sk-phone-line:#CDE3EE;
+  --sk-rgb:20,90,118;--sk-btn:linear-gradient(135deg,#145A76,#2B82A0);--sk-fab:linear-gradient(135deg,#145A76,#3190AE);--sk-btn-rgb:20,90,118;
+  --sk-next:linear-gradient(135deg,#BCDDEE 0%,#CFE9EC 55%,#E4F3F1 100%);--sk-next-rgb:50,130,165;--sk-next-pill:#104A61;--sk-next-ink:#123F52;--sk-qa-rgb:20,90,118;
+  --sk-av:linear-gradient(135deg,#CFE6F2,#DFF0EF);--sk-av-ink:#145673;--sk-status:rgba(236,245,250,.92);
+  --sk-f1:url(skins/lagon-a.svg);--sk-f2:url(skins/lagon-b.svg);--sk-f3:url(skins/lagon-a.svg)}
+body.cli-app[data-skin="sable"]{--accent:#7A4B30;--accent-soft:#F1E5D6;--bg:#F9F4EE;--line:#EADFD2;--line2:#F2EAE0;
+  --sk-bg:linear-gradient(180deg,#F6EFE6 0%,#FAF6F0 60%,#F9F4EE 100%);--sk-phone:linear-gradient(180deg,#F5EDE3,#FBF8F3);--sk-phone-line:#E6D8C6;
+  --sk-rgb:122,75,48;--sk-btn:linear-gradient(135deg,#7A4B30,#9C6B46);--sk-fab:linear-gradient(135deg,#7A4B30,#A6744C);--sk-btn-rgb:122,75,48;
+  --sk-next:linear-gradient(135deg,#E8D3BA 0%,#F0E1CC 55%,#F7EEE1 100%);--sk-next-rgb:160,115,80;--sk-next-pill:#6A3F27;--sk-next-ink:#553421;--sk-qa-rgb:122,75,48;
+  --sk-av:linear-gradient(135deg,#ECDDCA,#F5EBDD);--sk-av-ink:#6E432B;--sk-status:rgba(248,242,235,.92);
+  --sk-f1:url(skins/sable-a.svg);--sk-f2:url(skins/sable-b.svg);--sk-f3:url(skins/sable-a.svg)}
+body.cli-app[data-skin="nuit"]{--accent:#F0A6C6;--accent-ink:#241A22;--accent-soft:#3E2846;--bg:#1C1420;--line:#3A2A40;--line2:#2E2233;
+  --surface:#2A1E2D;--sunk:#33263A;--ink:#F7EEF3;--muted:#C9BAC4;--faint:#A595A0;
+  --sk-bg:linear-gradient(180deg,#1A1220 0%,#21162A 60%,#1C1420 100%);--sk-phone:linear-gradient(180deg,#1A1220,#241830);--sk-phone-line:#3A2A40;
+  --sk-rgb:0,0,0;--sk-btn:linear-gradient(135deg,#F0A6C6,#F5BC96);--sk-fab:linear-gradient(135deg,#F0A6C6,#F5BC96);--sk-btn-rgb:0,0,0;
+  --sk-next:linear-gradient(135deg,#4A2A55 0%,#5A3048 55%,#5E3A3A 100%);--sk-next-rgb:0,0,0;--sk-next-pill:#F7D3E3;--sk-next-ink:#F3DDE8;--sk-qa-rgb:0,0,0;
+  --sk-av:linear-gradient(135deg,#4A2E52,#5A3346);--sk-av-ink:#F5C6DA;--sk-card:rgba(42,30,45,.9);--sk-qa:rgba(46,34,52,.9);--sk-tabs:rgba(33,24,37,.94);--sk-status:rgba(28,20,32,.92);
+  --sk-f1:url(skins/nuit-a.svg);--sk-f2:url(skins/nuit-b.svg);--sk-f3:url(skins/nuit-a.svg);--sk-sbar:#F3ECF1}
+body.cli-app[data-skin="nuit"] .nextrdv .pill{background:rgba(255,255,255,.14)!important}
+body.cli-app[data-skin="nuit"] .wm{color:#F7EEF3}
+body.cli-app[data-skin="coton"]{--accent:#6B2D5C;--accent-soft:#F1E6EE;--bg:#FFFFFF;--line:#ECE6E9;--line2:#F4F0F2;
+  --sk-bg:#FFFFFF;--sk-phone:#FFFFFF;--sk-phone-line:#ECE6E9;
+  --sk-rgb:36,26,34;--sk-btn:#6B2D5C;--sk-fab:#6B2D5C;--sk-btn-rgb:107,45,92;
+  --sk-next:#F5EEF3;--sk-next-rgb:36,26,34;--sk-next-pill:#6B2D5C;--sk-next-ink:#4E2244;--sk-qa-rgb:36,26,34;
+  --sk-av:#F1E6EE;--sk-av-ink:#6B2D5C;--sk-card:#FFFFFF;--sk-qa:#F7F4F5;--sk-status:rgba(255,255,255,.94);
+  --sk-f1:none;--sk-f2:none;--sk-f3:none}
+.cli-app .appcli{background:var(--sk-phone);border-color:var(--sk-phone-line);box-shadow:0 20px 50px rgba(var(--sk-rgb),.14)}
 .cli-app h1,.cli-app .h-app{font-family:var(--display);letter-spacing:-.02em}.cli-app .h-app{font-size:19px;margin:2px 0 -4px}
 .hello{display:flex;flex-direction:column;gap:0}.hello span{font-size:14px;font-weight:700;color:var(--accent)}.hello b{font-family:var(--display);font-size:28px;line-height:1.15;letter-spacing:-.02em}
-.cli-app .card{border-radius:22px;border-color:var(--line);box-shadow:0 4px 14px rgba(181,56,111,.06)}
-.cli-app .nextrdv{background:linear-gradient(135deg,#F7B8D0 0%,#FBD3C0 55%,#FDE8D4 100%);border:0;box-shadow:0 14px 30px rgba(214,96,134,.25)}
-.cli-app .nextrdv .pill{background:rgba(255,255,255,.75);color:#8A2453}.cli-app .nextrdv .link,.cli-app .nextrdv .sub{color:#5B2340}
-.cli-app .qa button{border:0;background:rgba(255,255,255,.85);border-radius:18px;box-shadow:0 3px 10px rgba(138,36,83,.08)}
+.cli-app .card{border-radius:22px;border-color:var(--line);box-shadow:0 4px 14px rgba(var(--sk-rgb),.06)}
+.cli-app .nextrdv{background:var(--sk-next);border:0;box-shadow:0 14px 30px rgba(var(--sk-next-rgb),.25);color:var(--sk-next-ink)}
+.cli-app .nextrdv .pill{background:rgba(255,255,255,.75);color:var(--sk-next-pill)}.cli-app .nextrdv .link,.cli-app .nextrdv .sub{color:var(--sk-next-ink)}
+.cli-app .qa button{border:0;background:var(--sk-qa);border-radius:18px;box-shadow:0 3px 10px rgba(var(--sk-qa-rgb),.08)}
 .cli-app .qa button svg{width:34px;height:34px;padding:7px;border-radius:12px}
 .qa .q1 svg{background:#FFE1EC;color:#C2336F}.qa .q2 svg{background:#E3F4EC;color:#2F8A5B}.qa .q3 svg{background:#EAE4FF;color:#6A4FCF}.qa .q4 svg{background:#FFEBD9;color:#C46A1F}
-.cli-app .btn{background:linear-gradient(135deg,#C2417A,#E0678C);border:0;box-shadow:0 6px 14px rgba(194,65,122,.25)}.cli-app .btn.ghost,.cli-app .btn.danger{background:var(--surface);box-shadow:none;border:1px solid var(--line)}
-.cli-app .appfab{background:linear-gradient(135deg,#C2417A,#F08A73);box-shadow:0 10px 24px rgba(194,65,122,.38)}
-.cli-app .tabs,.cli-app .appnav{background:rgba(255,255,255,.94);backdrop-filter:blur(10px)}
+.cli-app .btn{background:var(--sk-btn);border:0;box-shadow:0 6px 14px rgba(var(--sk-btn-rgb),.25)}.cli-app .btn.ghost,.cli-app .btn.danger{background:var(--surface);box-shadow:none;border:1px solid var(--line)}
+.cli-app .appfab{background:var(--sk-fab);box-shadow:0 10px 24px rgba(var(--sk-btn-rgb),.38)}
+.cli-app .tabs,.cli-app .appnav{background:var(--sk-tabs);backdrop-filter:blur(10px)}
 .cli-app .tabs button[aria-current="page"] svg,.cli-app .appnav button[aria-current="page"] svg{background:var(--accent-soft);border-radius:14px;padding:3px 12px;width:46px;box-sizing:content-box;margin:0 -12px}
 .cli-app .chip[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
 .cli-app .wtile{border:0!important;color:#3A1730}.wtile .sub{color:#5B3550}.wtile .bar{background:rgba(255,255,255,.6)}
 .cli-app .w-carte{background:linear-gradient(135deg,#E9DDFF,#FBE2F1)}.w-carte .bar i{background:#7B5BD6}
 .cli-app .w-pack{background:linear-gradient(135deg,#FFD6CF,#FCE7D6)}.w-pack .bar i{background:var(--k)}
-.cli-app .w-bon{background:linear-gradient(135deg,#FFE7A8,#FFD1DE);gap:12px}.wgift{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.7);display:grid;place-items:center;color:#B5386F;flex:none}
-.cli-app .av{background:linear-gradient(135deg,#FBD0E1,#FDE3D3)!important;color:#9C2A5E!important}
+.cli-app .w-bon{background:linear-gradient(135deg,#FFE7A8,#FFD1DE);gap:12px}.wgift{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.7);display:grid;place-items:center;color:var(--accent);flex:none}
+.cli-app .av{background:var(--sk-av)!important;color:var(--sk-av-ink)!important}
 .phonewrap{display:flex;justify-content:center;padding:6px 0 30px}
 .phone{position:relative;width:390px;height:844px;border-radius:58px;background:linear-gradient(180deg,#FFF0F6,#FFF9F4);border:12px solid #1D1A1F;box-shadow:0 0 0 2px #3A3540,0 0 0 4px #CFC7D2,0 40px 80px rgba(120,40,80,.28),inset 0 0 0 1px rgba(255,255,255,.4);overflow:hidden;display:flex;flex-direction:column}
 .phone .island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#0D0B0E;z-index:6}
@@ -54,17 +107,29 @@
 .phone .appfab{display:flex!important;position:absolute;right:16px;bottom:104px;z-index:6}
 .phone .homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#1D1A1F;z-index:7}
 
+/* Choix du skin dans Profil */
+.skins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.skin{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink);border-radius:18px}
+.skin:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.skin .sw{width:100%;aspect-ratio:3/4;border-radius:16px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.skin .sw i{position:absolute;width:62%;height:44%;top:-12%;right:-14%;border-radius:50%}
+.skin .sw u{position:absolute;left:16%;right:16%;top:44%;height:14%;border-radius:6px;background:rgba(255,255,255,.85)}
+.skin .sw s{position:absolute;right:12%;bottom:10%;width:46%;height:13%;border-radius:999px}
+.skin .sw b{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.skin .sw b svg{width:12px;height:12px}
+.skin[aria-pressed="true"]{font-weight:800}.skin[aria-pressed="true"] .sw{box-shadow:0 0 0 2.5px var(--ink),inset 0 0 0 1px rgba(0,0,0,.06)}
 /* Fleurs et feuillages en filigrane : appli de la cliente seulement */
 body.cli-app::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;
-  background:url(flora-1.svg) right -70px top -60px/260px no-repeat,url(flora-2.svg) left -90px bottom 40px/280px no-repeat}
+  background:var(--sk-f1) right -70px top -60px/260px no-repeat,var(--sk-f2) left -90px bottom 40px/280px no-repeat}
 body.cli-app #app,body.cli-app main{position:relative;z-index:1}
-.phone{background:url(flora-1.svg) right -90px top 40px/230px no-repeat,url(flora-2.svg) left -100px bottom 30px/260px no-repeat,linear-gradient(180deg,#FFF0F6,#FFF9F4)!important}
+.phone{background:var(--sk-f1) right -90px top 40px/230px no-repeat,var(--sk-f2) left -100px bottom 30px/260px no-repeat,var(--sk-phone)!important}
+.cli-app .phone .sbar{color:var(--sk-sbar)}.cli-app .phone .sic i{background:var(--sk-sbar)}
 .phone .appscr .card,.phone .appscr .item,.cli-app .card,.cli-app .item{backdrop-filter:blur(2px)}
-.cli-app .card:not(.wtile):not(.nextrdv),.cli-app .item{background:rgba(255,255,255,.88)}
+.cli-app .card:not(.wtile):not(.nextrdv),.cli-app .item{background:var(--sk-card)}
 .cli-app .hello{position:relative;padding-right:70px}
-.cli-app .hello::after{content:'';position:absolute;right:0;top:-6px;width:64px;height:64px;background:url(flora-3.svg) center/contain no-repeat}
+.cli-app .hello::after{content:'';position:absolute;right:0;top:-6px;width:64px;height:64px;background:var(--sk-f3) center/contain no-repeat}
 /* Barre de statut de l'iPhone quand l'appli est installée */
-body.cli-app::after{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:rgba(255,242,247,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:60}
+body.cli-app::after{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--sk-status);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:60}
 body.cli-app main{padding-top:env(safe-area-inset-top,0px)}
 /* Le bouton Réserver ne cache plus le bas de la page, et les onglets ne se chevauchent plus */
 body.cli-app main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
@@ -1506,6 +1571,9 @@ function vMesRdv(){
   if(at==='profil'){const e=S.espace||{};const nt=e.notif||{veille:true,attente:true};
     const sw=(a,on,l,d)=>`<div class="item"><span class="t"><b>${l}</b><span>${d}</span></span><button class="toggle" role="switch" aria-checked="${on}" aria-label="${l}" data-a="${a}"></button></div>`;
     v=`<h1>Profil</h1><div class="card col" style="gap:4px"><b>${esc(m.nom)}</b><span class="sub small">${esc(m.mail||'')}</span><span class="sub small">${esc(m.tel)}</span></div>
+    <div class="sec"><h3>Apparence</h3><p class="sub small" style="margin-top:-4px">Choisissez le fond de votre appli. Vos instituts n’en sont pas modifiés.</p>
+    <div class="skins" role="group" aria-label="Fond de l’appli">${SKINS.map(([id,n,bg,deco,btn,ck])=>{const on=(e.skin||'petales')===id;return `<button class="skin" data-a="c-skin" data-v="${id}" aria-pressed="${on}"><span class="sw" style="background:${bg}"><i style="background:${deco}"></i><u${id==='nuit'?' style="background:rgba(255,255,255,.14)"':id==='coton'?' style="background:#F3EEF1"':''}></u><s style="background:${btn}"></s>${on?`<b style="background:${ck}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.2l2.4 2.3 4.6-5"/></svg></b>`:''}</span>${n}</button>`}).join('')}</div>
+    <div class="list">${sw('c-skin-auto',e.skinAuto!==false,'Suivre le mode sombre','Passe en « Nuit » quand le téléphone est en mode sombre')}</div>${e.skinAuto!==false&&telSombre()&&(e.skin||'petales')!=='nuit'?'<p class="sub small">Votre téléphone est en mode sombre : le fond Nuit s’affiche pour l’instant.</p>':''}</div>
     <div class="sec"><h3>Notifications</h3><div class="list">${sw('c-notif-veille',nt.veille,'Rappel la veille','Pour chacun de vos rendez-vous')}${sw('c-notif-attente',nt.attente,'Place libérée','Quand une place se libère en liste d’attente')}</div><p class="sub small">Sur iPhone, les notifications demandent d’avoir installé Agendelle sur l’écran d’accueil. Sinon, vous les recevez par email.</p></div>
     <div class="sec"><h3>Offres de mes instituts</h3><div class="list">${sw('c-optin-ecusson',!!m.optin,'Institut Écusson','Offres et nouveautés par email ou SMS')}${autres.map(o=>sw('c-optin-'+o.id,!!(e.optins||{})[o.id],esc(o.nom),'Offres et nouveautés par email ou SMS')).join('')}</div><p class="sub small">Chaque institut ne vous écrit que si vous l’avez accepté. Vous pouvez changer d’avis à tout moment.</p></div>
     <div class="sec"><h3>Mes données</h3><div class="list"><button class="item" data-a="c-export" style="width:100%;text-align:left"><span class="t"><b>Télécharger mes données</b><span>Rendez-vous, tickets et accords, tous instituts</span></span>${I.right}</button></div></div>
@@ -1513,6 +1581,15 @@ function vMesRdv(){
     <button class="link" data-a="c-logout" style="align-self:center;color:var(--muted)">Me déconnecter</button>`}
   return v;
 }
+/* Skins de l'appli cliente : [id, nom, fond, décor, bouton, coche] */
+const SKINS=[['petales','Pétales','#FBEFF3','#F5D3DF','linear-gradient(120deg,#C2417A,#E0678C)','#C2417A'],['lavande','Lavande','#F3EFFA','#DFD3F3','linear-gradient(120deg,#5B3F98,#8460BD)','#5B3F98'],
+  ['peche','Pêche','#FFF3EB','#FFD9C6','linear-gradient(120deg,#B8442A,#CF6338)','#B8442A'],['menthe','Menthe','#EEF7F2','#CFEBDD','linear-gradient(120deg,#1F6650,#3A876A)','#1F6650'],
+  ['lagon','Lagon','#EEF6FA','#CFE6F2','linear-gradient(120deg,#145A76,#2B82A0)','#145A76'],['sable','Sable','#F7F1EA','#ECDDCA','linear-gradient(120deg,#7A4B30,#9C6B46)','#7A4B30'],
+  ['nuit','Nuit','#1C1420','#33203B','linear-gradient(120deg,#F0A6C6,#F5BC96)','#B5386F'],['coton','Coton','#FFFFFF','#FFFFFF','#6B2D5C','#6B2D5C']];
+const DARK_MQ=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function telSombre(){const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&!!(DARK_MQ&&DARK_MQ.matches))}
+function skinActif(){const e=S.espace||{};if(e.skinAuto!==false&&telSombre())return 'nuit';return SKINS.some(k=>k[0]===e.skin)?e.skin:'petales'}
+if(DARK_MQ){const f=()=>{if(document.body.classList.contains('cli-app'))render(true)};DARK_MQ.addEventListener?DARK_MQ.addEventListener('change',f):DARK_MQ.addListener(f)}
 const APPTABS=[['accueil','Accueil','home','Accueil'],['rdv','Rendez-vous','cal','RDV'],['instituts','Instituts','users','Instituts'],['portefeuille','Portefeuille','cash','Cartes'],['profil','Profil','user','Profil']];
 function appNav(cls){const at=S.c.at||'accueil';return `<nav class="${cls}" aria-label="Appli cliente"><div class="in">${APPTABS.map(([k,l,ic_,c_])=>`<button data-a="c-at" data-v="${k}" aria-label="${l}" ${at===k?'aria-current="page"':''}>${I[ic_]||I.cal}<span class="l-long">${l}</span><span class="l-short" aria-hidden="true">${c_}</span></button>`).join('')}</div></nav><button class="fab appfab" data-a="c-resa">${I.plus} Réserver</button>`}
 function espaceData(){const m=me();const kp=S.rdv.filter(r=>r.client===m.id&&r.source==='kookla'&&r.pack);
@@ -1794,6 +1871,7 @@ function vueCli(){const app_=S.c.page==='mesrdv';
   <span class="sub small">${app_?'Ce qu’elle voit en ouvrant Agendelle sur son téléphone : ses instituts et ses rendez-vous, sans aucun institut mis en avant.':'Ce qu’elle voit en arrivant par le lien d’Institut Écusson (Instagram, Google, QR code en vitrine) : uniquement cet institut.'}</span></div>`}
 function render(keepScroll){
   document.body.classList.toggle('cli-app',S.mode==='cliente'&&S.c.page==='mesrdv'&&!!me());
+  document.body.dataset.skin=skinActif();
   if(DESK)return renderDesk(keepScroll);
   const y=window.scrollY;
   const app=document.getElementById('app');
@@ -2006,6 +2084,8 @@ document.addEventListener('click',e=>{
     case 'qa-map':toast('Ouvre l’itinéraire dans Plans ou Google Maps (simulation)');return;
     case 'qa-call':toast('Appelle l’institut (simulation)');return;
     case 'qa-move':if(v==='ecusson'&&id){const r=S.rdv.find(x=>x.id===id);return go(()=>{S.c.page='book';S.c.cart=r.soins.slice();S.c.editId=r.id;S.c.prat=r.prat;S.c.date=r.date;S.c.t=null;S.c.step='date'})}toast('Ouvre la gestion du rendez-vous chez '+AUTRES[v].nom+' (hors démo)');return;
+    case 'c-skin':{S.espace=S.espace||{ajoutes:[]};S.espace.skin=v;if(v!=='nuit'&&S.espace.skinAuto!==false&&telSombre()){S.espace.skinAuto=false}break}
+    case 'c-skin-auto':{S.espace=S.espace||{ajoutes:[]};S.espace.skinAuto=S.espace.skinAuto===false;break}
     case 'c-notif-veille':case 'c-notif-attente':{S.espace=S.espace||{ajoutes:[]};const nt=S.espace.notif=S.espace.notif||{veille:true,attente:true};const k=a.slice(8);nt[k]=!nt[k];break}
     case 'c-optin-ecusson':{const m=me();m.optin=!m.optin;toast(m.optin?'Offres d’Institut Écusson acceptées':'Vous ne recevrez plus d’offres d’Institut Écusson');break}
     case 'c-optin-atelier':case 'c-optin-spa':{S.espace=S.espace||{ajoutes:[]};const o=S.espace.optins=S.espace.optins||{};const k=a.slice(8);o[k]=!o[k];break}
