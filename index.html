@@ -1866,11 +1866,13 @@ function renderDesk(keepScroll){
   if(keepScroll)window.scrollTo(0,y);
   save();
 }
-function vueCli(){const app_=S.c.page==='mesrdv';
-  return `<div class="vuecli"><span class="tag">Vue cliente</span><div class="seg" role="group" aria-label="Vue cliente"><button data-a="c-home" aria-pressed="${!app_}">Page d’un institut</button><button data-a="c-mesrdv" aria-pressed="${app_}">Son appli Agendelle</button></div>
-  <span class="sub small">${app_?'Ce qu’elle voit en ouvrant Agendelle sur son téléphone : ses instituts et ses rendez-vous, sans aucun institut mis en avant.':'Ce qu’elle voit en arrivant par le lien d’Institut Écusson (Instagram, Google, QR code en vitrine) : uniquement cet institut.'}</span></div>`}
+function vueCli(){const app_=S.c.page==='mesrdv'||!!S.c.viaApp;
+  return `<div class="vuecli"><span class="tag">Vue cliente</span><div class="seg" role="group" aria-label="Vue cliente"><button data-a="c-home" data-v="lien" aria-pressed="${!app_}">Page d’un institut</button><button data-a="c-mesrdv" aria-pressed="${app_}">Son appli Agendelle</button></div>
+  <span class="sub small">${app_?(S.c.page==='mesrdv'?'Ce qu’elle voit en ouvrant Agendelle sur son téléphone : ses instituts et ses rendez-vous, sans aucun institut mis en avant.':'La page de l’institut ouverte depuis son appli : elle garde le fond qu’elle a choisi.'):'Ce qu’elle voit en arrivant par le lien d’Institut Écusson (Instagram, Google, QR code en vitrine) : uniquement cet institut.'}</span></div>`}
 function render(keepScroll){
-  document.body.classList.toggle('cli-app',S.mode==='cliente'&&S.c.page==='mesrdv'&&!!me());
+  /* Une page d'institut ouverte depuis l'appli garde le skin de la cliente */
+  if(S.mode==='cliente'&&S.c.page==='mesrdv')S.c.viaApp=true;
+  document.body.classList.toggle('cli-app',S.mode==='cliente'&&!!me()&&(S.c.page==='mesrdv'||!!S.c.viaApp));
   document.body.dataset.skin=skinActif();
   if(DESK)return renderDesk(keepScroll);
   const y=window.scrollY;
@@ -1891,7 +1893,7 @@ function render(keepScroll){
   }
   const topbar=`<header class="top"><span class="logo">${swallow(30,'var(--accent-ink)','var(--accent)')}<span class="wm">Agendelle</span></span>
     <div class="seg" role="group" aria-label="Point de vue"><button data-a="mode" data-v="salon" aria-pressed="${S.mode==='salon'}">Salon</button><button data-a="mode" data-v="cliente" aria-pressed="${S.mode==='cliente'}">Cliente</button></div></header>
-    ${S.mode==='cliente'&&(S.c.page==='home'||S.c.page==='mesrdv')?vueCli()+(S.c.page==='home'?`<button class="link small" data-a="c-mesrdv" style="align-self:flex-start;margin:-2px 0 10px">+ Ajouter à mes rendez-vous Agendelle</button>`:''):`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
+    ${S.mode==='cliente'&&(S.c.page==='home'||S.c.page==='mesrdv')?vueCli()+(S.c.page==='home'&&S.c.viaApp&&me()?`<button class="link small" data-a="c-mesrdv" style="align-self:flex-start;margin:-2px 0 10px">${I.left} Retour à mon appli Agendelle</button>`:S.c.page==='home'?`<button class="link small" data-a="c-mesrdv" style="align-self:flex-start;margin:-2px 0 10px">+ Ajouter à mes rendez-vous Agendelle</button>`:''):`<span class="tag" style="margin:-4px 0 10px">Démo · données d’exemple</span>`}`;
   app.innerHTML=topbar+`<main>${main}</main>`+nav+sheetHTML();
   setupStrip();
   if(keepScroll)window.scrollTo(0,y);
@@ -2050,7 +2052,7 @@ document.addEventListener('click',e=>{
     case 'desc-more':S.c.descOpen=!S.c.descOpen;break;
     case 'reset':S=seed();S.vitrine=defaultVitrine();S.sheet=null;return go(()=>{});
     /* cliente */
-    case 'c-home':return go(()=>{S.mode='cliente';S.c.page='home';S.c.g={}});
+    case 'c-home':return go(()=>{S.mode='cliente';S.c.page='home';S.c.g={};if(v==='lien')S.c.viaApp=false});
     case 'c-mesrdv':return go(()=>{S.mode='cliente';S.c.page='mesrdv';S.c.cancelId=null});
     case 'c-open':S.c.open=S.c.open===v?null:v;break;
     case 'c-add':if(!S.c.cart.includes(id))S.c.cart.push(id);else if(!el.dataset.stay)S.c.cart=S.c.cart.filter(x=>x!==id);S.c.t=null;break;
