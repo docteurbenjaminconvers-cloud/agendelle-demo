@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 12h20';
+const VERSION='7 nov. 2026 · 14h30';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1057,6 +1057,13 @@ const COMM_BOUTIQUE=0.10;
 function CMD(){if(!S.commandes)S.commandes=[];return S.commandes}
 function boutiqueOn(){return S.boutiqueOn!==false}
 function commission(total){return Math.round(total*COMM_BOUTIQUE*100)/100}
+/* Trois façons de vendre, au choix de l'institut : retrait à l'institut, expédition (modes et prix fixés par l'institut),
+   et produit ajouté en fin de réservation (payé en ligne tout de suite, remis au rendez-vous). Commission sur les produits seulement, jamais sur le port. */
+function SHOP(){if(!S.shop)S.shop={retrait:true,exp:true,upsell:true,franco:60,modes:[{id:'m1',nom:'Colissimo à domicile',prix:6.9,delai:'2 à 3 jours ouvrés'},{id:'m2',nom:'Point relais',prix:4.5,delai:'3 à 5 jours ouvrés'}]};return S.shop}
+function portPour(modeId,sous){const sh_=SHOP(),m=sh_.modes.find(x=>x.id===modeId);if(!m)return 0;return sh_.franco&&sous>=sh_.franco?0:m.prix}
+function modesClient(){const sh_=SHOP(),o=[];if(sh_.retrait)o.push({id:'retrait',nom:'Retrait à l’institut',prix:0,delai:'Gratuit · prévenue quand c’est prêt'});if(sh_.exp)sh_.modes.forEach(m=>o.push(m));return o}
+function upsellHTML(r){const sh_=SHOP();if(!boutiqueOn()||!sh_.upsell)return '';const xs=CAT().filter(x=>x.enLigne&&!x.retire&&dispo(x)>0).slice(0,3);if(!xs.length)return '';
+  return `<div class="sec"><h3>Pour compléter votre soin</h3><p class="sub small" style="margin-top:-4px">Payé maintenant, remis à votre rendez-vous.</p><div class="list">${xs.map(x=>`<div class="item"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.bag}</span><span class="t"><b>${esc(x.nom)}</b><span>${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}</span></span><button class="btn sm ghost" data-a="boutique" data-id="${x.id}" data-v="${r.id}">Ajouter</button></div>`).join('')}</div></div>`}
 function caisseItems(){return [...CAT().filter(x=>!x.retire).map(x=>[x.id,x.nom,x.prix]),['p6','Bon cadeau 50 €',50]]}
 const PRODUITS=[['p1','Crème hydratante',29],['p2','Sérum éclat',39],['p3','Huile sèche',24],['p4','Baume lèvres',9],['p5','Lime et soin ongles',12],['p6','Bon cadeau 50 €',50]];
 const MOTIFS=['Erreur d’encaissement','Prestation non réalisée','Geste commercial','Retour produit'];
@@ -1296,12 +1303,14 @@ function vProduits(){
   const cat=CAT(),vis=cat.filter(x=>!x.retire),ret=cat.filter(x=>x.retire),att=S.retraits.filter(r=>r.statut==='attente'),bas=vis.filter(x=>x.stock<=x.seuil);
   const ligne=r=>Object.entries(r.lignes).map(([k,q])=>{const x=PROD(k);return (q>1?q+' × ':'')+(x?x.nom:'Produit')}).join(', ');
   const cmds=CMD(),aFaire=cmds.filter(c=>c.statut==='payee'||c.statut==='prete'),moisC=cmds.filter(c=>c.statut!=='rembourse'&&c.date>=addDays(TODAY,-30));
-  const ca=r2(moisC.reduce((a,c)=>a+c.total,0)),com=r2(moisC.reduce((a,c)=>a+c.commission,0));
-  const st_={payee:['À préparer','warn'],prete:['Prête · cliente prévenue','ok'],remise:['Remise',''],rembourse:['Remboursée','']};
+  const ca=r2(moisC.reduce((a,c)=>a+(c.produits??c.total),0)),com=r2(moisC.reduce((a,c)=>a+c.commission,0));
+  const st_={expediee:['Expédiée','ok'],payee:['À préparer','warn'],prete:['Prête · cliente prévenue','ok'],remise:['Remise',''],rembourse:['Remboursée','']};
   return `<h1>Produits</h1>
-  <div class="card col" style="gap:8px"><div class="row between" style="gap:12px"><span class="t"><b>Boutique en ligne</b><br><span class="sub small">Gratuite · ${Math.round(COMM_BOUTIQUE*100)} % de commission Agendelle sur chaque produit payé en ligne. Retrait à l’institut.</span></span><button class="toggle" role="switch" aria-checked="${boutiqueOn()}" aria-label="Boutique en ligne" data-a="boutique-on"></button></div></div>
-  ${boutiqueOn()?`<div class="kpis two"><div class="kpi"><b>${eur(ca)}</b><span>vendus en ligne sur 30 jours</span></div><div class="kpi"><b>${eur(r2(ca-com))}</b><span>pour vous après ${eur(com)} de commission</span></div></div>`:''}
-  ${aFaire.length?`<div class="sec"><span class="tag">Commandes payées en ligne · à remettre</span><div class="list">${aFaire.map(c=>`<div class="item" style="flex-wrap:wrap"><span class="t" style="flex:1 1 180px"><b>${esc(c.nom)}</b><span>${esc(c.detail)} · ${eur(c.total)} payé · le ${dshort(c.date)}</span><span class="pill ${st_[c.statut][1]}" style="align-self:flex-start;margin-top:4px">${st_[c.statut][0]}</span></span><span class="row" style="gap:6px">${c.statut==='payee'?`<button class="btn sm" data-a="cmd-prete" data-id="${c.id}">Prête</button>`:`<button class="btn sm" data-a="cmd-remise" data-id="${c.id}">Remise</button>`}<button class="btn sm ghost" data-a="cmd-rembourser" data-id="${c.id}">Rembourser</button></span></div>`).join('')}</div><p class="sub small">Déjà payées : rien à encaisser en caisse au retrait.</p></div>`:''}
+  <div class="card col" style="gap:8px"><div class="row between" style="gap:12px"><span class="t"><b>Boutique en ligne</b><br><span class="sub small">Gratuite · ${Math.round(COMM_BOUTIQUE*100)} % de commission Agendelle sur chaque produit payé en ligne (pas sur la livraison).</span></span><button class="toggle" role="switch" aria-checked="${boutiqueOn()}" aria-label="Boutique en ligne" data-a="boutique-on"></button></div>
+    ${boutiqueOn()?`<div class="list">${[['retrait','Retrait à l’institut','La cliente paie en ligne et vient chercher'],['exp','Expédition','Vous envoyez le colis, avec vos modes et vos prix'],['upsell','En fin de réservation','Proposer vos produits juste après une prise de rendez-vous']].map(([k,t,d])=>`<div class="item"><span class="t"><b>${t}</b><span>${d}</span></span><button class="toggle" role="switch" aria-checked="${!!SHOP()[k]}" aria-label="${t}" data-a="shop-opt" data-v="${k}"></button></div>`).join('')}</div>
+    ${SHOP().exp?`<span class="tag">Modes d’expédition</span><div class="list">${SHOP().modes.map(m=>`<button class="item" data-a="mode-edit" data-id="${m.id}" style="width:100%;text-align:left"><span class="t"><b>${esc(m.nom)}</b><span>${eur(m.prix)} · ${esc(m.delai)}</span></span>${I.right}</button>`).join('')}<button class="item" data-a="franco" style="width:100%;text-align:left"><span class="t"><b>Livraison offerte</b><span>${SHOP().franco?'dès '+eur(SHOP().franco)+' d’achat':'Jamais'}</span></span>${I.right}</button></div><button class="btn ghost sm" data-a="mode-new" style="align-self:flex-start">${I.plus} Ajouter un mode d’expédition</button>`:''}`:''}</div>
+  ${boutiqueOn()?`<div class="kpis two"><div class="kpi"><b>${eur(ca)}</b><span>de produits vendus en ligne sur 30 jours</span></div><div class="kpi"><b>${eur(r2(ca-com))}</b><span>pour vous après ${eur(com)} de commission</span></div></div>`:''}
+  ${aFaire.length?`<div class="sec"><span class="tag">Commandes payées en ligne · à remettre</span><div class="list">${aFaire.map(c=>`<div class="item" style="flex-wrap:wrap"><span class="t" style="flex:1 1 180px"><b>${esc(c.nom)}</b><span>${esc(c.detail)} · ${eur(c.total)} payé · le ${dshort(c.date)}</span><span class="sub small">${c.mode==='exp'?esc(c.modeNom)+' · '+esc(c.adresse):c.mode==='rdv'?'À remettre au rendez-vous du '+dshort(c.rdvDate):'Retrait à l’institut'}</span><span class="pill ${st_[c.statut][1]}" style="align-self:flex-start;margin-top:4px">${st_[c.statut][0]}</span></span><span class="row" style="gap:6px">${c.mode==='exp'?`<button class="btn sm" data-a="cmd-expedier" data-id="${c.id}">Expédier</button>`:c.mode==='rdv'||c.statut==='prete'?`<button class="btn sm" data-a="cmd-remise" data-id="${c.id}">Remise</button>`:`<button class="btn sm" data-a="cmd-prete" data-id="${c.id}">Prête</button>`}<button class="btn sm ghost" data-a="cmd-rembourser" data-id="${c.id}">Rembourser</button></span></div>`).join('')}</div><p class="sub small">Déjà payées : rien à encaisser en caisse. Commission sur les produits seulement, jamais sur le port.</p></div>`:''}
   ${att.length?`<div class="sec"><span class="tag">Mis de côté en ligne · à préparer</span><div class="list">${att.map(r=>`<div class="item"><span class="t"><b>${esc(r.nom)}</b><span>${esc(ligne(r))} · ${eur(r.total)} · le ${dshort(r.date)}</span></span><button class="btn sm" data-a="retrait-encaisser" data-id="${r.id}">Encaisser</button><button class="ibtn" data-a="retrait-annuler" data-id="${r.id}" aria-label="Annuler la mise de côté de ${esc(r.nom)}">${I.x}</button></div>`).join('')}</div><p class="sub small">La cliente paie sur place, au moment du retrait.</p></div>`:''}
   ${bas.length?`<div class="notice warn"><span>Stock bas : ${bas.map(x=>esc(x.nom)+' ('+x.stock+')').join(', ')}.</span></div>`:''}
   <div class="sec"><span class="tag">Catalogue</span><div class="list">${vis.map(x=>`<div class="item"><button class="t" data-a="prod-edit" data-id="${x.id}" style="all:unset;flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;cursor:pointer"><b>${esc(x.nom)}</b><span class="sub small">${[x.marque,eur(x.prix),x.stock?x.stock+' en stock':'rupture',reserve(x.id)?reserve(x.id)+' mis de côté':''].filter(Boolean).map(esc).join(' · ')}</span><span class="link small" style="margin-top:2px">Modifier</span></button>${x.enLigne?'<span class="pill ok">En ligne</span>':'<span class="pill">Institut</span>'}</div>`).join('')||'<p class="sub small">Aucun produit pour l’instant.</p>'}</div>
@@ -1570,6 +1579,7 @@ function vBook(){
       <p class="sub small">${r.garantie===2?'Payé en ligne : '+eur(r.paid?r.paid.montant:0)+' (simulation). ':r.garantie===1?'Carte enregistrée, aucun débit. ':''}Confirmation envoyée par email${S.reglages.validation?' dès que l’institut aura validé':''}.</p>
       <button class="btn ghost" data-a="c-cal">${I.cal} Ajouter à mon agenda</button>
       <button class="btn" data-a="c-mesrdv">Voir mes rendez-vous</button></div>
+    ${upsellHTML(r)}
     <div class="sec"><span class="tag">L’email que vous recevez</span>
     <div class="card mail"><div class="mh"><span class="av sm" style="background:var(--accent-soft);color:var(--accent)">É</span><span class="col" style="gap:1px;min-width:0"><b class="small">Institut Écusson</b><span class="sub small">rdv@agendelle.fr · à ${esc(CLIENT(r.client).mail||'vous')}</span></span></div>
       <b>Votre rendez-vous ${dlabel(r.date)} à ${hm(r.start)}</b>
@@ -1629,7 +1639,7 @@ function vMesRdv(){
     const packs=E.packs;
     v=`<h1>Mon portefeuille</h1>
     <div class="sec"><h3>Cartes de séances</h3>${cartes.length?cartes.map(([c_,i_])=>`<div class="card col wtile w-carte" style="gap:6px"><div class="row between"><b>${esc(c_.nom)}</b><span class="pill ok">${c_.reste} restante${c_.reste>1?'s':''}</span></div><span class="sub small">${esc(i_)}</span><div class="bar"><i style="width:${Math.round((c_.total-c_.reste)/c_.total*100)}%"></i></div><span class="sub small">${c_.total-c_.reste} séance${c_.total-c_.reste>1?'s':''} utilisée${c_.total-c_.reste>1?'s':''} sur ${c_.total}</span></div>`).join(''):'<p class="sub small">Aucune carte en cours.</p>'}</div>
-    ${CMD().some(c=>c.client===m.id)?`<div class="sec"><h3>Mes commandes</h3>${CMD().filter(c=>c.client===m.id).slice().reverse().map(c=>`<div class="card col" style="gap:4px"><div class="row between"><b>${esc(c.detail)}</b><span class="pill ${c.statut==='prete'?'ok':''}">${({payee:'En préparation',prete:'Prête à retirer',remise:'Retirée',rembourse:'Remboursée'})[c.statut]}</span></div><span class="sub small">${eur(c.total)} payé le ${dshort(c.date)} · à retirer à Institut Écusson</span></div>`).join('')}</div>`:''}
+    ${CMD().some(c=>c.client===m.id)?`<div class="sec"><h3>Mes commandes</h3>${CMD().filter(c=>c.client===m.id).slice().reverse().map(c=>`<div class="card col" style="gap:4px"><div class="row between"><b>${esc(c.detail)}</b><span class="pill ${c.statut==='prete'?'ok':''}">${(c.mode==='exp'?{payee:'En préparation',expediee:'Expédiée',rembourse:'Remboursée'}:c.mode==='rdv'?{payee:'À recevoir à votre rendez-vous',remise:'Remis',rembourse:'Remboursée'}:{payee:'En préparation',prete:'Prête à retirer',remise:'Retirée',rembourse:'Remboursée'})[c.statut]||''}</span></div><span class="sub small">${eur(c.total)} payé le ${dshort(c.date)} · ${c.mode==='exp'?esc(c.modeNom)+(c.suivi?' · suivi '+esc(c.suivi):''):c.mode==='rdv'?'remis au rendez-vous du '+dshort(c.rdvDate):'à retirer à Institut Écusson'}</span></div>`).join('')}</div>`:''}
     ${(m.achats||[]).some(a=>a.type==='abo')?`<div class="sec"><h3>Abonnements</h3>${m.achats.filter(a=>a.type==='abo').map(a=>`<div class="card col" style="gap:6px"><div class="row between"><b>${esc(a.nom)}</b><span class="pill ${a.resilie?'':'ok'}">${a.resilie?'Résilié':'Actif'}</span></div><span class="sub small">${esc(a.contenu)}${a.contenu?' · ':''}${eur(a.prix)} par mois · Institut Écusson</span>${a.resilie?'<span class="sub small">S’arrête à la fin du mois payé.</span>':`<button class="link small" data-a="abo-resilier" data-id="${a.id}" style="align-self:flex-start;color:var(--muted)">Résilier</button>`}</div>`).join('')}</div>`:''}
     <div class="sec"><h3>Packs laser Kookla</h3>${packs.map(p=>`<div class="card col wtile w-pack" style="gap:6px"><div class="row between"><b>${esc(p.nom)}</b><span class="pill k">Kookla</span></div><span class="sub small">Institut Écusson · garanti par Kookla</span><div class="bar"><i style="width:${Math.round(p.faites/p.total*100)}%;background:var(--k)"></i></div><span class="sub small">${p.faites} séance${p.faites>1?'s':''} sur ${p.total} · prochaine à réserver</span></div>`).join('')}</div>
     <div class="sec"><h3>Bons cadeaux</h3>${E.bons.map(b_=>`<div class="card row between wtile w-bon"><span class="wgift">${I.gift}</span><span class="col" style="gap:2px;flex:1"><b>${esc(b_.nom)}</b><span class="sub small">${esc(b_.inst)} · offert par ${esc(b_.de)} · valable jusqu’au ${dshort(b_.fin)}</span></span><b style="white-space:nowrap">${eur(b_.solde)}</b></div>`).join('')}</div>
@@ -1852,21 +1862,33 @@ function sheetHTML(){
       <p class="foot">Démo : aucun paiement réel n’est fait.</p>
       <span class="err" id="ac-err"></span><button class="btn" type="submit">Payer ${eur(o.prix)}${o.type==='abo'?' et m’abonner':''}</button></form>`;
   }
-  if(sh.type==='boutique'){const x=PROD(sh.id),m=me(),q=sh.q||1,d=dispo(x);
-    if(sh.ok){h=`<div class="col" style="gap:10px;align-items:center;text-align:center;padding:10px 0"><span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check}</span>
-      <h2>Commande payée</h2><p class="sub">${q>1?q+' × ':''}${esc(x.nom)} · ${eur(r2(x.prix*q))}</p>
-      <p class="sub small">Institut Écusson la prépare et vous prévient quand elle est prête. À retirer à l’institut, rien à payer sur place.${m?' Suivez-la dans votre appli, onglet Cartes.':''}</p><button class="btn" data-a="close">Terminé</button></div>`}
+  if(sh.type==='boutique'){const x=PROD(sh.id),m=me(),q=sh.q||1,d=dispo(x),dr=sh.draft||{},rv=sh.rdv?S.rdv.find(z=>z.id===sh.rdv):null;
+    const modes=rv?[]:modesClient(),mode=rv?'rdv':(modes.find(z=>z.id===sh.mode)||modes[0]||{}).id,sous=r2(x.prix*q),port=mode&&mode!=='retrait'&&mode!=='rdv'?portPour(mode,sous):0,tot=r2(sous+port);
+    if(sh.ok){const c=CMD().find(z=>z.id===sh.ok)||{};h=`<div class="col" style="gap:10px;align-items:center;text-align:center;padding:10px 0"><span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check}</span>
+      <h2>Commande payée</h2><p class="sub">${esc(c.detail||'')} · ${eur(c.total||0)}</p>
+      <p class="sub small">${c.mode==='exp'?'Institut Écusson vous l’envoie ('+esc(c.modeNom)+'). Vous recevrez le numéro de suivi.':c.mode==='rdv'?'Il vous sera remis à votre rendez-vous du '+dshort(c.rdvDate)+'. Rien à payer sur place pour ce produit.':'Institut Écusson la prépare et vous prévient quand elle est prête. Rien à payer sur place.'}${m?' Suivez-la dans votre appli, onglet Cartes.':''}</p><button class="btn" data-a="close">Terminé</button></div>`}
     else h=`<h2>${esc(x.nom)}</h2><p class="sub">${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}</p>${x.desc?`<p>${esc(x.desc)}</p>`:''}
     <span class="tag">Quantité</span><div class="chips">${[1,2,3].filter(n=>n<=d).map(n=>`<button class="chip" data-a="boutique-q" data-v="${n}" aria-pressed="${q===n}">${n}</button>`).join('')}</div>
-    <div class="card col" style="gap:6px"><div class="row between"><span>Retrait</span><b>À l’institut</b></div><div class="row between"><span>Livraison</span><b>Non</b></div><div class="row between"><b>À payer</b><b style="font-family:var(--display);font-size:22px">${eur(r2(x.prix*q))}</b></div></div>
+    ${rv?`<div class="notice">${I.cal}<span>Remis à votre rendez-vous du ${dshort(rv.date)} à ${hm(rv.start)}.</span></div>`:`<span class="tag">Réception</span><div class="list">${modes.map(z=>{const p_=z.id==='retrait'?0:portPour(z.id,sous);return `<button class="item" data-a="boutique-mode" data-v="${z.id}" aria-pressed="${z.id===mode}" style="width:100%;text-align:left;${z.id===mode?'box-shadow:0 0 0 2px var(--accent)':''}"><span class="t"><b>${esc(z.nom)}</b><span>${esc(z.delai||'')}</span></span><b>${p_?eur(p_):'Gratuit'}</b></button>`}).join('')}</div>${SHOP().exp&&SHOP().franco&&sous<SHOP().franco?`<p class="sub small">Livraison offerte dès ${eur(SHOP().franco)} d’achat.</p>`:''}`}
     <form id="f-boutique" class="list" novalidate>
-      <label class="field" for="bq-nom">Votre nom<input id="bq-nom" value="${esc(m?m.nom:'')}" autocomplete="name"></label>
-      <label class="field" for="bq-tel">Téléphone<input id="bq-tel" type="tel" value="${esc(m?m.tel:'')}" autocomplete="tel"></label>
-      <label class="field" for="bq-mail">Email<input id="bq-mail" type="email" value="${esc(m?(m.mail||''):'')}" autocomplete="email"></label>
-      <p class="sub small">Payé au nom d’Institut Écusson. Vous la retirez à l’institut quand elle est prête. Droit de rétractation de 14 jours à compter du retrait, sauf produit descellé après le retrait pour des raisons d’hygiène.</p>
+      <label class="field" for="bq-nom">Votre nom<input id="bq-nom" value="${esc(dr['bq-nom']??(m?m.nom:''))}" autocomplete="name"></label>
+      <label class="field" for="bq-tel">Téléphone<input id="bq-tel" type="tel" value="${esc(dr['bq-tel']??(m?m.tel:''))}" autocomplete="tel"></label>
+      <label class="field" for="bq-mail">Email<input id="bq-mail" type="email" value="${esc(dr['bq-mail']??(m?(m.mail||''):''))}" autocomplete="email"></label>
+      ${mode!=='retrait'&&mode!=='rdv'&&mode?`<label class="field" for="bq-adr">Adresse de livraison<input id="bq-adr" value="${esc(dr['bq-adr']||'')}" autocomplete="street-address" placeholder="N° et rue"></label><div class="kpis two"><label class="field" for="bq-cp">Code postal<input id="bq-cp" inputmode="numeric" value="${esc(dr['bq-cp']||'')}" autocomplete="postal-code"></label><label class="field" for="bq-ville">Ville<input id="bq-ville" value="${esc(dr['bq-ville']||'')}" autocomplete="address-level2"></label></div>`:''}
+      <div class="card col" style="gap:6px"><div class="row between"><span>Produits</span><b>${eur(sous)}</b></div>${mode!=='retrait'&&mode!=='rdv'?`<div class="row between"><span>Livraison</span><b>${port?eur(port):'Offerte'}</b></div>`:''}<div class="row between"><b>À payer</b><b style="font-family:var(--display);font-size:22px">${eur(tot)}</b></div></div>
+      <p class="sub small">Payé au nom d’Institut Écusson. Droit de rétractation de 14 jours à compter de la réception, sauf produit descellé après réception pour des raisons d’hygiène.</p>
       <p class="foot">Démo : aucun paiement réel n’est fait.</p>
-      <span class="err" id="bq-err"></span><button class="btn" type="submit">Payer ${eur(r2(x.prix*q))}</button></form>`;
+      <span class="err" id="bq-err"></span><button class="btn" type="submit">Payer ${eur(tot)}</button></form>`;
   }
+  if(sh.type==='mode-exp'){const m=sh.id?SHOP().modes.find(z=>z.id===sh.id):null;
+    h=`<h2>${m?'Modifier le mode d’expédition':'Nouveau mode d’expédition'}</h2><form id="f-mode" class="list" novalidate>
+      <label class="field" for="me-nom">Nom<input id="me-nom" value="${esc(m?m.nom:'')}" placeholder="Ex. Colissimo, point relais, lettre suivie"></label>
+      <div class="kpis two"><label class="field" for="me-prix">Prix (€)<input id="me-prix" type="number" min="0" step="0.1" inputmode="decimal" value="${m?m.prix:''}"></label><label class="field" for="me-delai">Délai<input id="me-delai" value="${esc(m?m.delai:'')}" placeholder="Ex. 2 à 3 jours ouvrés"></label></div>
+      <span class="err" id="me-err"></span><button class="btn" type="submit">Enregistrer</button></form>
+      ${m?`<button class="link" data-a="mode-del" data-id="${m.id}" style="align-self:center;color:var(--bad)">Supprimer ce mode</button><p class="sub small" style="text-align:center">Les commandes déjà passées gardent leur mode et leur prix de livraison.</p>`:''}`;
+  }
+  if(sh.type==='franco'){h=`<h2>Livraison offerte</h2><p class="sub">À partir de quel montant de produits la livraison est-elle offerte ? Laissez vide pour ne jamais l’offrir.</p><form id="f-franco" class="list" novalidate><label class="field" for="fr-v">Dès (€)<input id="fr-v" type="number" min="0" step="1" inputmode="decimal" value="${SHOP().franco||''}"></label><span class="err" id="fr-err"></span><button class="btn" type="submit">Enregistrer</button></form>`}
+  if(sh.type==='cmd-exp'){const c=CMD().find(z=>z.id===sh.id);if(!c)return '';h=`<h2>Expédier la commande</h2><p>${esc(c.nom)} · ${esc(c.detail)}</p><p class="sub small">${esc(c.modeNom)} · ${esc(c.adresse)}</p><form id="f-exp" class="list" novalidate><label class="field" for="ex-suivi">Numéro de suivi<input id="ex-suivi" placeholder="Ex. 6A12345678901"></label><span class="err" id="ex-err"></span><button class="btn" type="submit">Marquer expédiée et prévenir la cliente</button></form>`}
   if(sh.type==='offre'){const o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte'),n=o?offreAcheteuses(o):0,d=o||{validite:12};
     h=`<h2>${o?'Modifier l’offre':'Créer une offre'}</h2>
     ${o?`<p class="sub">${OTYPES[t]}</p>`:`<div class="chips" role="group" aria-label="Type d’offre">${Object.entries(OTYPES).map(([k,l])=>`<button class="chip" data-a="offre-type" data-v="${k}" aria-pressed="${t===k}">${l}</button>`).join('')}</div>`}
@@ -2169,15 +2191,21 @@ document.addEventListener('click',e=>{
     case 'prod-nodel':if(sh)sh.del=false;break;
     case 'prod-del':{const x=PROD(id);if(!x)break;if((x.vendus||0)>0||reserve(x.id)>0){x.retire=true;x.enLigne=false;toast('Produit retiré du catalogue')}else{S.boutique=S.boutique.filter(y=>y.id!==id);toast('Produit supprimé')}S.sheet=null;break}
     case 'prod-remettre':{const x=PROD(id);if(x){x.retire=false;toast('« '+x.nom+' » est de nouveau au catalogue')}break}
-    case 'boutique':S.sheet={type:'boutique',id,q:1};break;
+    case 'boutique':S.sheet={type:'boutique',id,q:1,rdv:v||null};break;
     case 'achat':S.sheet={type:'achat',id};break;
+    case 'shop-opt':{const o=SHOP();if((v==='retrait'||v==='exp')&&o[v]&&!o[v==='retrait'?'exp':'retrait']){toast('Gardez au moins le retrait ou l’expédition');return}o[v]=!o[v];break}
+    case 'mode-new':S.sheet={type:'mode-exp',id:null};break;
+    case 'mode-edit':S.sheet={type:'mode-exp',id};break;
+    case 'mode-del':{const o=SHOP();if(o.modes.length<=1&&o.exp){toast('Gardez au moins un mode, ou désactivez l’expédition');return}o.modes=o.modes.filter(z=>z.id!==id);S.sheet=null;toast('Mode supprimé');break}
+    case 'franco':S.sheet={type:'franco'};break;
+    case 'cmd-expedier':S.sheet={type:'cmd-exp',id};break;
     case 'boutique-on':S.boutiqueOn=!boutiqueOn();toast(boutiqueOn()?'Boutique en ligne activée':'Boutique en ligne désactivée · vos produits restent vendus en caisse');break;
     case 'cmd-prete':{const c=CMD().find(z=>z.id===id);if(c){c.statut='prete';toast('Cliente prévenue : sa commande est prête')}break}
     case 'cmd-remise':{const c=CMD().find(z=>z.id===id);if(c){c.statut='remise';c.remiseLe=TODAY;toast('Commande remise')}break}
     case 'cmd-rembourser':{const c=CMD().find(z=>z.id===id);if(!c)break;if(!sh||sh.type!=='cmd-remb'){S.sheet={type:'cmd-remb',id};break}
       Object.entries(c.lignes).forEach(([k,q])=>{const x=PROD(k);if(x){x.stock+=q;x.vendus=Math.max(0,(x.vendus||0)-q)}});c.statut='rembourse';c.commission=0;S.sheet=null;toast('Remboursée · le stock est remis et aucune commission n’est prise');break}
     case 'abo-resilier':{const m=me();const a=m&&(m.achats||[]).find(z=>z.id===id);if(a&&!a.resilie){a.resilie=true;toast('Abonnement résilié · il reste actif jusqu’à la fin du mois payé')}break}
-    case 'boutique-q':if(sh)sh.q=+v;break;
+    case 'boutique-q':case 'boutique-mode':if(!sh)break;sh.draft=sh.draft||{};['bq-nom','bq-tel','bq-mail','bq-adr','bq-cp','bq-ville'].forEach(k=>{const n=document.getElementById(k);if(n)sh.draft[k]=n.value});if(a==='boutique-q')sh.q=+v;else sh.mode=v;break;
     case 'retrait-encaisser':{const r=S.retraits.find(z=>z.id===id);if(!r)break;S.sheet={type:'vente',cart:{...r.lignes},p1:'CB',retrait:r.id};break}
     case 'retrait-annuler':{const r=S.retraits.find(z=>z.id===id);if(r){r.statut='annule';toast('Mise de côté annulée · le stock est de nouveau disponible')}break}
     case 'offre-new':S.sheet={type:'offre',id:null,t:'carte'};break;
@@ -2348,15 +2376,25 @@ document.addEventListener('submit',e=>{
       m.achats.push(o.type==='carte'?{id:'ac'+uid(),offre:o.id,type:'carte',nom:o.nom,total:o.seances,reste:o.seances,prix:o.prix,fin:addDays(TODAY,Math.round((o.validite||12)*30.44)),date:TODAY}
         :{id:'ac'+uid(),offre:o.id,type:'abo',nom:o.nom,contenu:o.contenu||'',prix:o.prix,date:TODAY,resilie:false})}
     sh.ok=true;render(true);return}
-  if(f.id==='f-boutique'){const sh=S.sheet,x=PROD(sh.id),q=sh.q||1,nom=val('bq-nom'),tel=val('bq-tel'),mail=val('bq-mail');
+  if(f.id==='f-boutique'){const sh=S.sheet,x=PROD(sh.id),q=sh.q||1,nom=val('bq-nom'),tel=val('bq-tel'),mail=val('bq-mail'),rv=sh.rdv?S.rdv.find(z=>z.id===sh.rdv):null;
     if(!boutiqueOn()||!x||!x.enLigne||x.retire)return err('bq-err','Ce produit n’est plus vendu en ligne.');
+    const modes=rv?[]:modesClient(),mode=rv?'rdv':(modes.find(z=>z.id===sh.mode)||modes[0]||{}).id;if(!mode)return err('bq-err','Cet institut ne propose pas de mode de réception pour le moment.');
     if(!nom||!tel)return err('bq-err','Indiquez votre nom et votre téléphone.');if(!/^\S+@\S+\.\S+$/.test(mail))return err('bq-err','Indiquez un email valide pour recevoir le reçu.');
+    let adresse='';if(mode!=='retrait'&&mode!=='rdv'){const a=val('bq-adr'),cp=val('bq-cp'),v_=val('bq-ville');if(!a||!/^\d{5}$/.test(cp)||!v_)return err('bq-err','Indiquez l’adresse de livraison complète (code postal à 5 chiffres).');adresse=a+', '+cp+' '+v_}
     if(dispo(x)<q)return err('bq-err','Il n’en reste plus assez, choisissez une quantité plus petite.');
-    const total=r2(x.prix*q);
-    /* Le stock est décompté au paiement ; la commande garde le prix payé, même si l'institut change le prix ensuite */
+    const sous=r2(x.prix*q),port=mode!=='retrait'&&mode!=='rdv'?portPour(mode,sous):0,md=SHOP().modes.find(z=>z.id===mode);
+    /* Stock décompté au paiement ; la commande garde le prix, le mode et le port payés, même si l'institut les change ensuite.
+       Commission sur les produits seulement. */
     x.stock-=q;x.vendus=(x.vendus||0)+q;
-    CMD().push({id:'cm'+uid(),lignes:{[x.id]:q},detail:(q>1?q+' × ':'')+x.nom,total,commission:commission(total),nom,tel,mail,client:me()?me().id:null,date:TODAY,statut:'payee'});
-    sh.ok=true;render(true);return}
+    const id_='cm'+uid();
+    CMD().push({id:id_,lignes:{[x.id]:q},detail:(q>1?q+' × ':'')+x.nom,produits:sous,port,total:r2(sous+port),commission:commission(sous),mode:mode==='retrait'||mode==='rdv'?mode:'exp',modeNom:md?md.nom:'',adresse,rdv:rv?rv.id:null,rdvDate:rv?rv.date:null,suivi:'',nom,tel,mail,client:me()?me().id:null,date:TODAY,statut:'payee'});
+    sh.ok=id_;render(true);return}
+  if(f.id==='f-mode'){const sh=S.sheet,nom=val('me-nom'),prix=parseFloat(val('me-prix').replace(',','.')),delai=val('me-delai');
+    if(!nom)return err('me-err','Donnez un nom à ce mode.');if(!(prix>=0))return err('me-err','Indiquez un prix (0 si gratuit).');
+    const m=sh.id?SHOP().modes.find(z=>z.id===sh.id):null,v_={nom,prix:Math.round(prix*100)/100,delai:delai||''};if(m)Object.assign(m,v_);else SHOP().modes.push({id:'m'+uid(),...v_});
+    S.sheet=null;render(true);toast('Mode d’expédition enregistré');return}
+  if(f.id==='f-franco'){const v_=val('fr-v');const n=v_===''?null:parseFloat(v_.replace(',','.'));if(n!==null&&!(n>0))return err('fr-err','Indiquez un montant valide, ou laissez vide.');SHOP().franco=n;S.sheet=null;render(true);toast(n?'Livraison offerte dès '+eur(n):'Livraison jamais offerte');return}
+  if(f.id==='f-exp'){const sh=S.sheet,c=CMD().find(z=>z.id===sh.id),n=val('ex-suivi');if(!n)return err('ex-err','Indiquez le numéro de suivi.');c.statut='expediee';c.suivi=n;c.expedieeLe=TODAY;S.sheet=null;render(true);toast('Expédiée · la cliente reçoit le numéro de suivi');return}
   if(f.id==='f-offre'){const sh=S.sheet,o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte');
     const nom=val('of-nom')||(t==='bonlibre'?'Bon cadeau libre':''),prix=t==='bonlibre'?0:parseFloat(val('of-prix').replace(',','.'));
     if(!nom)return err('of-err','Donnez un nom à l’offre.');
