@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 00h15';
+const VERSION='7 nov. 2026 · 9h05';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1577,6 +1577,7 @@ function vMesRdv(){
     <div class="sec"><h3>Notifications</h3><div class="list">${sw('c-notif-veille',nt.veille,'Rappel la veille','Pour chacun de vos rendez-vous')}${sw('c-notif-attente',nt.attente,'Place libérée','Quand une place se libère en liste d’attente')}</div><p class="sub small">Sur iPhone, les notifications demandent d’avoir installé Agendelle sur l’écran d’accueil. Sinon, vous les recevez par email.</p></div>
     <div class="sec"><h3>Offres de mes instituts</h3><div class="list">${sw('c-optin-ecusson',!!m.optin,'Institut Écusson','Offres et nouveautés par email ou SMS')}${autres.map(o=>sw('c-optin-'+o.id,!!(e.optins||{})[o.id],esc(o.nom),'Offres et nouveautés par email ou SMS')).join('')}</div><p class="sub small">Chaque institut ne vous écrit que si vous l’avez accepté. Vous pouvez changer d’avis à tout moment.</p></div>
     <div class="sec"><h3>Mes données</h3><div class="list"><button class="item" data-a="c-export" style="width:100%;text-align:left"><span class="t"><b>Télécharger mes données</b><span>Rendez-vous, tickets et accords, tous instituts</span></span>${I.right}</button></div></div>
+    <div class="sec"><h3>Application</h3><div class="list"><button class="item" data-a="update" style="width:100%;text-align:left"><span class="t"><b>Actualiser l’application</b><span>Charger la dernière version · version du ${VERSION}</span></span>${I.refresh}</button></div></div>
     <div class="card row" style="gap:12px;align-items:flex-start"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.plus}</span><span class="col" style="gap:3px"><b>Installez Agendelle, une seule fois</b><span class="sub small">Sur iPhone : Partager, puis « Sur l’écran d’accueil ». Sur Android : menu ⋮, puis « Ajouter à l’écran d’accueil ».</span></span></div>
     <button class="link" data-a="c-logout" style="align-self:center;color:var(--muted)">Me déconnecter</button>`}
   return v;
