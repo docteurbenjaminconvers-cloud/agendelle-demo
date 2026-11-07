@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 9h30';
+const VERSION='7 nov. 2026 · 10h05';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1280,7 +1280,7 @@ function OFFRES(){
   return S.offres}
 function OFFRE(id){return OFFRES().find(o=>o.id===id)}
 function offreEnVente(type){return OFFRES().some(o=>o.actif&&!o.retire&&(!type||type.split('|').includes(o.type)))}
-function offreAcheteuses(o){const ids=new Set();(S.ventes||[]).forEach(v=>{if(v.offre===o.id)ids.add('v'+v.id)});(S.clients||[]).forEach(c=>{if(c.carte&&c.carte.offre===o.id)ids.add('c'+c.id)});return ids.size}
+function offreAcheteuses(o){const ids=new Set();(S.ventes||[]).forEach(v=>{if(v.offre===o.id)ids.add('v'+v.id)});(S.clients||[]).forEach(c=>{if(c.carte&&c.carte.offre===o.id)ids.add('c'+c.id);(c.achats||[]).forEach(a=>{if(a.offre===o.id)ids.add('c'+c.id)})});return ids.size}
 function offreResume(o){const val=o.validite?`à utiliser en ${o.validite} mois`:'';
   if(o.type==='bonlibre')return ['Montant au choix de l’acheteuse',o.validite?`valable ${o.validite} mois`:''].filter(Boolean).join(' · ');
   if(o.type==='bon')return [o.contenu,o.validite?`valable ${o.validite} mois`:'',eur(o.prix)].filter(Boolean).join(' · ');
@@ -1298,6 +1298,8 @@ function vProduits(){
   ${ret.length?`<div class="sec"><span class="tag">Retirés du catalogue</span><div class="list">${ret.map(x=>`<div class="item"><span class="t"><b>${esc(x.nom)}</b><span>${x.vendus||0} vendu${(x.vendus||0)>1?'s':''} · gardé pour l’historique de caisse</span></span><button class="btn sm ghost" data-a="prod-remettre" data-id="${x.id}">Remettre</button></div>`).join('')}</div></div>`:''}
   <div class="notice">${I.shield}<span>Les produits se vendent en caisse. Ceux marqués « En ligne » apparaissent sur votre page : la cliente les met de côté et paie sur place en venant les chercher.</span></div>`;
 }
+function offresHTML(){if(!plus())return '';const xs=OFFRES().filter(o=>o.actif&&!o.retire&&(o.type==='carte'||o.type==='abo'));if(!xs.length)return '';
+  return `<div class="sec"><h3>Offres</h3><div class="list">${xs.map(o=>`<button class="item" data-a="achat" data-id="${o.id}" style="width:100%;text-align:left"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${o.type==='abo'?I.cal:I.cash}</span><span class="t"><b>${esc(o.nom)}</b><span>${esc(offreResume(o))}</span></span>${I.right}</button>`).join('')}</div></div>`}
 function boutiqueHTML(){const xs=CAT().filter(x=>x.enLigne&&!x.retire);if(!xs.length)return '';
   return `<div class="sec"><h3>Boutique</h3><p class="sub small" style="margin-top:-4px">À mettre de côté, payé sur place en venant le chercher.</p><div class="list">${xs.map(x=>{const d=dispo(x);return `<div class="item"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.bag}</span><span class="t"><b>${esc(x.nom)}</b><span>${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}${d?'':' · bientôt de retour'}</span></span>${d?`<button class="btn sm ghost" data-a="boutique" data-id="${x.id}">Mettre de côté</button>`:''}</div>`}).join('')}</div></div>`}
 function vVentes(){
@@ -1466,6 +1468,7 @@ function vClienteHome(){
      ${open?`<div class="list plist" style="padding-top:10px">${list.map(s=>{const inC=S.c.cart.includes(s.id);return `<div class="item"><span class="t"><b>${esc(s.nom)}</b><span>${s.dur} min${s.desc?' · '+esc(s.desc):''}</span></span><span class="col" style="align-items:flex-end;gap:6px"><span class="price">${eur(s.prix)}</span><button class="btn sm ${inC?'soft':''}" data-a="c-add" data-id="${s.id}">${inC?'Ajouté':'Choisir'}</button></span></div>`}).join('')}</div>`:''}</div>`}).join('')}</div>
   <div class="sec"><h2>L’équipe</h2><div class="row" style="gap:14px;overflow-x:auto">${PK.map(p=>`<div class="col" style="align-items:center;gap:4px;min-width:84px">${pAv(p).replace('av sm','av lg')}<b class="small">${PRATS[p].nom}</b><span class="sub small" style="text-align:center">${PRATS[p].role}</span></div>`).join('')}</div></div>
   ${plus()&&offreEnVente('bonlibre|bon')?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre ou soin, envoyé par message.</span></span>${I.right}</button>`:''}
+  ${offresHTML()}
   ${boutiqueHTML()}
   <div class="sec"><div class="sec-h"><h2>Avis</h2><span class="sub small">128 avis vérifiés</span></div><span class="sub small" style="margin-top:-4px">Seules les clientes venues à un rendez-vous peuvent laisser un avis. Aucun avis n’est supprimé ni trié par l’institut.</span>
    <div class="list avis">${AVIS.slice(0,3).map(([n,s,t,w])=>`<div class="card col" style="gap:4px"><div class="row between"><b class="small">${n}</b><span class="sub small">${w}</span></div><span class="stars small">${'★'.repeat(s)}${'☆'.repeat(5-s)}</span><span class="small">${t}</span></div>`).join('')}</div></div>
@@ -1611,10 +1614,11 @@ function vMesRdv(){
     <button class="btn" data-a="c-inst-add">${I.plus} Scanner un QR code ou coller un lien</button>
     <p class="foot">Seuls les instituts où vous avez réservé, ou que vous avez ajoutés, apparaissent ici. Agendelle ne vous propose jamais d’autres instituts.</p>`}
   if(at==='portefeuille'){ensureCaisse();const tks=S.caisse.tk.filter(t=>t.client===m.id).slice(-6).reverse();
-    const cartes=[...(m.carte?[[m.carte,'Institut Écusson']]:[]),...(autres.some(o=>o.id==='atelier')?[[E.carteAtelier,'L’Atelier des Ongles']]:[])];
+    const cartes=[...(m.carte?[[m.carte,'Institut Écusson']]:[]),...(m.achats||[]).filter(a=>a.type==='carte').map(a=>[a,'Institut Écusson · à utiliser avant le '+dshort(a.fin)+' '+a.fin.slice(0,4)]),...(autres.some(o=>o.id==='atelier')?[[E.carteAtelier,'L’Atelier des Ongles']]:[])];
     const packs=E.packs;
     v=`<h1>Mon portefeuille</h1>
     <div class="sec"><h3>Cartes de séances</h3>${cartes.length?cartes.map(([c_,i_])=>`<div class="card col wtile w-carte" style="gap:6px"><div class="row between"><b>${esc(c_.nom)}</b><span class="pill ok">${c_.reste} restante${c_.reste>1?'s':''}</span></div><span class="sub small">${esc(i_)}</span><div class="bar"><i style="width:${Math.round((c_.total-c_.reste)/c_.total*100)}%"></i></div><span class="sub small">${c_.total-c_.reste} séance${c_.total-c_.reste>1?'s':''} utilisée${c_.total-c_.reste>1?'s':''} sur ${c_.total}</span></div>`).join(''):'<p class="sub small">Aucune carte en cours.</p>'}</div>
+    ${(m.achats||[]).some(a=>a.type==='abo')?`<div class="sec"><h3>Abonnements</h3>${m.achats.filter(a=>a.type==='abo').map(a=>`<div class="card col" style="gap:6px"><div class="row between"><b>${esc(a.nom)}</b><span class="pill ${a.resilie?'':'ok'}">${a.resilie?'Résilié':'Actif'}</span></div><span class="sub small">${esc(a.contenu)}${a.contenu?' · ':''}${eur(a.prix)} par mois · Institut Écusson</span>${a.resilie?'<span class="sub small">S’arrête à la fin du mois payé.</span>':`<button class="link small" data-a="abo-resilier" data-id="${a.id}" style="align-self:flex-start;color:var(--muted)">Résilier</button>`}</div>`).join('')}</div>`:''}
     <div class="sec"><h3>Packs laser Kookla</h3>${packs.map(p=>`<div class="card col wtile w-pack" style="gap:6px"><div class="row between"><b>${esc(p.nom)}</b><span class="pill k">Kookla</span></div><span class="sub small">Institut Écusson · garanti par Kookla</span><div class="bar"><i style="width:${Math.round(p.faites/p.total*100)}%;background:var(--k)"></i></div><span class="sub small">${p.faites} séance${p.faites>1?'s':''} sur ${p.total} · prochaine à réserver</span></div>`).join('')}</div>
     <div class="sec"><h3>Bons cadeaux</h3>${E.bons.map(b_=>`<div class="card row between wtile w-bon"><span class="wgift">${I.gift}</span><span class="col" style="gap:2px;flex:1"><b>${esc(b_.nom)}</b><span class="sub small">${esc(b_.inst)} · offert par ${esc(b_.de)} · valable jusqu’au ${dshort(b_.fin)}</span></span><b style="white-space:nowrap">${eur(b_.solde)}</b></div>`).join('')}</div>
     <div class="sec"><h3>Mes tickets</h3>${tks.length?`<div class="list">${tks.map(t=>`<button class="item" data-a="tk-cli" data-v="${t.n}" style="width:100%;text-align:left"><span class="t"><b>${dshort(t.date)} · ${esc(t.lignes.map(l=>l[0]).join(', '))}</b><span>${t.type==='avoir'?'Avoir':'Ticket'} n° ${nTk(t.n)} · Institut Écusson</span></span><span class="price">${eur(t.ttc)}</span></button>`).join('')}</div>`:'<p class="sub small">Les tickets envoyés par vos instituts apparaîtront ici.</p>'}</div>`}
@@ -1818,6 +1822,20 @@ function sheetHTML(){
     ${x?(sh.del?`<div class="notice warn"><span>${used?`« ${esc(x.nom)} » a déjà été vendu ou mis de côté : il est retiré du catalogue, et les tickets déjà émis restent tels quels.`:`Supprimer « ${esc(x.nom)} » ? Il n’a jamais été vendu.`}</span></div><div class="row"><button class="btn ghost" data-a="prod-nodel" style="flex:1">Garder</button><button class="btn danger" data-a="prod-del" data-id="${x.id}" style="flex:1">${used?'Retirer':'Supprimer'}</button></div>`
       :`<button class="link" data-a="prod-askdel" style="align-self:center;color:var(--bad)">${used?'Retirer du catalogue':'Supprimer le produit'}</button>`):''}`;
   }
+  if(sh.type==='achat'){const o=OFFRE(sh.id),m=me();if(!o)return '';
+    if(sh.ok){h=`<div class="col" style="gap:10px;align-items:center;text-align:center;padding:10px 0"><span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check||I.plus}</span>
+      <h2>${o.type==='abo'?'Abonnement activé':'Carte achetée'}</h2><p class="sub">${esc(o.nom)} · ${eur(o.prix)}${o.type==='abo'?' par mois':''}</p>
+      <p class="sub small">${m?'Elle est dans votre appli, onglet Cartes.':'Le reçu vous est envoyé par email.'} Payé à Institut Écusson.</p><button class="btn" data-a="close">Terminé</button></div>`}
+    else h=`<h2>${esc(o.nom)}</h2><p class="sub">${OTYPES[o.type]} · Institut Écusson</p>
+    <div class="card col" style="gap:6px">${o.type==='carte'?`<div class="row between"><span>Séances</span><b>${o.seances}</b></div><div class="row between"><span>À utiliser dans</span><b>${o.validite} mois</b></div>${o.remise?`<div class="row between"><span>Remise</span><b>−${o.remise} %</b></div>`:''}`:`<div class="row between"><span>Compris</span><b>${esc(o.contenu||'—')}</b></div><div class="row between"><span>Engagement</span><b>Aucun</b></div>`}
+      <div class="row between"><b>${o.type==='abo'?'Chaque mois':'À payer'}</b><b style="font-family:var(--display);font-size:22px">${eur(o.prix)}</b></div></div>
+    <p class="sub small">${o.type==='abo'?'Prélevé chaque mois au nom de l’institut. Vous résiliez quand vous voulez depuis votre appli, sans frais : il s’arrête à la fin du mois payé.':'Payé au nom de l’institut. Les séances se réservent comme d’habitude, la carte est décomptée à chaque venue. Si vous changez d’avis, vous avez 14 jours pour être remboursée tant qu’aucune séance n’a été faite.'}</p>
+    <form id="f-achat" class="list" novalidate>
+      <label class="field" for="ac-nom">Votre nom<input id="ac-nom" value="${esc(m?m.nom:'')}" autocomplete="name"></label>
+      <label class="field" for="ac-mail">Email<input id="ac-mail" type="email" value="${esc(m?(m.mail||''):'')}" autocomplete="email"></label>
+      <p class="foot">Démo : aucun paiement réel n’est fait.</p>
+      <span class="err" id="ac-err"></span><button class="btn" type="submit">Payer ${eur(o.prix)}${o.type==='abo'?' et m’abonner':''}</button></form>`;
+  }
   if(sh.type==='boutique'){const x=PROD(sh.id),m=me(),q=sh.q||1,d=dispo(x);
     h=`<h2>${esc(x.nom)}</h2><p class="sub">${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}</p>${x.desc?`<p>${esc(x.desc)}</p>`:''}
     <span class="tag">Quantité</span><div class="chips">${[1,2,3].filter(n=>n<=d).map(n=>`<button class="chip" data-a="boutique-q" data-v="${n}" aria-pressed="${q===n}">${n}</button>`).join('')}</div>
@@ -1907,6 +1925,7 @@ function cAsideHome(){
     <span class="sub small">Annulation gratuite jusqu’à ${S.reglages.annulation} h avant · ${['paiement sur place','carte demandée en garantie, paiement sur place','paiement en ligne à la réservation'][garantie()]}</span></div>
   ${kPartner()?`<button class="notice k" data-a="k-open" style="border:0;text-align:left;width:100%"><span class="pill k">K</span><span><b>Épilation laser :</b> séances et packs vendus et garantis par Kookla.</span></button>`:''}
   ${plus()&&offreEnVente('bonlibre|bon')?`<button class="card row" data-a="g-open" style="text-align:left;width:100%;gap:12px"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.gift}</span><span class="grow"><b>Offrir un bon cadeau</b><br><span class="sub small">Montant libre, envoyé par message.</span></span>${I.right}</button>`:''}
+  ${offresHTML()}
   ${boutiqueHTML()}`;
 }
 function cAsideFlow(){
@@ -2130,6 +2149,8 @@ document.addEventListener('click',e=>{
     case 'prod-del':{const x=PROD(id);if(!x)break;if((x.vendus||0)>0||reserve(x.id)>0){x.retire=true;x.enLigne=false;toast('Produit retiré du catalogue')}else{S.boutique=S.boutique.filter(y=>y.id!==id);toast('Produit supprimé')}S.sheet=null;break}
     case 'prod-remettre':{const x=PROD(id);if(x){x.retire=false;toast('« '+x.nom+' » est de nouveau au catalogue')}break}
     case 'boutique':S.sheet={type:'boutique',id,q:1};break;
+    case 'achat':S.sheet={type:'achat',id};break;
+    case 'abo-resilier':{const m=me();const a=m&&(m.achats||[]).find(z=>z.id===id);if(a&&!a.resilie){a.resilie=true;toast('Abonnement résilié · il reste actif jusqu’à la fin du mois payé')}break}
     case 'boutique-q':if(sh)sh.q=+v;break;
     case 'retrait-encaisser':{const r=S.retraits.find(z=>z.id===id);if(!r)break;S.sheet={type:'vente',cart:{...r.lignes},p1:'CB',retrait:r.id};break}
     case 'retrait-annuler':{const r=S.retraits.find(z=>z.id===id);if(r){r.statut='annule';toast('Mise de côté annulée · le stock est de nouveau disponible')}break}
@@ -2292,6 +2313,15 @@ document.addEventListener('submit',e=>{
     const v_={nom,marque:val('pr-marque'),prix:Math.round(prix*100)/100,stock,seuil,desc:val('pr-desc'),enLigne:!!(sh.enLigne??(x?x.enLigne:true))};
     if(x)Object.assign(x,v_);else S.boutique.push({id:'pr'+uid(),...v_,retire:false,vendus:0});
     S.sheet=null;render(true);toast(x?'Produit enregistré':'Produit ajouté au catalogue');return}
+  if(f.id==='f-achat'){const sh=S.sheet,o=OFFRE(sh.id),nom=val('ac-nom'),mail=val('ac-mail');
+    if(!o||!o.actif||o.retire)return err('ac-err','Cette offre n’est plus en vente.');
+    if(!nom)return err('ac-err','Indiquez votre nom.');if(!/^\S+@\S+\.\S+$/.test(mail))return err('ac-err','Indiquez un email valide pour recevoir le reçu.');
+    S.ventes.push({id:uid(),type:o.type==='abo'?'Abonnement':'Carte',nom:o.nom,montant:o.prix,date:TODAY,acheteur:nom,offre:o.id});
+    const m=me();if(m){m.achats=m.achats||[];
+      /* L'achat garde ses propres conditions : une modification ou un retrait de l'offre par l'institut ne les change pas */
+      m.achats.push(o.type==='carte'?{id:'ac'+uid(),offre:o.id,type:'carte',nom:o.nom,total:o.seances,reste:o.seances,prix:o.prix,fin:addDays(TODAY,Math.round((o.validite||12)*30.44)),date:TODAY}
+        :{id:'ac'+uid(),offre:o.id,type:'abo',nom:o.nom,contenu:o.contenu||'',prix:o.prix,date:TODAY,resilie:false})}
+    sh.ok=true;render(true);return}
   if(f.id==='f-boutique'){const sh=S.sheet,x=PROD(sh.id),q=sh.q||1,nom=val('bq-nom'),tel=val('bq-tel');
     if(!nom||!tel)return err('bq-err','Indiquez votre nom et votre téléphone.');if(dispo(x)<q)return err('bq-err','Il n’en reste plus assez, choisissez une quantité plus petite.');
     S.retraits.push({id:'rt'+uid(),lignes:{[x.id]:q},total:r2(x.prix*q),nom,tel,client:me()?me().id:null,date:TODAY,statut:'attente'});
