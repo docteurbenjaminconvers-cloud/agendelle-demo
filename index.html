@@ -566,7 +566,7 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return (s-1)/214
 function mondayOf(s){const d=fromIso(s);const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d)}
 
 /* ---------- reference data ---------- */
-const VERSION='7 nov. 2026 · 10h05';
+const VERSION='7 nov. 2026 · 12h20';
 const SW='M80 30 C76 27 70 28 66 32 C54 24 38 18 16 17 C32 26 46 36 55 43 C47 49 38 55 30 58 L9 64 L25 63 L13 79 L33 68 C42 64 50 60 56 56 C59 66 60 76 57 87 C66 75 69 62 67 50 C72 44 76 38 80 34 L86 32 Z';
 const PRATS={
   maya:{nom:'Maya',role:'Esthéticienne · laser',h:{1:[[780,1200]],2:[[600,720],[780,1140]],4:[[780,1200]],5:[[600,720],[780,1140]],6:[[600,1080]]}},
@@ -1051,6 +1051,12 @@ function CAT(){if(!S.boutique){const st={p1:8,p2:5,p3:12,p4:20,p5:6},mq={p1:'Mai
 function PROD(id){return CAT().find(x=>x.id===id)}
 function reserve(id){return (S.retraits||[]).filter(r=>r.statut==='attente').reduce((a,r)=>a+(r.lignes[id]||0),0)}
 function dispo(x){return Math.max(0,x.stock-reserve(x.id))}
+/* Boutique en ligne : option gratuite, Agendelle prend 10 % sur chaque produit payé en ligne (pas sur les cartes, abonnements ni bons).
+   Paiement au nom de l'institut, retrait à l'institut. Hors caisse : ces paiements en ligne sont tracés par le prestataire de paiement. */
+const COMM_BOUTIQUE=0.10;
+function CMD(){if(!S.commandes)S.commandes=[];return S.commandes}
+function boutiqueOn(){return S.boutiqueOn!==false}
+function commission(total){return Math.round(total*COMM_BOUTIQUE*100)/100}
 function caisseItems(){return [...CAT().filter(x=>!x.retire).map(x=>[x.id,x.nom,x.prix]),['p6','Bon cadeau 50 €',50]]}
 const PRODUITS=[['p1','Crème hydratante',29],['p2','Sérum éclat',39],['p3','Huile sèche',24],['p4','Baume lèvres',9],['p5','Lime et soin ongles',12],['p6','Bon cadeau 50 €',50]];
 const MOTIFS=['Erreur d’encaissement','Prestation non réalisée','Geste commercial','Retour produit'];
@@ -1289,19 +1295,24 @@ function offreResume(o){const val=o.validite?`à utiliser en ${o.validite} mois`
 function vProduits(){
   const cat=CAT(),vis=cat.filter(x=>!x.retire),ret=cat.filter(x=>x.retire),att=S.retraits.filter(r=>r.statut==='attente'),bas=vis.filter(x=>x.stock<=x.seuil);
   const ligne=r=>Object.entries(r.lignes).map(([k,q])=>{const x=PROD(k);return (q>1?q+' × ':'')+(x?x.nom:'Produit')}).join(', ');
+  const cmds=CMD(),aFaire=cmds.filter(c=>c.statut==='payee'||c.statut==='prete'),moisC=cmds.filter(c=>c.statut!=='rembourse'&&c.date>=addDays(TODAY,-30));
+  const ca=r2(moisC.reduce((a,c)=>a+c.total,0)),com=r2(moisC.reduce((a,c)=>a+c.commission,0));
+  const st_={payee:['À préparer','warn'],prete:['Prête · cliente prévenue','ok'],remise:['Remise',''],rembourse:['Remboursée','']};
   return `<h1>Produits</h1>
-  <div class="kpis two"><div class="kpi"><b>${vis.length}</b><span>produits au catalogue</span></div><div class="kpi"><b>${att.length}</b><span>retrait${att.length>1?'s':''} à préparer</span></div></div>
+  <div class="card col" style="gap:8px"><div class="row between" style="gap:12px"><span class="t"><b>Boutique en ligne</b><br><span class="sub small">Gratuite · ${Math.round(COMM_BOUTIQUE*100)} % de commission Agendelle sur chaque produit payé en ligne. Retrait à l’institut.</span></span><button class="toggle" role="switch" aria-checked="${boutiqueOn()}" aria-label="Boutique en ligne" data-a="boutique-on"></button></div></div>
+  ${boutiqueOn()?`<div class="kpis two"><div class="kpi"><b>${eur(ca)}</b><span>vendus en ligne sur 30 jours</span></div><div class="kpi"><b>${eur(r2(ca-com))}</b><span>pour vous après ${eur(com)} de commission</span></div></div>`:''}
+  ${aFaire.length?`<div class="sec"><span class="tag">Commandes payées en ligne · à remettre</span><div class="list">${aFaire.map(c=>`<div class="item" style="flex-wrap:wrap"><span class="t" style="flex:1 1 180px"><b>${esc(c.nom)}</b><span>${esc(c.detail)} · ${eur(c.total)} payé · le ${dshort(c.date)}</span><span class="pill ${st_[c.statut][1]}" style="align-self:flex-start;margin-top:4px">${st_[c.statut][0]}</span></span><span class="row" style="gap:6px">${c.statut==='payee'?`<button class="btn sm" data-a="cmd-prete" data-id="${c.id}">Prête</button>`:`<button class="btn sm" data-a="cmd-remise" data-id="${c.id}">Remise</button>`}<button class="btn sm ghost" data-a="cmd-rembourser" data-id="${c.id}">Rembourser</button></span></div>`).join('')}</div><p class="sub small">Déjà payées : rien à encaisser en caisse au retrait.</p></div>`:''}
   ${att.length?`<div class="sec"><span class="tag">Mis de côté en ligne · à préparer</span><div class="list">${att.map(r=>`<div class="item"><span class="t"><b>${esc(r.nom)}</b><span>${esc(ligne(r))} · ${eur(r.total)} · le ${dshort(r.date)}</span></span><button class="btn sm" data-a="retrait-encaisser" data-id="${r.id}">Encaisser</button><button class="ibtn" data-a="retrait-annuler" data-id="${r.id}" aria-label="Annuler la mise de côté de ${esc(r.nom)}">${I.x}</button></div>`).join('')}</div><p class="sub small">La cliente paie sur place, au moment du retrait.</p></div>`:''}
   ${bas.length?`<div class="notice warn"><span>Stock bas : ${bas.map(x=>esc(x.nom)+' ('+x.stock+')').join(', ')}.</span></div>`:''}
   <div class="sec"><span class="tag">Catalogue</span><div class="list">${vis.map(x=>`<div class="item"><button class="t" data-a="prod-edit" data-id="${x.id}" style="all:unset;flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;cursor:pointer"><b>${esc(x.nom)}</b><span class="sub small">${[x.marque,eur(x.prix),x.stock?x.stock+' en stock':'rupture',reserve(x.id)?reserve(x.id)+' mis de côté':''].filter(Boolean).map(esc).join(' · ')}</span><span class="link small" style="margin-top:2px">Modifier</span></button>${x.enLigne?'<span class="pill ok">En ligne</span>':'<span class="pill">Institut</span>'}</div>`).join('')||'<p class="sub small">Aucun produit pour l’instant.</p>'}</div>
   <button class="btn ghost" data-a="prod-new">${I.plus} Ajouter un produit</button></div>
   ${ret.length?`<div class="sec"><span class="tag">Retirés du catalogue</span><div class="list">${ret.map(x=>`<div class="item"><span class="t"><b>${esc(x.nom)}</b><span>${x.vendus||0} vendu${(x.vendus||0)>1?'s':''} · gardé pour l’historique de caisse</span></span><button class="btn sm ghost" data-a="prod-remettre" data-id="${x.id}">Remettre</button></div>`).join('')}</div></div>`:''}
-  <div class="notice">${I.shield}<span>Les produits se vendent en caisse. Ceux marqués « En ligne » apparaissent sur votre page : la cliente les met de côté et paie sur place en venant les chercher.</span></div>`;
+  <div class="notice">${I.shield}<span>Les produits se vendent en caisse. Avec la boutique en ligne, ceux marqués « En ligne » apparaissent sur votre page : la cliente paie en ligne (l’argent va sur votre compte, moins ${Math.round(COMM_BOUTIQUE*100)} % de commission) et vient les chercher à l’institut.</span></div>`;
 }
 function offresHTML(){if(!plus())return '';const xs=OFFRES().filter(o=>o.actif&&!o.retire&&(o.type==='carte'||o.type==='abo'));if(!xs.length)return '';
   return `<div class="sec"><h3>Offres</h3><div class="list">${xs.map(o=>`<button class="item" data-a="achat" data-id="${o.id}" style="width:100%;text-align:left"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${o.type==='abo'?I.cal:I.cash}</span><span class="t"><b>${esc(o.nom)}</b><span>${esc(offreResume(o))}</span></span>${I.right}</button>`).join('')}</div></div>`}
-function boutiqueHTML(){const xs=CAT().filter(x=>x.enLigne&&!x.retire);if(!xs.length)return '';
-  return `<div class="sec"><h3>Boutique</h3><p class="sub small" style="margin-top:-4px">À mettre de côté, payé sur place en venant le chercher.</p><div class="list">${xs.map(x=>{const d=dispo(x);return `<div class="item"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.bag}</span><span class="t"><b>${esc(x.nom)}</b><span>${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}${d?'':' · bientôt de retour'}</span></span>${d?`<button class="btn sm ghost" data-a="boutique" data-id="${x.id}">Mettre de côté</button>`:''}</div>`}).join('')}</div></div>`}
+function boutiqueHTML(){if(!boutiqueOn())return '';const xs=CAT().filter(x=>x.enLigne&&!x.retire);if(!xs.length)return '';
+  return `<div class="sec"><h3>Boutique</h3><p class="sub small" style="margin-top:-4px">Payé en ligne, à retirer à l’institut.</p><div class="list">${xs.map(x=>{const d=dispo(x);return `<div class="item"><span class="av" style="background:var(--accent-soft);color:var(--accent)">${I.bag}</span><span class="t"><b>${esc(x.nom)}</b><span>${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}${d?'':' · bientôt de retour'}</span></span>${d?`<button class="btn sm ghost" data-a="boutique" data-id="${x.id}">Acheter</button>`:''}</div>`}).join('')}</div></div>`}
 function vVentes(){
   if(!plus())return plusGate('Ventes en ligne','Vendez des bons cadeaux et des cartes de séances sur votre page, même la nuit.');
   const mois=S.ventes.filter(v=>v.date>=addDays(TODAY,-30));
@@ -1618,6 +1629,7 @@ function vMesRdv(){
     const packs=E.packs;
     v=`<h1>Mon portefeuille</h1>
     <div class="sec"><h3>Cartes de séances</h3>${cartes.length?cartes.map(([c_,i_])=>`<div class="card col wtile w-carte" style="gap:6px"><div class="row between"><b>${esc(c_.nom)}</b><span class="pill ok">${c_.reste} restante${c_.reste>1?'s':''}</span></div><span class="sub small">${esc(i_)}</span><div class="bar"><i style="width:${Math.round((c_.total-c_.reste)/c_.total*100)}%"></i></div><span class="sub small">${c_.total-c_.reste} séance${c_.total-c_.reste>1?'s':''} utilisée${c_.total-c_.reste>1?'s':''} sur ${c_.total}</span></div>`).join(''):'<p class="sub small">Aucune carte en cours.</p>'}</div>
+    ${CMD().some(c=>c.client===m.id)?`<div class="sec"><h3>Mes commandes</h3>${CMD().filter(c=>c.client===m.id).slice().reverse().map(c=>`<div class="card col" style="gap:4px"><div class="row between"><b>${esc(c.detail)}</b><span class="pill ${c.statut==='prete'?'ok':''}">${({payee:'En préparation',prete:'Prête à retirer',remise:'Retirée',rembourse:'Remboursée'})[c.statut]}</span></div><span class="sub small">${eur(c.total)} payé le ${dshort(c.date)} · à retirer à Institut Écusson</span></div>`).join('')}</div>`:''}
     ${(m.achats||[]).some(a=>a.type==='abo')?`<div class="sec"><h3>Abonnements</h3>${m.achats.filter(a=>a.type==='abo').map(a=>`<div class="card col" style="gap:6px"><div class="row between"><b>${esc(a.nom)}</b><span class="pill ${a.resilie?'':'ok'}">${a.resilie?'Résilié':'Actif'}</span></div><span class="sub small">${esc(a.contenu)}${a.contenu?' · ':''}${eur(a.prix)} par mois · Institut Écusson</span>${a.resilie?'<span class="sub small">S’arrête à la fin du mois payé.</span>':`<button class="link small" data-a="abo-resilier" data-id="${a.id}" style="align-self:flex-start;color:var(--muted)">Résilier</button>`}</div>`).join('')}</div>`:''}
     <div class="sec"><h3>Packs laser Kookla</h3>${packs.map(p=>`<div class="card col wtile w-pack" style="gap:6px"><div class="row between"><b>${esc(p.nom)}</b><span class="pill k">Kookla</span></div><span class="sub small">Institut Écusson · garanti par Kookla</span><div class="bar"><i style="width:${Math.round(p.faites/p.total*100)}%;background:var(--k)"></i></div><span class="sub small">${p.faites} séance${p.faites>1?'s':''} sur ${p.total} · prochaine à réserver</span></div>`).join('')}</div>
     <div class="sec"><h3>Bons cadeaux</h3>${E.bons.map(b_=>`<div class="card row between wtile w-bon"><span class="wgift">${I.gift}</span><span class="col" style="gap:2px;flex:1"><b>${esc(b_.nom)}</b><span class="sub small">${esc(b_.inst)} · offert par ${esc(b_.de)} · valable jusqu’au ${dshort(b_.fin)}</span></span><b style="white-space:nowrap">${eur(b_.solde)}</b></div>`).join('')}</div>
@@ -1817,10 +1829,14 @@ function sheetHTML(){
       <label class="field" for="pr-stock">En stock<input id="pr-stock" type="number" min="0" step="1" value="${d.stock??0}"></label></div>
       <label class="field" for="pr-seuil">Prévenir quand il en reste<input id="pr-seuil" type="number" min="0" step="1" value="${d.seuil??3}"></label>
       <label class="field" for="pr-desc">Description<input id="pr-desc" value="${esc(d.desc||'')}" placeholder="Facultatif, affichée sur votre page"></label>
-      <div class="item"><span class="t"><b>Proposer sur ma page</b><span>Mis de côté en ligne, payé sur place</span></span><button type="button" class="toggle" role="switch" aria-checked="${!!(sh.enLigne??d.enLigne)}" aria-label="Proposer sur ma page" data-a="prod-ligne"></button></div>
+      <div class="item"><span class="t"><b>Vendre en ligne</b><span>Payé en ligne, retiré à l’institut</span></span><button type="button" class="toggle" role="switch" aria-checked="${!!(sh.enLigne??d.enLigne)}" aria-label="Proposer sur ma page" data-a="prod-ligne"></button></div>
       <span class="err" id="pr-err"></span><button class="btn" type="submit">${x?'Enregistrer':'Ajouter au catalogue'}</button></form>
     ${x?(sh.del?`<div class="notice warn"><span>${used?`« ${esc(x.nom)} » a déjà été vendu ou mis de côté : il est retiré du catalogue, et les tickets déjà émis restent tels quels.`:`Supprimer « ${esc(x.nom)} » ? Il n’a jamais été vendu.`}</span></div><div class="row"><button class="btn ghost" data-a="prod-nodel" style="flex:1">Garder</button><button class="btn danger" data-a="prod-del" data-id="${x.id}" style="flex:1">${used?'Retirer':'Supprimer'}</button></div>`
       :`<button class="link" data-a="prod-askdel" style="align-self:center;color:var(--bad)">${used?'Retirer du catalogue':'Supprimer le produit'}</button>`):''}`;
+  }
+  if(sh.type==='cmd-remb'){const c=CMD().find(z=>z.id===sh.id);if(!c)return '';
+    h=`<h2>Rembourser la commande ?</h2><p>${esc(c.nom)} · ${esc(c.detail)}</p><div class="notice warn"><span>${eur(c.total)} seront rendus à la cliente sur sa carte. Le produit revient en stock et Agendelle ne prend pas de commission sur cette vente.</span></div>
+    <div class="row"><button class="btn ghost" data-a="close" style="flex:1">Garder</button><button class="btn danger" data-a="cmd-rembourser" data-id="${c.id}" style="flex:1">Rembourser</button></div>`;
   }
   if(sh.type==='achat'){const o=OFFRE(sh.id),m=me();if(!o)return '';
     if(sh.ok){h=`<div class="col" style="gap:10px;align-items:center;text-align:center;padding:10px 0"><span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check||I.plus}</span>
@@ -1837,14 +1853,19 @@ function sheetHTML(){
       <span class="err" id="ac-err"></span><button class="btn" type="submit">Payer ${eur(o.prix)}${o.type==='abo'?' et m’abonner':''}</button></form>`;
   }
   if(sh.type==='boutique'){const x=PROD(sh.id),m=me(),q=sh.q||1,d=dispo(x);
-    h=`<h2>${esc(x.nom)}</h2><p class="sub">${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}</p>${x.desc?`<p>${esc(x.desc)}</p>`:''}
+    if(sh.ok){h=`<div class="col" style="gap:10px;align-items:center;text-align:center;padding:10px 0"><span style="width:58px;height:58px;border-radius:29px;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center">${I.check}</span>
+      <h2>Commande payée</h2><p class="sub">${q>1?q+' × ':''}${esc(x.nom)} · ${eur(r2(x.prix*q))}</p>
+      <p class="sub small">Institut Écusson la prépare et vous prévient quand elle est prête. À retirer à l’institut, rien à payer sur place.${m?' Suivez-la dans votre appli, onglet Cartes.':''}</p><button class="btn" data-a="close">Terminé</button></div>`}
+    else h=`<h2>${esc(x.nom)}</h2><p class="sub">${[x.marque,eur(x.prix)].filter(Boolean).map(esc).join(' · ')}</p>${x.desc?`<p>${esc(x.desc)}</p>`:''}
     <span class="tag">Quantité</span><div class="chips">${[1,2,3].filter(n=>n<=d).map(n=>`<button class="chip" data-a="boutique-q" data-v="${n}" aria-pressed="${q===n}">${n}</button>`).join('')}</div>
+    <div class="card col" style="gap:6px"><div class="row between"><span>Retrait</span><b>À l’institut</b></div><div class="row between"><span>Livraison</span><b>Non</b></div><div class="row between"><b>À payer</b><b style="font-family:var(--display);font-size:22px">${eur(r2(x.prix*q))}</b></div></div>
     <form id="f-boutique" class="list" novalidate>
       <label class="field" for="bq-nom">Votre nom<input id="bq-nom" value="${esc(m?m.nom:'')}" autocomplete="name"></label>
       <label class="field" for="bq-tel">Téléphone<input id="bq-tel" type="tel" value="${esc(m?m.tel:'')}" autocomplete="tel"></label>
-      <div class="row between"><b>À payer sur place</b><b style="font-family:var(--display);font-size:22px">${eur(r2(x.prix*q))}</b></div>
-      <span class="err" id="bq-err"></span><button class="btn" type="submit">Mettre de côté</button>
-      <p class="foot">Rien n’est payé maintenant. L’institut vous le garde et vous réglez en venant le chercher, par exemple à votre prochain rendez-vous.</p></form>`;
+      <label class="field" for="bq-mail">Email<input id="bq-mail" type="email" value="${esc(m?(m.mail||''):'')}" autocomplete="email"></label>
+      <p class="sub small">Payé au nom d’Institut Écusson. Vous la retirez à l’institut quand elle est prête. Droit de rétractation de 14 jours à compter du retrait, sauf produit descellé après le retrait pour des raisons d’hygiène.</p>
+      <p class="foot">Démo : aucun paiement réel n’est fait.</p>
+      <span class="err" id="bq-err"></span><button class="btn" type="submit">Payer ${eur(r2(x.prix*q))}</button></form>`;
   }
   if(sh.type==='offre'){const o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte'),n=o?offreAcheteuses(o):0,d=o||{validite:12};
     h=`<h2>${o?'Modifier l’offre':'Créer une offre'}</h2>
@@ -2150,6 +2171,11 @@ document.addEventListener('click',e=>{
     case 'prod-remettre':{const x=PROD(id);if(x){x.retire=false;toast('« '+x.nom+' » est de nouveau au catalogue')}break}
     case 'boutique':S.sheet={type:'boutique',id,q:1};break;
     case 'achat':S.sheet={type:'achat',id};break;
+    case 'boutique-on':S.boutiqueOn=!boutiqueOn();toast(boutiqueOn()?'Boutique en ligne activée':'Boutique en ligne désactivée · vos produits restent vendus en caisse');break;
+    case 'cmd-prete':{const c=CMD().find(z=>z.id===id);if(c){c.statut='prete';toast('Cliente prévenue : sa commande est prête')}break}
+    case 'cmd-remise':{const c=CMD().find(z=>z.id===id);if(c){c.statut='remise';c.remiseLe=TODAY;toast('Commande remise')}break}
+    case 'cmd-rembourser':{const c=CMD().find(z=>z.id===id);if(!c)break;if(!sh||sh.type!=='cmd-remb'){S.sheet={type:'cmd-remb',id};break}
+      Object.entries(c.lignes).forEach(([k,q])=>{const x=PROD(k);if(x){x.stock+=q;x.vendus=Math.max(0,(x.vendus||0)-q)}});c.statut='rembourse';c.commission=0;S.sheet=null;toast('Remboursée · le stock est remis et aucune commission n’est prise');break}
     case 'abo-resilier':{const m=me();const a=m&&(m.achats||[]).find(z=>z.id===id);if(a&&!a.resilie){a.resilie=true;toast('Abonnement résilié · il reste actif jusqu’à la fin du mois payé')}break}
     case 'boutique-q':if(sh)sh.q=+v;break;
     case 'retrait-encaisser':{const r=S.retraits.find(z=>z.id===id);if(!r)break;S.sheet={type:'vente',cart:{...r.lignes},p1:'CB',retrait:r.id};break}
@@ -2322,10 +2348,15 @@ document.addEventListener('submit',e=>{
       m.achats.push(o.type==='carte'?{id:'ac'+uid(),offre:o.id,type:'carte',nom:o.nom,total:o.seances,reste:o.seances,prix:o.prix,fin:addDays(TODAY,Math.round((o.validite||12)*30.44)),date:TODAY}
         :{id:'ac'+uid(),offre:o.id,type:'abo',nom:o.nom,contenu:o.contenu||'',prix:o.prix,date:TODAY,resilie:false})}
     sh.ok=true;render(true);return}
-  if(f.id==='f-boutique'){const sh=S.sheet,x=PROD(sh.id),q=sh.q||1,nom=val('bq-nom'),tel=val('bq-tel');
-    if(!nom||!tel)return err('bq-err','Indiquez votre nom et votre téléphone.');if(dispo(x)<q)return err('bq-err','Il n’en reste plus assez, choisissez une quantité plus petite.');
-    S.retraits.push({id:'rt'+uid(),lignes:{[x.id]:q},total:r2(x.prix*q),nom,tel,client:me()?me().id:null,date:TODAY,statut:'attente'});
-    S.sheet=null;render(true);toast('Mis de côté · à payer sur place en venant le chercher');return}
+  if(f.id==='f-boutique'){const sh=S.sheet,x=PROD(sh.id),q=sh.q||1,nom=val('bq-nom'),tel=val('bq-tel'),mail=val('bq-mail');
+    if(!boutiqueOn()||!x||!x.enLigne||x.retire)return err('bq-err','Ce produit n’est plus vendu en ligne.');
+    if(!nom||!tel)return err('bq-err','Indiquez votre nom et votre téléphone.');if(!/^\S+@\S+\.\S+$/.test(mail))return err('bq-err','Indiquez un email valide pour recevoir le reçu.');
+    if(dispo(x)<q)return err('bq-err','Il n’en reste plus assez, choisissez une quantité plus petite.');
+    const total=r2(x.prix*q);
+    /* Le stock est décompté au paiement ; la commande garde le prix payé, même si l'institut change le prix ensuite */
+    x.stock-=q;x.vendus=(x.vendus||0)+q;
+    CMD().push({id:'cm'+uid(),lignes:{[x.id]:q},detail:(q>1?q+' × ':'')+x.nom,total,commission:commission(total),nom,tel,mail,client:me()?me().id:null,date:TODAY,statut:'payee'});
+    sh.ok=true;render(true);return}
   if(f.id==='f-offre'){const sh=S.sheet,o=sh.id?OFFRE(sh.id):null,t=o?o.type:(sh.t||'carte');
     const nom=val('of-nom')||(t==='bonlibre'?'Bon cadeau libre':''),prix=t==='bonlibre'?0:parseFloat(val('of-prix').replace(',','.'));
     if(!nom)return err('of-err','Donnez un nom à l’offre.');
